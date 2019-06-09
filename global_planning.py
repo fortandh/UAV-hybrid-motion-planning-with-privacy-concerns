@@ -40,7 +40,29 @@ time_step = 0
 
 idx = 0
 
-hasprivacythreat = 1
+
+def hasprivacythreat (position, occ_grid, viewradius = 2):
+    x = position.x
+    y = position.y
+    z = position.z
+    r = viewradius
+    flag = 0
+    min_x = max(x - r, 0)
+    max_x = min(x + r, grid_x - 1)
+    min_y = max(y - r, 0)
+    max_y = min(y + r, grid_y - 1)
+    min_z = max(z - r, 0)
+    max_z = min(z + r, grid_z - 1)
+    for m in range(min_x, max_x + 1):
+        for n in range(min_y, max_y + 1):
+            for l in range(min_z, max_z + 1):
+                if occ_grid[m][n][l] == 2 || occ_grid[m][n][l] == 3 ||occ_grid[m][n][l] == 4 :
+                    dis = np.sqrt(np.power((x - m), 2) + np.power((y - n), 2) + np.power((z - l), 2))
+                    if dis <= r:
+                        flag = 1
+    return flag
+
+
 
 while not (idx >= len(trajectory_plan)):
     current_p = trajectory_plan[idx].point
@@ -57,7 +79,7 @@ while not (idx >= len(trajectory_plan)):
         idx += 1
         continue
 
-    if hasprivacythreat :
+    if hasprivacythreat(current_p, occ_grid, 2) :
         # localization
         p_threat, h_impact = privacy_modeling()
         # update occ_grid, pri_grid

@@ -40,7 +40,7 @@ if __name__ == "__main__":
     occ_grid, obstacle_num = map_generate(grid_x, grid_y, grid_z,
                                           starting_point, end_point, safety_threshold, privacy_threshold)
     print(occ_grid)
-    pri_grid, privacy_sum = privacy_init(grid_x, grid_y, grid_z, starting_point, end_point, occ_grid, privacy_radius)
+    pri_grid, privacy_sum = privacy_init(grid_x, grid_y, grid_z, occ_grid, privacy_radius)
     print(pri_grid)
     objectives = [end_point]
     alg = gA.GeneticAlgorithm(population, 0.00001, 5, 2, 40, grid_map)
