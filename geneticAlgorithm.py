@@ -1,4 +1,4 @@
-# 遗传算法
+# multi-objective genetic algorithm
 import copy
 from random import randint, shuffle
 from point import Point
@@ -22,22 +22,24 @@ class GeneticAlgorithm(object):
         self.scale = grid_map
 
     # 初始化种群
-    def init_population(self, starting_point, objectives):
+    def init_population(self, starting_point, objectives, Kca):
         solutions = []
         for i in range(self.population):
             objectives_ = objectives[:]  # copy
             prev_x = starting_point.x
             prev_y = starting_point.y
             prev_z = starting_point.z
+            prev_ca = starting_point.ca
             total_obj = len(objectives_)
             tmp = [starting_point]
             shuffle(objectives_)
+            num_of_ca_off = 0
             # 生成一个可行解,这个解要求通过所有的点，不论什么顺序
             while total_obj > 0:
                 next_x = 0
                 next_y = 0
                 next_z = 0
-                # 判定x的取值范围
+                # range of x
                 min_x = prev_x
                 max_x = prev_x
                 if objectives_[0].x < prev_x:
@@ -45,7 +47,7 @@ class GeneticAlgorithm(object):
                 if objectives_[0].x > prev_x:
                     max_x = prev_x + 1
 
-                # 判定y的取值范围
+                # range of y
                 min_y = prev_y
                 max_y = prev_y
                 if objectives_[0].y < prev_y:
@@ -53,7 +55,7 @@ class GeneticAlgorithm(object):
                 if objectives_[0].y > prev_y:
                     max_y = prev_y + 1
 
-                # 判定z的取值范围
+                # range of z
                 min_z = prev_z
                 max_z = prev_z
                 if objectives_[0].z < prev_z:
@@ -66,7 +68,7 @@ class GeneticAlgorithm(object):
                 available_y = range(min_y, max_y + 1)
                 available_z = range(min_z, max_z + 1)
 
-                # 生成可行的下一个点
+                # generation of the next point
                 allowed_point = True
                 while allowed_point:
                     next_x = available_x[randint(0, len(available_x) - 1)]
@@ -79,11 +81,23 @@ class GeneticAlgorithm(object):
                     if prev_x == next_x and prev_y == next_y and prev_z == next_z:
                         allowed_point = True
 
-                # 将生成的下一个坐标放入临时解tmp中
+                # the next option for camera configuration
+                rand_ca = randint(0,1)
+                if rand_ca == 1:
+                    if num_of_ca_off + 1 <= Kca:
+                        num_of_ca_off += 1
+                        next_ca = rand_ca
+                    else:
+                        next_ca = 0
+                else:
+                    next_ca = rand_ca
+                #print(next_ca, num_of_ca_off, Kca)
+                # add the point to the path
                 prev_x = next_x
                 prev_y = next_y
                 prev_z = next_z
-                tmp.append(Point(next_x, next_y, next_z))
+                prev_ca = next_ca
+                tmp.append(Point(next_x, next_y, next_z, next_ca))
                 for o in range(total_obj):
                     if next_x == objectives_[o].x and next_y == objectives_[o].y and next_z == objectives_[o].z:
                         total_obj -= 1
@@ -171,7 +185,7 @@ class GeneticAlgorithm(object):
         return new_path
     '''
 
-    def cross_over(self, path1, path2, objectives):
+    def cross_over(self, path1, path2, objectivesm, Kca):
         # 寻找公共点
         tmp = list(set(path1).intersection(path2))
         common_points = []
@@ -187,12 +201,47 @@ class GeneticAlgorithm(object):
             new_path = copy.deepcopy(path2[:])
             return Path(new_path)
 
+        num_of_ca_off1 = 0
+        num_of_ca_off2 = 0
+
+        for i in range (common_points[crossover_point].path2_index+1):
+            if path2[i].ca == 1:
+                num_of_ca_off2 += 1
+        for i in range (common_points[crossover_point].path1_index+1, len(path1)):
+            if path1[i].ca == 1:
+                num_of_ca_off1 += 1
+
         # 开始进行交叉
         first_half = copy.deepcopy(path2[:common_points[crossover_point].path2_index])
         new_part = copy.deepcopy(path1[common_points[crossover_point].path1_index:])
-        new_path = first_half + new_part
+        #new_path = first_half + new_part
+
+        if (num_of_ca_off2 + num_of_ca_off1) <= Kca :
+            new_path = first_half + new_part
+            #return Path(new_path)
+        else:
+            left = num_of_ca_off1 - (Kca - num_of_ca_off2)
+            for j in range(len(new_part)):
+                if new_part[j].ca == 1:
+                    new_part[j].ca = 0
+                    left -= 1
+                if (left == 0):
+                    break
+            new_path = first_half + new_part
+        '''
+        for j in range(len(path1)):
+            print("path1",path1[j])
+        for j in range(len(path2)):
+            print("path2",path2[j])
+
+        for j in range(len(first_half)):
+            print("first_half",first_half[j])
+        for j in range(len(new_part)):
+            print("new_part",new_part[j])
+        '''
 
         return Path(new_path)
+
 
     '''
     # 变异过程
@@ -226,17 +275,24 @@ class GeneticAlgorithm(object):
         return new_path
     '''
 
-    def mutate(self, path, objectives):
-        # 选定变异点
+    def mutate(self, path, objectives, Kca):
+        # choose the starting point for mutation
         starting_point = randint(1, len(path.points) - 2)
 
         objectives_ = objectives[:]
         prev_x = path.points[starting_point].x
         prev_y = path.points[starting_point].y
         prev_z = path.points[starting_point].z
+        prev_ca = path.points[starting_point].ca
+        num_of_ca_off = 0
+
+        for i in range (starting_point+1):
+            if path.points[i].ca == 1:
+                num_of_ca_off += 1
+
         total_obj = len(objectives_)
         tmp = [path.points[starting_point]]
-        # 所有元素随机排序
+        # sort the objectives randomly
         # shuffle(objectives_)
         while total_obj > 0:
             allowed_point = True
@@ -283,7 +339,19 @@ class GeneticAlgorithm(object):
             prev_x = next_x
             prev_y = next_y
             prev_z = next_z
-            tmp.append(Point(next_x, next_y, next_z))
+
+            # the next option for camera configuration
+            rand_ca = randint(0, 1)
+            if rand_ca == 1:
+                if num_of_ca_off + 1 <= Kca:
+                    num_of_ca_off += 1
+                    next_ca = rand_ca
+                else:
+                    next_ca = 0
+            else:
+                next_ca = rand_ca
+
+            tmp.append(Point(next_x, next_y, next_z, next_ca))
             # print(next_x,next_y,next_z)
             # print(Point)
             for o in range(total_obj):
@@ -356,6 +424,7 @@ class GeneticAlgorithm(object):
         # print (safety)
         for point in path:
             privacy += math.exp(point.ca) * pri_grid[point.x][point.y][point.z]
+        # h*exp(-ws-(1/2)*dis^2)
         # print(privacy)
         privacy = privacy/sum_privacy
 
@@ -370,8 +439,8 @@ class GeneticAlgorithm(object):
         # maximize
         fitness = flag + beta * efficiency + alpha * privacy
         # print(fitness)
-        if flag < 0:
-            path.flag = 1
+        #if flag < 0:
+        #    path.flag = 1
 
 
         return fitness

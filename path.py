@@ -7,4 +7,4 @@ class Path(object):
     def __init__(self, path, fitness=0, flag = 0):
         self.points = path
         self.fitness = fitness
-        self.flag = 0
+        #self.flag = 0

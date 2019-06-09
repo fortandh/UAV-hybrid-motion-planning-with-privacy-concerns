@@ -20,8 +20,8 @@ tournament_size = 10
 objectives = []
 no_of_objectives = 1
 obstacles_per_axis = 1
-starting_point = Point(0, 0, 0)
-end_point = Point(4, 4, 4)
+starting_point = Point(0, 0, 0, 0)
+end_point = Point(4, 4, 4, 0)
 grid_map = [grid_x, grid_y, grid_z]
 sigma = 0.00001
 mutation_rate = 5
@@ -30,6 +30,8 @@ sr = 40
 safety_threshold = 0.5
 privacy_threshold = 0.1
 privacy_radius = 1
+# the tolerance of the times of camera off
+Kca = 3
 
 
 if __name__ == "__main__":
@@ -44,7 +46,7 @@ if __name__ == "__main__":
     alg = gA.GeneticAlgorithm(population, 0.00001, 5, 2, 40, grid_map)
 
     print('\033[94m Generating random initial solutions... \033[0m')
-    paths = alg.init_population(starting_point, objectives)
+    paths = alg.init_population(starting_point, objectives, Kca)
 
     for p in range(len(paths)):
         paths[p].fitness = alg.get_fitness(paths[p].points, occ_grid, pri_grid,
@@ -73,15 +75,15 @@ if __name__ == "__main__":
 
         new_path = []
         # Always crossover (cr = 1)
-        new_path1 = alg.cross_over(paths[p1].points, paths[p2].points, objectives)
-        new_path2 = alg.cross_over(paths[p2].points, paths[p1].points, objectives)
+        new_path1 = alg.cross_over(paths[p1].points, paths[p2].points, objectives, Kca)
+        new_path2 = alg.cross_over(paths[p2].points, paths[p1].points, objectives, Kca)
 
-        new_path1_ = alg.mutate(new_path1, objectives)
+        new_path1_ = alg.mutate(new_path1, objectives, Kca)
         new_path1_.fitness = alg.get_fitness(new_path1.points, occ_grid, pri_grid,
                                              starting_point, end_point, privacy_sum, obstacle_num)
         paths[-2] = new_path1_
 
-        new_path2_ = alg.mutate(new_path2, objectives)
+        new_path2_ = alg.mutate(new_path2, objectives, Kca)
         new_path2_.fitness = alg.get_fitness(new_path2.points, occ_grid, pri_grid,
                                              starting_point, end_point, privacy_sum, obstacle_num)
         paths[-1] = new_path2_
