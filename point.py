@@ -2,7 +2,7 @@
 # ca:camera's working state 1: off 0: on
 
 class Point(object):
-    def __init__(self, x, y, z, ca):
+    def __init__(self, x, y, z, ca=0):
         self.x = x
         self.y = y
         self.z = z
