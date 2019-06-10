@@ -7,6 +7,8 @@ import geneticAlgorithm as gA
 from quickSort import quick_sort
 from gridVisualization import grid_visualization
 from mapTools import privacy_init, map_generate
+import sys
+sys.setrecursionlimit(1000000)
 
 path = []
 grid_x = 5
@@ -62,10 +64,12 @@ if __name__ == "__main__":
     for i in range(max_generation):
         print(i)
         quick_sort(paths)
-        if max_f < paths[0].fitness:
-            max_f = paths[0].fitness
+        if max_f < paths[0].fitness :
+            if paths[0].flag == 0:
+                max_f = paths[0].fitness
             print('\033[94m Current maximum fitness:\033[0m\033[92m ' + str(
                 max_f) + '\033[0m\033[94m, Generation:\033[0m\033[92m ' + str(i) + ' \033[0m')
+            print(paths[0].flag)
             for j in range(len(paths[0].points)):
                 print(paths[0].points[j])
             print("the generation", i, len(paths[0].points))

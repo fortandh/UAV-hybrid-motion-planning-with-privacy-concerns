@@ -7,14 +7,16 @@ import geneticAlgorithm as gA
 from quickSort import quick_sort
 from gridVisualization import grid_visualization
 from mapTools import privacy_init, map_generate
-#import ga_class as GA
+from ga_class import GA_class
 import copy
 import math
+import sys
+sys.setrecursionlimit(1000000)
 
 #map parameter
-grid_x = 10
-grid_y = 10
-grid_z = 10
+grid_x = 5
+grid_y = 5
+grid_z = 5
 safety_threshold = 0.5
 privacy_threshold = 0.1
 privacy_radius = 1 ## [1,2,3]
@@ -22,12 +24,12 @@ privacy_radius = 1 ## [1,2,3]
 # drone parameter
 starting_point = Point(0, 0, 0, 0)
 end_point = Point(4, 4, 4, 0)
-T_budget = 20
+T_budget = 100
 viewradius = 2
 
 # GA parameter
-population = 1000
-generation = 500
+population = 500
+generation = 50
 selection_size = 50
 
 
@@ -53,17 +55,27 @@ occ_grid, obstacle_num, occ_grid_known, pri_grid_known, privacy_sum_known = init
 
 # list of initial solution with global map
 """ to organize"""
-ga = GA.GA_class(population, generation, selection_size)
+ga = GA_class(population, generation, selection_size)
 
-fitness, trajectory_ref = ga.initialsolution(cc_grid_known, pri_grid_known, privacy_sum_known, obstacle_num, starting_point, end_point, Tbudget)
+max_flag =1
+while max_flag == 1:
+    max_f, trajectory_ref, max_flag = ga.initialsolution(occ_grid, pri_grid_known, privacy_sum_known, obstacle_num, starting_point, end_point, T_budget, 0)
+    print(max_f,max_flag)
+    for j in range(len( trajectory_ref.points)):
+        print( trajectory_ref.points[j])
 
-trajectory_plan = copy.deepcopy(trajectory_ref[:])
-sensor_initial = np.zeros(len(trajectory_plan))
-sensor_plan = copy.deepcopy(sensor_initial[:])
+
+trajectory_plan = copy.deepcopy(trajectory_ref)
+sensor_initial = np.zeros(len(trajectory_plan.points))
+sensor_plan = copy.deepcopy(sensor_initial)
 time_step = 0
 
 idx = 0
 
+for j in range(len(trajectory_plan.points)):
+    print(trajectory_plan.points[j])
+for j in range(len(sensor_plan)):
+    print(sensor_plan[j])
 
 def hasprivacythreat (position, occ_grid_known, occ_grid, pri_grid_known, privacy_sum_known, viewradius = 2):
     x = position.x
@@ -93,10 +105,10 @@ def hasprivacythreat (position, occ_grid_known, occ_grid, pri_grid_known, privac
 
 
 
-while not (idx >= len(trajectory_plan)):
-    current_p = trajectory_plan[idx].point
+while not (idx >= len(trajectory_plan.points)):
+    current_p = trajectory_plan[idx].points
     current_ca = trajectory_plan[idx].ca
-    next_p = trajectory_plan[idx+1].point
+    next_p = trajectory_plan[idx+1].points
     next_idx = idx + 1
 
     if current_p == end_point :

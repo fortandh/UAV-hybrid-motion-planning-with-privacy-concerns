@@ -412,13 +412,13 @@ class GeneticAlgorithm(object):
         # 计算fitness之和
         fitness_sum = 0
         for path in paths:
-            fitness_sum += self.get_fitness(path, occ_grid, pri_grid, start, end, sum_privacy, obstacle_num)
+            fitness_sum += math.exp(self.get_fitness(path, occ_grid, pri_grid, start, end, sum_privacy, obstacle_num))
 
         # 构建轮盘
         tmp = 0
         roulette_list = []
         for path in paths:
-            fitness = self.get_fitness(path, occ_grid, pri_grid, start, end, sum_privacy, obstacle_num)
+            fitness = math.exp(self.get_fitness(path, occ_grid, pri_grid, start, end, sum_privacy, obstacle_num))
             tmp = tmp + (fitness / fitness_sum)
             roulette_list.append(tmp)
 
@@ -494,8 +494,9 @@ class GeneticAlgorithm(object):
         # print(flag)
         # maximize
         fitness = flag + beta * efficiency + alpha * privacy
+        #fitness = beta * efficiency + alpha * privacy
         # print(fitness)
-        if path.flag < 0:
+        if flag < 0:
             path.flag = 1
-
+        #print (flag, path.flag)
         return fitness
