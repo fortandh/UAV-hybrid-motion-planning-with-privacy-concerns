@@ -17,7 +17,7 @@ sys.setrecursionlimit(1000000)
 grid_x = 5
 grid_y = 5
 grid_z = 5
-safety_threshold = 0.5
+safety_threshold = 0.3
 privacy_threshold = 0.1
 privacy_radius = 1 ## [1,2,3]
 
@@ -26,10 +26,11 @@ starting_point = Point(0, 0, 0, 0)
 end_point = Point(4, 4, 4, 0)
 T_budget = 100
 viewradius = 2
+Kca = 0
 
 # GA parameter
 population = 500
-generation = 50
+generation = 5
 selection_size = 50
 
 
@@ -48,7 +49,7 @@ def initialmap (grid_x, grid_y, grid_z, starting_point, end_point, safety_thresh
                     occ_grid_known[i][j][k] = 0
                     #print (occ_grid_known[i][j][k], i,j,k)
     pri_grid_known, privacy_sum_known = privacy_init(grid_x, grid_y, grid_z, occ_grid_known, privacy_radius)
-    #print (occ_grid, obstacle_num, occ_grid_known, pri_grid_known, privacy_sum_known)
+    print (occ_grid, obstacle_num, occ_grid_known, pri_grid_known, privacy_sum_known)
     return occ_grid, obstacle_num, occ_grid_known, pri_grid_known, privacy_sum_known
 
 occ_grid, obstacle_num, occ_grid_known, pri_grid_known, privacy_sum_known = initialmap (grid_x, grid_y, grid_z, starting_point, end_point, safety_threshold, privacy_threshold, privacy_radius)
@@ -106,11 +107,11 @@ def hasprivacythreat (position, occ_grid_known, occ_grid, pri_grid_known, privac
 
 
 while not (idx >= len(trajectory_plan.points)):
-    current_p = trajectory_plan[idx].points
-    current_ca = trajectory_plan[idx].ca
-    next_p = trajectory_plan[idx+1].points
+    current_p = trajectory_plan.points[idx]
+    current_ca = trajectory_plan.points[idx].ca
+    next_p = trajectory_plan.points[idx+1]
     next_idx = idx + 1
-
+    print (current_p,current_ca,next_p,next_idx)
     if current_p == end_point :
         break
 
@@ -123,28 +124,35 @@ while not (idx >= len(trajectory_plan.points)):
     # update occ_grid, pri_grid
     flag, occ_grid_known, pri_grid_known, privacy_sum_known = hasprivacythreat (current_p, occ_grid_known, occ_grid, pri_grid_known, privacy_sum_known, viewradius)
 
+
     if flag :
         # localization
         #p_threat, h_impact = privacy_modeling()
         # update occ_grid, pri_grid
-
-        for j in range (idx+1, len(trajectory_plan)):
+        print(pri_grid_known, len(trajectory_plan.points))
+        for j in range (idx+1, len(trajectory_plan.points)):
             sigma_privacy = 0
-            for k in range (j,len(trajectory_plan)):
-                sigma_privacy += pri_grid_known * math.exp(-sensor_plan[j])
-                if sigma_privacy == 0:
-                    next_p = trajectory_plan[j].point
-                    next_idx = j
-                    break
-                elif k == len(trajectory_plan)-1 :
-                    next_p = trajectory_plan[-1].point
-                    next_idx = len(trajectory_plan)-1
-        T_plan = T_budget - idx - (len(trajectory_plan) - 1 - next_idx)
+            for k in range (j,len(trajectory_plan.points)):
+                sigma_privacy += pri_grid_known[trajectory_plan.points[k].x][trajectory_plan.points[k].y][trajectory_plan.points[k].z] * math.exp(-sensor_plan[k])
+            if sigma_privacy == 0:
+                next_p = trajectory_plan.points[j]
+                next_idx = j
+                break
+            elif k == len(trajectory_plan.points)-1 :
+                next_p = trajectory_plan.points[-1]
+                next_idx = len(trajectory_plan.points)-1
+        T_plan = T_budget - idx - (len(trajectory_plan.points) - 1 - next_idx)
         """ to organize"""
-        trajectory_optimal, sensor_optimal = ga.motionplan(occ_grid_known, pri_grid_known, current_p, next_p, T_plan)
-        previous_trajectroy = copy.deepcopy(trajectory_plan[ :idx])
-        following_trajectroy = copy.deepcopy(trajectory_plan[next_idx+1: ])
-        now_trajectroy = previous_trajectroy + trajectory_optimal + following_trajectroy
+        print(T_plan,current_p,  next_p)
+        trajectory_optimal_f, trajectory_optimal, trajectory_optimal_flag = ga.motionplan(occ_grid_known, pri_grid_known, privacy_sum_known, obstacle_num, current_p, next_p, T_plan, Kca)
+        previous_trajectroy = copy.deepcopy(trajectory_plan.points[ :idx])
+        following_trajectroy = copy.deepcopy(trajectory_plan.points[next_idx+1: ])
+        now_trajectroy = []
+        now_trajectroy.append(previous_trajectroy)
+        now_trajectroy.append(trajectory_optimal)
+        now_trajectroy.append(following_trajectroy)
+        #now_trajectory = previous_trajectroy + trajectory_optimal + following_trajectroy
+        print(now_trajectroy)
         trajectory_plan = copy.deepcopy(now_trajectroy)
     time_step += 1
     idx = next_idx

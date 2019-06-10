@@ -164,46 +164,54 @@ class GA_class(object):
         max_path = []
 
         for i in range(self.generation):
+            print(i)
             quick_sort(paths)
-            if max_f < paths[0].fitness:
-                max_f = paths[0].fitness
-                max_path = copy.deepcopy(paths[0])
-                print('\033[94m Current maximum fitness:\033[0m\033[92m ' + str(
-                    max_f) + '\033[0m\033[94m, Generation:\033[0m\033[92m ' + str(i) + ' \033[0m')
-                for j in range(len(paths[0].points)):
-                    print(paths[0].points[j])
-                print("the generation", i, len(paths[0].points))
-                alg.get_fitness(paths[0], occ_grid, pri_grid, starting_point, end_point, privacy_sum, obstacle_num)
-                # 选择
-                selected_path_list = alg.select(paths, self.selection_size, occ_grid, pri_grid, starting_point,
-                                                end_point, privacy_sum, obstacle_num)
-                # 形成couple, 交叉， 变异
-                new_path_list = []
-                for j in range(self.selection_size):
-                    for k in range(j + 1, self.selection_size):
-                        new_path1 = alg.cross_over(paths[j].points, paths[k].points, objectives, Kca)
-                        new_path2 = alg.cross_over(paths[k].points, paths[j].points, objectives, Kca)
 
-                        new_path1_mutated = alg.mutate(new_path1, objectives, Kca)
-                        new_path1_mutated.fitness = alg.get_fitness(new_path1_mutated, occ_grid, pri_grid,
-                                                                    starting_point, end_point, privacy_sum,
-                                                                    obstacle_num)
-                        new_path_list.append(new_path1_mutated)
+            for m in range(len(paths)):
+                # print (m)
+                if max_f <= paths[m].fitness and paths[m].flag == 0:
+                    max_f = paths[m].fitness
+                    max_path = copy.deepcopy(paths[m])
+                    max_flag = paths[m].flag
+                    print('\033[94m Current maximum fitness:\033[0m\033[92m ' + str(
+                        max_f) + '\033[0m\033[94m, Generation:\033[0m\033[92m ' + str(
+                        i) + '\033[0m\033[94m, Flag:\033[0m\033[92m ' + str(max_flag) +
+                          '\033[0m\033[94m, Solution:\033[0m\033[92m ' + str(m) + ' \033[0m')
+                    for j in range(len(paths[m].points)):
+                        print(paths[m].points[j])
+                    print("the solution", m, len(paths[m].points), max_flag)
+                    break
 
-                        new_path2_mutated = alg.mutate(new_path2, objectives, Kca)
-                        new_path2_mutated.fitness = alg.get_fitness(new_path2_mutated, occ_grid, pri_grid,
-                                                                    starting_point, end_point, privacy_sum,
-                                                                    obstacle_num)
-                        new_path_list.append(new_path2_mutated)
+            # 选择
+            selected_path_list = alg.select(paths, self.selection_size, occ_grid, pri_grid, starting_point,
+                                            end_point, privacy_sum, obstacle_num)
+            # 形成couple, 交叉， 变异
+            new_path_list = []
+            for j in range(self.selection_size):
+                for k in range(j + 1, self.selection_size):
+                    new_path1 = alg.cross_over(paths[j].points, paths[k].points, objectives, Kca)
+                    new_path2 = alg.cross_over(paths[k].points, paths[j].points, objectives, Kca)
 
-                # 重插入
-                paths = alg.reinsert(paths, new_path_list, population)
+                    new_path1_mutated = alg.mutate(new_path1, objectives, Kca)
+                    new_path1_mutated.fitness = alg.get_fitness(new_path1_mutated, occ_grid, pri_grid,
+                                                                starting_point, end_point, privacy_sum,
+                                                                obstacle_num)
+                    new_path_list.append(new_path1_mutated)
+
+                    new_path2_mutated = alg.mutate(new_path2, objectives, Kca)
+                    new_path2_mutated.fitness = alg.get_fitness(new_path2_mutated, occ_grid, pri_grid,
+                                                                starting_point, end_point, privacy_sum,
+                                                                obstacle_num)
+                    new_path_list.append(new_path2_mutated)
+
+            # 重插入
+            paths = alg.reinsert(paths, new_path_list, population)
 
         if len(max_path.points) < T_budget:
-            return max_f, max_path
+            return max_f, max_path, max_flag
         else:
             print("No Solution!")
-            return max_f, max_path
+            return max_f, max_path, max_flag
 
 
 # import global map
