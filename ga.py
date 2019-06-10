@@ -15,7 +15,7 @@ grid_z = 5
 thickness = 5
 occ_grid = None
 population = 500
-max_generation = 30
+max_generation = 1000
 selection_size = 50
 objectives = []
 no_of_objectives = 1
@@ -43,7 +43,7 @@ if __name__ == "__main__":
     pri_grid, privacy_sum = privacy_init(grid_x, grid_y, grid_z, occ_grid, privacy_radius)
     print(pri_grid)
     objectives = [end_point]
-    alg = gA.GeneticAlgorithm(population, 0.00001, 5, 2, 40, grid_map)
+    alg = gA.GeneticAlgorithm(population)
 
     print('\033[94m Generating random initial solutions... \033[0m')
     paths = alg.init_population(starting_point, objectives, Kca)
@@ -60,6 +60,7 @@ if __name__ == "__main__":
     print(len(paths))
 
     for i in range(max_generation):
+        print(i)
         quick_sort(paths)
         if max_f < paths[0].fitness:
             max_f = paths[0].fitness

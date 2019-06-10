@@ -38,11 +38,13 @@ def initialmap (grid_x, grid_y, grid_z, starting_point, end_point, safety_thresh
     pri_grid, privacy_sum = privacy_init(grid_x, grid_y, grid_z, occ_grid, privacy_radius)
 
     occ_grid_known = copy.deepcopy(occ_grid)
-    for i in range (grid_x-1):
-        for j in range (grid_y-1):
-            for k in range (grid_z-1):
-                if occ_grid_known[i][j][k] == 2 or occ_grid_known[i][j][k] == 3 or occ_grid_known[i][j][k] == 4:
+
+    for i in range (grid_x):
+        for j in range (grid_y):
+            for k in range (grid_z):
+                if occ_grid[i][j][k] == 2 or occ_grid[i][j][k] == 3 or occ_grid[i][j][k] == 4:
                     occ_grid_known[i][j][k] = 0
+                    #print (occ_grid_known[i][j][k], i,j,k)
     pri_grid_known, privacy_sum_known = privacy_init(grid_x, grid_y, grid_z, occ_grid_known, privacy_radius)
     #print (occ_grid, obstacle_num, occ_grid_known, pri_grid_known, privacy_sum_known)
     return occ_grid, obstacle_num, occ_grid_known, pri_grid_known, privacy_sum_known

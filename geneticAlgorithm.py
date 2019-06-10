@@ -479,7 +479,10 @@ class GeneticAlgorithm(object):
             privacy += math.exp(point.ca) * pri_grid[point.x][point.y][point.z]
         # h*exp(-ws-(1/2)*dis^2)
         # print(privacy)
-        privacy = privacy/sum_privacy
+        if sum_privacy == 0:
+            privacy = 0
+        else :
+            privacy = privacy/sum_privacy
 
         ideal_length = abs(start.x - end.x) + abs(start.y - end.y) + abs(start.z - end.z)
         length = len(path.points)

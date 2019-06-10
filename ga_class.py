@@ -44,9 +44,9 @@ class GA_class(object):
         # 选择个数
         self.selection_size = selection_size
 
-    def initialsolution(occ_grid, pri_grid, privacy_sum, obstacle_num, starting_point, end_point, Tbudget, Kca=0):
+    def initialsolution(self, occ_grid, pri_grid, privacy_sum, obstacle_num, starting_point, end_point, Tbudget, Kca):
         objectives = [end_point]
-        Kca = 0
+        Kca = Kca
         T_budget = Tbudget
         occ_grid = occ_grid
         pri_grid = pri_grid
@@ -55,7 +55,7 @@ class GA_class(object):
         starting_point = starting_point
         end_point = end_point
 
-        alg = gA.GeneticAlgorithm(self.population, self.generation)
+        alg = gA.GeneticAlgorithm(self.population)
         print('\033[94m Generating random initial solutions... \033[0m')
         paths = alg.init_population(starting_point, objectives, Kca)
 
@@ -104,13 +104,13 @@ class GA_class(object):
                 # 重插入
                 paths = alg.reinsert(paths, new_path_list, population)
 
-        if len(max_path) < T_budget:
+        if len(max_path.points) < T_budget:
             return max_f, max_path
         else:
             print("No Solution!")
             return max_f, max_path
 
-    def motionplan (occ_grid_known, pri_grid_known, privacy_sum, obstacle_num,  current_p, next_p, T_plan, Kca):
+    def motionplan (self, occ_grid_known, pri_grid_known, privacy_sum, obstacle_num,  current_p, next_p, T_plan, Kca):
         objectives = [next_p]
         Kca = Kca
         T_budget = T_plan
@@ -121,7 +121,7 @@ class GA_class(object):
         starting_point = current_p
         end_point =  next_p
 
-        alg = gA.GeneticAlgorithm(self.population, self.generation)
+        alg = gA.GeneticAlgorithm(self.population)
         print('\033[94m Generating random initial solutions... \033[0m')
         paths = alg.init_population(starting_point, objectives, Kca)
 
@@ -170,7 +170,7 @@ class GA_class(object):
                 # 重插入
                 paths = alg.reinsert(paths, new_path_list, population)
 
-        if len(max_path) < T_budget:
+        if len(max_path.points) < T_budget:
             return max_f, max_path
         else:
             print("No Solution!")
@@ -184,11 +184,13 @@ def initialmap (grid_x, grid_y, grid_z, starting_point, end_point, safety_thresh
     pri_grid, privacy_sum = privacy_init(grid_x, grid_y, grid_z, occ_grid, privacy_radius)
 
     occ_grid_known = copy.deepcopy(occ_grid)
-    for i in range (grid_x-1):
-        for j in range (grid_y-1):
-            for k in range (grid_z-1):
-                if occ_grid_known[i][j][k] == 2 or occ_grid_known[i][j][k] == 3 or occ_grid_known[i][j][k] == 4:
+
+    for i in range (grid_x):
+        for j in range (grid_y):
+            for k in range (grid_z):
+                if occ_grid[i][j][k] == 2 or occ_grid[i][j][k] == 3 or occ_grid[i][j][k] == 4:
                     occ_grid_known[i][j][k] = 0
+                    #print (occ_grid_known[i][j][k], i,j,k)
     pri_grid_known, privacy_sum_known = privacy_init(grid_x, grid_y, grid_z, occ_grid_known, privacy_radius)
     #print (occ_grid, obstacle_num, occ_grid_known, pri_grid_known, privacy_sum_known)
     return occ_grid, obstacle_num, occ_grid_known, pri_grid_known, privacy_sum_known
@@ -197,7 +199,9 @@ occ_grid, obstacle_num, occ_grid_known, pri_grid_known, privacy_sum_known = init
 
 print (occ_grid, obstacle_num, occ_grid_known, pri_grid_known, privacy_sum_known)
 
-max_f, max_path = ga.initialsolution(occ_grid, pri_grid, privacy_sum, obstacle_num, starting_point, end_point, Tbudget, Kca=0)
+ga = GA_class(population, generation, selection_size)
+
+max_f, max_path = ga.initialsolution(occ_grid, pri_grid_known, privacy_sum_known, obstacle_num, starting_point, end_point, Tbudget, 0)
 print(max_f)
 for j in range(len(max_path.points)):
     print(max_path.points[j])
