@@ -16,7 +16,7 @@ thickness = 5
 occ_grid = None
 population = 500
 max_generation = 30
-tournament_size = 10
+selection_size = 50
 objectives = []
 no_of_objectives = 1
 obstacles_per_axis = 1
@@ -49,7 +49,7 @@ if __name__ == "__main__":
     paths = alg.init_population(starting_point, objectives, Kca)
 
     for p in range(len(paths)):
-        paths[p].fitness = alg.get_fitness(paths[p].points, occ_grid, pri_grid,
+        paths[p].fitness = alg.get_fitness(paths[p], occ_grid, pri_grid,
                                            starting_point, end_point, privacy_sum, obstacle_num)
 
     max_p = max(paths, key=lambda x: x.fitness)
@@ -68,8 +68,8 @@ if __name__ == "__main__":
             for j in range(len(paths[0].points)):
                 print(paths[0].points[j])
             print("the generation", i, len(paths[0].points))
-            alg.get_fitness(paths[0].points, occ_grid, pri_grid, starting_point, end_point, privacy_sum, obstacle_num)
-
+            alg.get_fitness(paths[0], occ_grid, pri_grid, starting_point, end_point, privacy_sum, obstacle_num)
+        '''
         p1 = alg.tournament_select(paths)
         p2 = alg.tournament_select(paths)
 
@@ -79,14 +79,38 @@ if __name__ == "__main__":
         new_path2 = alg.cross_over(paths[p2].points, paths[p1].points, objectives, Kca)
 
         new_path1_ = alg.mutate(new_path1, objectives, Kca)
-        new_path1_.fitness = alg.get_fitness(new_path1.points, occ_grid, pri_grid,
+        new_path1_.fitness = alg.get_fitness(new_path1_, occ_grid, pri_grid,
                                              starting_point, end_point, privacy_sum, obstacle_num)
         paths[-2] = new_path1_
 
         new_path2_ = alg.mutate(new_path2, objectives, Kca)
-        new_path2_.fitness = alg.get_fitness(new_path2.points, occ_grid, pri_grid,
+        new_path2_.fitness = alg.get_fitness(new_path2_, occ_grid, pri_grid,
                                              starting_point, end_point, privacy_sum, obstacle_num)
         paths[-1] = new_path2_
+        '''
+
+        # 选择
+        selected_path_list = alg.select(paths, selection_size, occ_grid, pri_grid, starting_point,
+                                        end_point, privacy_sum, obstacle_num)
+        # 形成couple, 交叉， 变异
+        new_path_list = []
+        for j in range(selection_size):
+            for k in range(j+1, selection_size):
+                new_path1 = alg.cross_over(paths[j].points, paths[k].points, objectives, Kca)
+                new_path2 = alg.cross_over(paths[k].points, paths[j].points, objectives, Kca)
+
+                new_path1_mutated = alg.mutate(new_path1, objectives, Kca)
+                new_path1_mutated.fitness = alg.get_fitness(new_path1_mutated, occ_grid, pri_grid,
+                                                            starting_point, end_point, privacy_sum, obstacle_num)
+                new_path_list.append(new_path1_mutated)
+
+                new_path2_mutated = alg.mutate(new_path2, objectives, Kca)
+                new_path2_mutated.fitness = alg.get_fitness(new_path2_mutated, occ_grid, pri_grid,
+                                                            starting_point, end_point, privacy_sum, obstacle_num)
+                new_path_list.append(new_path2_mutated)
+
+        # 重插入
+        paths = alg.reinsert(paths, new_path_list, population)
 
     # optimal path
     quick_sort(paths)

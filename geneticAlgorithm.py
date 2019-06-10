@@ -1,11 +1,13 @@
 # multi-objective genetic algorithm
 import copy
-from random import randint, shuffle
+from random import randint, shuffle, uniform
 from point import Point
 from path import Path
 from numpy import random
 from commonPoint import CommonPoint
+from quickSort import quick_sort
 import math
+
 
 class GeneticAlgorithm(object):
     def __init__(self, population, sigma, mr, ts, sr, grid_map):
@@ -82,7 +84,7 @@ class GeneticAlgorithm(object):
                         allowed_point = True
 
                 # the next option for camera configuration
-                rand_ca = randint(0,1)
+                rand_ca = randint(0, 1)
                 if rand_ca == 1:
                     if num_of_ca_off + 1 <= Kca:
                         num_of_ca_off += 1
@@ -204,10 +206,10 @@ class GeneticAlgorithm(object):
         num_of_ca_off1 = 0
         num_of_ca_off2 = 0
 
-        for i in range (common_points[crossover_point].path2_index+1):
+        for i in range(common_points[crossover_point].path2_index+1):
             if path2[i].ca == 1:
                 num_of_ca_off2 += 1
-        for i in range (common_points[crossover_point].path1_index+1, len(path1)):
+        for i in range(common_points[crossover_point].path1_index+1, len(path1)):
             if path1[i].ca == 1:
                 num_of_ca_off1 += 1
 
@@ -225,7 +227,7 @@ class GeneticAlgorithm(object):
                 if new_part[j].ca == 1:
                     new_part[j].ca = 0
                     left -= 1
-                if (left == 0):
+                if left == 0:
                     break
             new_path = first_half + new_part
         '''
@@ -286,7 +288,7 @@ class GeneticAlgorithm(object):
         prev_ca = path.points[starting_point].ca
         num_of_ca_off = 0
 
-        for i in range (starting_point+1):
+        for i in range(starting_point+1):
             if path.points[i].ca == 1:
                 num_of_ca_off += 1
 
@@ -367,6 +369,7 @@ class GeneticAlgorithm(object):
 
         return new_path
 
+    '''
     # 平滑过程
     def smooth(self, path, objectives):
         new_path = copy.deepcopy(path)
@@ -382,6 +385,7 @@ class GeneticAlgorithm(object):
                     new_path[i].z = p.z
 
         return new_path
+    '''
 
     def tournament_select(self, paths):
         winner_index = 0
@@ -394,6 +398,48 @@ class GeneticAlgorithm(object):
                 winner_index = rand_index
 
         return winner_index
+
+    # 选择方法
+    # selection_size 选择的规模
+    def select(self, paths, selection_size, occ_grid, pri_grid, start, end, sum_privacy, obstacle_num):
+        # 计算fitness之和
+        fitness_sum = 0
+        for path in paths:
+            fitness_sum += self.get_fitness(path, occ_grid, pri_grid, start, end, sum_privacy, obstacle_num)
+
+        # 构建轮盘
+        tmp = 0
+        roulette_list = []
+        for path in paths:
+            fitness = self.get_fitness(path, occ_grid, pri_grid, start, end, sum_privacy, obstacle_num)
+            tmp = tmp + (fitness / fitness_sum)
+            roulette_list.append(tmp)
+
+        # 开始选择
+        interval = 1.0 / selection_size
+        selection = uniform(0, interval)
+        selected_path_list = []
+        for i in range(selection_size):
+            choice = selection + i * interval
+            selected_id = 0
+            for j in range(len(roulette_list)):
+                if choice <= roulette_list[j]:
+                    selected_id = j
+                    break
+            selected_path_list.append(paths[selected_id])
+        return selected_path_list
+
+    # 重插入方法
+    # old_paths 父代路径
+    # new_paths 子代路径
+    # population 种群规模
+    def reinsert(self, old_paths, new_paths, population):
+        # 父子融合
+        tmp_paths = old_paths
+        tmp_paths.extend(new_paths)
+        # 优胜劣汰
+        quick_sort(tmp_paths)
+        return tmp_paths[:population]
 
     '''
     def get_fitness(self, path, occ_grid):
@@ -416,20 +462,20 @@ class GeneticAlgorithm(object):
         alpha = 1
         beta = 1
 
-        for point in path:
+        for point in path.points:
             # The closer to an obstacle, the more points lost
             if occ_grid[point.x][point.y][point.z] == 1:
                 flag += -1
                 safety += occ_grid[point.x][point.y][point.z]
         # print (safety)
-        for point in path:
+        for point in path.points:
             privacy += math.exp(point.ca) * pri_grid[point.x][point.y][point.z]
         # h*exp(-ws-(1/2)*dis^2)
         # print(privacy)
         privacy = privacy/sum_privacy
 
         ideal_length = abs(start.x - end.x) + abs(start.y - end.y) + abs(start.z - end.z)
-        length = len(path)
+        length = len(path.points)
         efficiency = ideal_length / (length - 1)
         # safety = 1 - safety / obstacle_num  # 可以统计所有的障碍物的数目
         # print(ideal_length,length,efficiency)
@@ -439,8 +485,7 @@ class GeneticAlgorithm(object):
         # maximize
         fitness = flag + beta * efficiency + alpha * privacy
         # print(fitness)
-        #if flag < 0:
-        #    path.flag = 1
-
+        if path.flag < 0:
+            path.flag = 1
 
         return fitness
