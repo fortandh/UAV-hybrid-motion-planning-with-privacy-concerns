@@ -113,6 +113,7 @@ class GA_class(object):
                                                 end_point, privacy_sum, obstacle_num)
             # 形成couple, 交叉， 变异
             new_path_list = []
+            """
             for j in range(self.selection_size):
                 for k in range(j + 1, self.selection_size):
                     new_path1 = alg.cross_over(paths[j].points, paths[k].points, objectives, Kca)
@@ -129,7 +130,23 @@ class GA_class(object):
                                                                     starting_point, end_point, privacy_sum,
                                                                     obstacle_num)
                     new_path_list.append(new_path2_mutated)
+            """
+            for j in range(self.selection_size):
+                for k in range(j + 1, self.selection_size):
+                    new_path1 = alg.cross_over(selected_path_list[j].points, selected_path_list[k].points, objectives, Kca)
+                    new_path2 = alg.cross_over(selected_path_list[k].points, selected_path_list[j].points, objectives, Kca)
 
+                    new_path1_mutated = alg.mutate(new_path1, objectives, Kca)
+                    new_path1_mutated.fitness = alg.get_fitness(new_path1_mutated, occ_grid, pri_grid,
+                                                                    starting_point, end_point, privacy_sum,
+                                                                    obstacle_num)
+                    new_path_list.append(new_path1_mutated)
+
+                    new_path2_mutated = alg.mutate(new_path2, objectives, Kca)
+                    new_path2_mutated.fitness = alg.get_fitness(new_path2_mutated, occ_grid, pri_grid,
+                                                                    starting_point, end_point, privacy_sum,
+                                                                    obstacle_num)
+                    new_path_list.append(new_path2_mutated)
             # 重插入
             paths = alg.reinsert(paths, new_path_list, population)
 
@@ -139,13 +156,13 @@ class GA_class(object):
             print("No Solution!")
             return max_f, max_path, max_flag
 
-    def motionplan (self, occ_grid_known, pri_grid_known, privacy_sum, obstacle_num,  current_p, next_p, T_plan, Kca):
+    def motionplan (self, occ_grid_known, pri_grid_known, privacy_sum_known, obstacle_num,  current_p, next_p, T_plan, Kca):
         objectives = [next_p]
         Kca = Kca
         T_budget = T_plan
         occ_grid = occ_grid_known
         pri_grid = pri_grid_known
-        privacy_sum = privacy_sum
+        privacy_sum = privacy_sum_known
         obstacle_num = obstacle_num
         starting_point = current_p
         end_point =  next_p
@@ -161,7 +178,10 @@ class GA_class(object):
         max_p = max(paths, key=lambda x: x.fitness)
 
         max_f = -5
-        max_path = []
+        max_path = copy.deepcopy(paths[0])
+        delete_idx = []
+        max_flag = 1
+
 
         for i in range(self.generation):
             print(i)
@@ -184,9 +204,10 @@ class GA_class(object):
 
             # 选择
             selected_path_list = alg.select(paths, self.selection_size, occ_grid, pri_grid, starting_point,
-                                            end_point, privacy_sum, obstacle_num)
+                                                end_point, privacy_sum, obstacle_num)
             # 形成couple, 交叉， 变异
             new_path_list = []
+            """
             for j in range(self.selection_size):
                 for k in range(j + 1, self.selection_size):
                     new_path1 = alg.cross_over(paths[j].points, paths[k].points, objectives, Kca)
@@ -194,14 +215,31 @@ class GA_class(object):
 
                     new_path1_mutated = alg.mutate(new_path1, objectives, Kca)
                     new_path1_mutated.fitness = alg.get_fitness(new_path1_mutated, occ_grid, pri_grid,
-                                                                starting_point, end_point, privacy_sum,
-                                                                obstacle_num)
+                                                                    starting_point, end_point, privacy_sum,
+                                                                    obstacle_num)
                     new_path_list.append(new_path1_mutated)
 
                     new_path2_mutated = alg.mutate(new_path2, objectives, Kca)
                     new_path2_mutated.fitness = alg.get_fitness(new_path2_mutated, occ_grid, pri_grid,
-                                                                starting_point, end_point, privacy_sum,
-                                                                obstacle_num)
+                                                                    starting_point, end_point, privacy_sum,
+                                                                    obstacle_num)
+                    new_path_list.append(new_path2_mutated)
+            """
+            for j in range(self.selection_size):
+                for k in range(j + 1, self.selection_size):
+                    new_path1 = alg.cross_over(selected_path_list[j].points, selected_path_list[k].points, objectives, Kca)
+                    new_path2 = alg.cross_over(selected_path_list[k].points, selected_path_list[j].points, objectives, Kca)
+
+                    new_path1_mutated = alg.mutate(new_path1, objectives, Kca)
+                    new_path1_mutated.fitness = alg.get_fitness(new_path1_mutated, occ_grid, pri_grid,
+                                                                    starting_point, end_point, privacy_sum,
+                                                                    obstacle_num)
+                    new_path_list.append(new_path1_mutated)
+
+                    new_path2_mutated = alg.mutate(new_path2, objectives, Kca)
+                    new_path2_mutated.fitness = alg.get_fitness(new_path2_mutated, occ_grid, pri_grid,
+                                                                    starting_point, end_point, privacy_sum,
+                                                                    obstacle_num)
                     new_path_list.append(new_path2_mutated)
 
             # 重插入

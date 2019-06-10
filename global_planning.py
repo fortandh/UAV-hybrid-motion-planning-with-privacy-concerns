@@ -109,11 +109,14 @@ def hasprivacythreat (position, occ_grid_known, occ_grid, pri_grid_known, privac
 while not (idx >= len(trajectory_plan.points)):
     current_p = trajectory_plan.points[idx]
     current_ca = trajectory_plan.points[idx].ca
+
+    if current_p == end_point :
+        break
+
     next_p = trajectory_plan.points[idx+1]
     next_idx = idx + 1
     print (current_p,current_ca,next_p,next_idx)
-    if current_p == end_point :
-        break
+
 
     if current_ca == 1:
         time_step += 1
@@ -141,21 +144,48 @@ while not (idx >= len(trajectory_plan.points)):
             elif k == len(trajectory_plan.points)-1 :
                 next_p = trajectory_plan.points[-1]
                 next_idx = len(trajectory_plan.points)-1
-        T_plan = T_budget - idx - (len(trajectory_plan.points) - 1 - next_idx)
-        """ to organize"""
-        print(T_plan,current_p,  next_p)
-        trajectory_optimal_f, trajectory_optimal, trajectory_optimal_flag = ga.motionplan(occ_grid_known, pri_grid_known, privacy_sum_known, obstacle_num, current_p, next_p, T_plan, Kca)
-        previous_trajectroy = copy.deepcopy(trajectory_plan.points[ :idx])
-        following_trajectroy = copy.deepcopy(trajectory_plan.points[next_idx+1: ])
-        now_trajectroy = []
-        now_trajectroy.append(previous_trajectroy)
-        now_trajectroy.append(trajectory_optimal)
-        now_trajectroy.append(following_trajectroy)
-        #now_trajectory = previous_trajectroy + trajectory_optimal + following_trajectroy
-        print(now_trajectroy)
-        trajectory_plan = copy.deepcopy(now_trajectroy)
+        print(next_idx,next_p)
+        if next_idx != idx + 1: # no need for motion planning
+
+            T_plan = T_budget - idx - (len(trajectory_plan.points) - 1 - next_idx)
+            #if T_plan < (abs(trajectory_plan.points[next_idx].x - trajectory_plan.points[idx].x) + abs(trajectory_plan.points[next_idx].y - trajectory_plan.points[idx].y) + \
+            #        abs(trajectory_plan.points[next_idx].z - trajectory_plan.points[idx].z)):
+            #    print("no solution!")
+            """ to organize"""
+            print(T_plan,current_p,  next_p)
+            trajectory_optimal_f, trajectory_optimal, trajectory_optimal_flag = ga.motionplan(occ_grid_known, pri_grid_known, privacy_sum_known, obstacle_num, current_p, next_p, T_plan, Kca)
+            previous_trajectory = copy.deepcopy(trajectory_plan.points[ :idx])
+            following_trajectory = copy.deepcopy(trajectory_plan.points[next_idx+1: ])
+            #for i in range (len(previous_trajectory.points))
+
+            now_trajectory = []
+            for ll in range(idx):
+                temp = Point(trajectory_plan.points[ll].x, trajectory_plan.points[ll].y,
+                             trajectory_plan.points[ll].z, trajectory_plan.points[ll].ca)
+                now_trajectory.append(temp)
+
+            for ll in range(0, len(trajectory_optimal.points)):
+                temp = Point(trajectory_optimal.points[ll].x,trajectory_optimal.points[ll].y,trajectory_optimal.points[ll].z,trajectory_optimal.points[ll].ca)
+                now_trajectory.append(temp)
+
+            #for ll in range(len(now_trajectory.points)):
+            #    print(now_trajectory.points[ll])
+
+            for ll in range(next_idx+1,len(trajectory_plan.points)):
+                temp = Point(trajectory_plan.points[ll].x,trajectory_plan.points[ll].y,trajectory_plan.points[ll].z,trajectory_plan.points[ll].ca)
+                now_trajectory.append(temp)
+
+            #for ll in range(len(now_trajectory.points)):
+            #    print(now_trajectory.points[ll])
+
+            now_trajectory = Path(now_trajectory)
+            for ll in range(len(now_trajectory.points)):
+                print(now_trajectory.points[ll])
+            #now_trajectory = previous_trajectory + trajectory_optimal + following_trajectory
+            trajectory_plan = copy.deepcopy(now_trajectory)
     time_step += 1
-    idx = next_idx
+    idx = idx + 1
+    print(idx,time_step, len(trajectory_plan.points))
 
 
 
