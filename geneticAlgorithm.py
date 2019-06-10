@@ -10,6 +10,7 @@ import math
 
 
 class GeneticAlgorithm(object):
+    """
     def __init__(self, population, sigma, mr, ts, sr, grid_map):
         # population 种群数量
         self.population = population
@@ -22,6 +23,12 @@ class GeneticAlgorithm(object):
         # smoothing_rate 进行平滑过程的概率
         self.smoothing_rate = sr
         self.scale = grid_map
+
+    """
+    def __init__(self, population):
+        # population 种群数量
+        self.population = population
+
 
     # 初始化种群
     def init_population(self, starting_point, objectives, Kca):

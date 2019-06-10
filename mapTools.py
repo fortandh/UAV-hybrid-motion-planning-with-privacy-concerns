@@ -14,6 +14,7 @@ def privacy_init(grid_x, grid_y, grid_z, occ_grid, r):
             for k in range(grid_z):
                 # 这里隐私等级分为三级，数字越大，级别越高
                 if (occ_grid[i][j][k] == 2) or (occ_grid[i][j][k] == 3) or (occ_grid[i][j][k] == 4):
+                    #r = r[occ_grid[i][j][k]-2]
                     min_x = max(i - r, 0)
                     max_x = min(i + r, grid_x - 1)
                     min_y = max(j - r, 0)
