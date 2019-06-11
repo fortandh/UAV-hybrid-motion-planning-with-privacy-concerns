@@ -7,20 +7,29 @@ import math
 
 
 # 隐私部分的初始化
-def privacy_init(grid_x, grid_y, grid_z, occ_grid, r):
+def privacy_init(grid_x, grid_y, grid_z, occ_grid, radius):
+    #print(radius[0])
     pri_grid = np.zeros((grid_x, grid_y, grid_z))
     for i in range(grid_x):
         for j in range(grid_y):
             for k in range(grid_z):
                 # 这里隐私等级分为三级，数字越大，级别越高
                 if (occ_grid[i][j][k] == 2) or (occ_grid[i][j][k] == 3) or (occ_grid[i][j][k] == 4):
-                    #r = r[occ_grid[i][j][k]-2]
+                    # different level of privacy restricted area has different affecting radius:
+                    temp = int (occ_grid[i][j][k])
+                    r = radius[temp-2]
                     min_x = max(i - r, 0)
+                    min_x = math.floor(min_x)
                     max_x = min(i + r, grid_x - 1)
+                    max_x = math.ceil(max_x)
                     min_y = max(j - r, 0)
+                    min_y = math.floor(min_y)
                     max_y = min(j + r, grid_y - 1)
+                    max_y = math.ceil(max_y)
                     min_z = max(k - r, 0)
+                    min_z = math.floor(min_z)
                     max_z = min(k + r, grid_z - 1)
+                    max_z = math.ceil(max_z)
                     for m in range(min_x, max_x + 1):
                         for n in range(min_y, max_y + 1):
                             for l in range(min_z, max_z + 1):

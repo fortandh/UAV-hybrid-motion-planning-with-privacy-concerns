@@ -19,7 +19,8 @@ grid_y = 5
 grid_z = 5
 safety_threshold = 0.3
 privacy_threshold = 0.1
-privacy_radius = 1 ## [1,2,3]
+#privacy_radius = 1 ##
+privacy_radius = [0.5,1,2]
 
 # drone parameter
 starting_point = Point(0, 0, 0, 0)
@@ -49,16 +50,19 @@ def initialmap (grid_x, grid_y, grid_z, starting_point, end_point, safety_thresh
                     occ_grid_known[i][j][k] = 0
                     #print (occ_grid_known[i][j][k], i,j,k)
     pri_grid_known, privacy_sum_known = privacy_init(grid_x, grid_y, grid_z, occ_grid_known, privacy_radius)
-    print (occ_grid, obstacle_num, occ_grid_known, pri_grid_known, privacy_sum_known)
+    print (occ_grid, obstacle_num, occ_grid_known, pri_grid_known, privacy_sum_known,pri_grid,privacy_sum)
     return occ_grid, obstacle_num, occ_grid_known, pri_grid_known, privacy_sum_known
 
 occ_grid, obstacle_num, occ_grid_known, pri_grid_known, privacy_sum_known = initialmap (grid_x, grid_y, grid_z, starting_point, end_point, safety_threshold, privacy_threshold, privacy_radius)
+#print(occ_grid,obstacle_num,occ_grid_known,pri_grid_known,privacy_sum_known)
 
 # list of initial solution with global map
 """ to organize"""
 ga = GA_class(population, generation, selection_size)
+alg = gA.GeneticAlgorithm(population)
 
-max_flag =1
+max_flag = 1
+max_f = - 100
 while max_flag == 1:
     max_f, trajectory_ref, max_flag = ga.initialsolution(occ_grid, pri_grid_known, privacy_sum_known, obstacle_num, starting_point, end_point, T_budget, 0)
     print(max_f,max_flag)
@@ -105,7 +109,7 @@ def hasprivacythreat (position, occ_grid_known, occ_grid, pri_grid_known, privac
     return flag, occ_grid_known, pri_grid_known, privacy_sum_known
 
 
-
+current_f = max_f
 while not (idx >= len(trajectory_plan.points)):
     current_p = trajectory_plan.points[idx]
     current_ca = trajectory_plan.points[idx].ca
@@ -130,7 +134,7 @@ while not (idx >= len(trajectory_plan.points)):
 
     if flag :
         # localization
-        #p_threat, h_impact = privacy_modeling()
+        # p_threat, h_impact = privacy_modeling()
         # update occ_grid, pri_grid
         print(pri_grid_known, len(trajectory_plan.points))
         for j in range (idx+1, len(trajectory_plan.points)):
@@ -182,7 +186,12 @@ while not (idx >= len(trajectory_plan.points)):
             for ll in range(len(now_trajectory.points)):
                 print(now_trajectory.points[ll])
             #now_trajectory = previous_trajectory + trajectory_optimal + following_trajectory
+            current_max_f = alg.get_fitness(trajectory_plan, occ_grid_known, pri_grid_known,
+                                        starting_point, end_point, privacy_sum_known, obstacle_num)
             trajectory_plan = copy.deepcopy(now_trajectory)
+            current_f = alg.get_fitness(trajectory_plan, occ_grid_known, pri_grid_known,
+                                               starting_point, end_point, privacy_sum_known, obstacle_num)
+            print("fitness",current_max_f,current_f)
     time_step += 1
     idx = idx + 1
     print(idx,time_step, len(trajectory_plan.points))

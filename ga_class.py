@@ -207,24 +207,7 @@ class GA_class(object):
                                                 end_point, privacy_sum, obstacle_num)
             # 形成couple, 交叉， 变异
             new_path_list = []
-            """
-            for j in range(self.selection_size):
-                for k in range(j + 1, self.selection_size):
-                    new_path1 = alg.cross_over(paths[j].points, paths[k].points, objectives, Kca)
-                    new_path2 = alg.cross_over(paths[k].points, paths[j].points, objectives, Kca)
 
-                    new_path1_mutated = alg.mutate(new_path1, objectives, Kca)
-                    new_path1_mutated.fitness = alg.get_fitness(new_path1_mutated, occ_grid, pri_grid,
-                                                                    starting_point, end_point, privacy_sum,
-                                                                    obstacle_num)
-                    new_path_list.append(new_path1_mutated)
-
-                    new_path2_mutated = alg.mutate(new_path2, objectives, Kca)
-                    new_path2_mutated.fitness = alg.get_fitness(new_path2_mutated, occ_grid, pri_grid,
-                                                                    starting_point, end_point, privacy_sum,
-                                                                    obstacle_num)
-                    new_path_list.append(new_path2_mutated)
-            """
             for j in range(self.selection_size):
                 for k in range(j + 1, self.selection_size):
                     new_path1 = alg.cross_over(selected_path_list[j].points, selected_path_list[k].points, objectives, Kca)
