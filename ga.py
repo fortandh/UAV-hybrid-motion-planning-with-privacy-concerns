@@ -64,7 +64,7 @@ if __name__ == "__main__":
     for i in range(max_generation):
         print(i)
         quick_sort(paths)
-        if max_f < paths[0].fitness :
+        if max_f < paths[0].fitness:
             if paths[0].flag == 0:
                 max_f = paths[0].fitness
             print('\033[94m Current maximum fitness:\033[0m\033[92m ' + str(
