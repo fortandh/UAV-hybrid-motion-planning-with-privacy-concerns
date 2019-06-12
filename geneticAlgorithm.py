@@ -511,7 +511,7 @@ class GeneticAlgorithm(object):
         for point in path.points:
             # The closer to an obstacle, the more points lost
             if occ_grid[point.x][point.y][point.z] == 1:
-                flag += -1
+                flag += -2
                 safety += occ_grid[point.x][point.y][point.z]
         # print (safety)
         for point in path.points:
@@ -521,7 +521,7 @@ class GeneticAlgorithm(object):
         if sum_privacy == 0:
             privacy = 0
         else :
-            privacy = privacy/sum_privacy
+            privacy = 1 - privacy/sum_privacy
 
         ideal_length = abs(start.x - end.x) + abs(start.y - end.y) + abs(start.z - end.z)
         length = len(path.points)

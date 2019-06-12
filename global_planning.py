@@ -14,9 +14,9 @@ import sys
 sys.setrecursionlimit(1000000)
 
 #map parameter
-grid_x = 10
-grid_y = 10
-grid_z = 10
+grid_x = 5
+grid_y = 5
+grid_z = 5
 safety_threshold = 0.3
 privacy_threshold = 0.1
 # privacy_radius = 1 ##
@@ -93,7 +93,7 @@ if __name__ == "__main__":
     max_f = - 100
     trajectory_ref = None
     while max_flag == 1:
-        max_f, trajectory_ref, max_flag = ga.initialsolution(occ_grid, pri_grid_known, privacy_sum_known, obstacle_num, starting_point, end_point, T_budget, 0, grid_x, grid_y, grid_z)
+        max_f, trajectory_ref, max_flag = ga.initialsolution(occ_grid_known, pri_grid_known, privacy_sum_known, obstacle_num, starting_point, end_point, T_budget, 0, grid_x, grid_y, grid_z)
         print(max_f, max_flag)
         for j in range(len( trajectory_ref.points)):
             print(trajectory_ref.points[j])
