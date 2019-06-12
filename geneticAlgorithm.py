@@ -29,9 +29,8 @@ class GeneticAlgorithm(object):
         # population 种群数量
         self.population = population
 
-
     # 初始化种群
-    def init_population(self, starting_point, objectives, Kca):
+    def init_population(self, starting_point, objectives, Kca, grid_x, grid_y, grid_z):
         solutions = []
         for i in range(self.population):
             objectives_ = objectives[:]  # copy
@@ -49,27 +48,51 @@ class GeneticAlgorithm(object):
                 next_y = 0
                 next_z = 0
                 # range of x
+                '''
                 min_x = prev_x
                 max_x = prev_x
                 if objectives_[0].x < prev_x:
                     min_x = prev_x - 1
                 if objectives_[0].x > prev_x:
                     max_x = prev_x + 1
+                '''
+                min_x = 0
+                if prev_x - 1 > 0:
+                    min_x = prev_x - 1
+                max_x = grid_x - 1
+                if prev_x + 1 < grid_x:
+                    max_x = prev_x + 1
 
                 # range of y
+                '''
                 min_y = prev_y
                 max_y = prev_y
                 if objectives_[0].y < prev_y:
                     min_y = prev_y - 1
                 if objectives_[0].y > prev_y:
                     max_y = prev_y + 1
+                '''
+                min_y = 0
+                if prev_y - 1 > 0:
+                    min_y = prev_y - 1
+                max_y = grid_y - 1
+                if prev_y + 1 < grid_y:
+                    max_y = prev_y + 1
 
                 # range of z
+                '''
                 min_z = prev_z
                 max_z = prev_z
                 if objectives_[0].z < prev_z:
                     min_z = prev_z - 1
                 if objectives_[0].z > prev_z:
+                    max_z = prev_z + 1
+                '''
+                min_z = 0
+                if prev_z - 1 > 0:
+                    min_z = prev_z - 1
+                max_z = grid_z - 1
+                if prev_z + 1 < grid_z:
                     max_z = prev_z + 1
 
                 # 这里available表示x,y,z可取的值，max加1表示末尾算入available中
@@ -101,7 +124,7 @@ class GeneticAlgorithm(object):
                 else:
                     next_ca = rand_ca
                 #print(next_ca, num_of_ca_off, Kca)
-                # add the point to the path
+                # add the point to the ath
                 prev_x = next_x
                 prev_y = next_y
                 prev_z = next_z
@@ -237,17 +260,6 @@ class GeneticAlgorithm(object):
                 if left == 0:
                     break
             new_path = first_half + new_part
-        '''
-        for j in range(len(path1)):
-            print("path1",path1[j])
-        for j in range(len(path2)):
-            print("path2",path2[j])
-
-        for j in range(len(first_half)):
-            print("first_half",first_half[j])
-        for j in range(len(new_part)):
-            print("new_part",new_part[j])
-        '''
 
         return Path(new_path)
 
@@ -284,8 +296,10 @@ class GeneticAlgorithm(object):
         return new_path
     '''
 
-    def mutate(self, path, objectives, Kca):
+    def mutate(self, path, objectives, Kca, grid_x, grid_y, grid_z):
         # choose the starting point for mutation
+        if len(path.points) < 3:
+            return path
         starting_point = randint(1, len(path.points) - 2)
 
         objectives_ = objectives[:]
@@ -308,25 +322,50 @@ class GeneticAlgorithm(object):
             next_x = 0
             next_y = 0
             next_z = 0
+
+            '''
             min_x = prev_x
             max_x = prev_x
             if objectives_[0].x < prev_x:
                 min_x = prev_x - 1
             if objectives_[0].x > prev_x:
                 max_x = prev_x + 1
+            '''
+            min_x = 0
+            if prev_x - 1 > 0:
+                min_x = prev_x - 1
+            max_x = grid_x - 1
+            if prev_x + 1 < grid_x:
+                max_x = prev_x + 1
 
+            '''
             min_y = prev_y
             max_y = prev_y
             if objectives_[0].y < prev_y:
                 min_y = prev_y - 1
             if objectives_[0].y > prev_y:
                 max_y = prev_y + 1
+            '''
+            min_y = 0
+            if prev_y - 1 > 0:
+                min_y = prev_y - 1
+            max_y = grid_y - 1
+            if prev_y + 1 < grid_y:
+                max_y = prev_y + 1
 
+            '''
             min_z = prev_z
             max_z = prev_z
             if objectives_[0].z < prev_z:
                 min_z = prev_z - 1
             if objectives_[0].z > prev_z:
+                max_z = prev_z + 1
+            '''
+            min_z = 0
+            if prev_z - 1 > 0:
+                min_z = prev_z - 1
+            max_z = grid_z - 1
+            if prev_z + 1 < grid_x:
                 max_z = prev_z + 1
 
             available_x = range(min_x, max_x + 1)

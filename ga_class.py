@@ -31,7 +31,7 @@ end_point = Point(4, 4, 4, 0)
 
 safety_threshold = 0.5
 privacy_threshold = 0.1
-privacy_radius = 1
+privacy_radius = [0.5,1,2]
 # the tolerance of the times of camera off
 Kca = 3
 
@@ -46,7 +46,9 @@ class GA_class(object):
         # 选择个数
         self.selection_size = selection_size
 
-    def initialsolution(self, occ_grid, pri_grid, privacy_sum, obstacle_num, starting_point, end_point, Tbudget, Kca):
+    # 初始化种群
+    def initialsolution(self, occ_grid, pri_grid, privacy_sum, obstacle_num, starting_point, end_point, Tbudget, Kca, grid_x, grid_y, grid_z):
+        # 初始化变量
         objectives = [end_point]
         Kca = Kca
         T_budget = Tbudget
@@ -59,14 +61,14 @@ class GA_class(object):
 
         alg = gA.GeneticAlgorithm(self.population)
         print('\033[94m Generating random initial solutions for global planning... \033[0m')
-        paths = alg.init_population(starting_point, objectives, Kca)
+        paths = alg.init_population(starting_point, objectives, Kca, grid_x, grid_y, grid_z)
 
         for p in range(len(paths)):
             paths[p].fitness = alg.get_fitness(paths[p], occ_grid, pri_grid,
                                                starting_point, end_point, privacy_sum, obstacle_num)
 
         max_p = max(paths, key=lambda x: x.fitness)
-        #print(max_p)
+        # print(max_p)
 
         max_f = -5
         max_path = copy.deepcopy(paths[0])
@@ -77,7 +79,7 @@ class GA_class(object):
             print(i)
             quick_sort(paths)
 
-            for m in range (len(paths)):
+            for m in range(len(paths)):
                 # print (m)
                 if max_f <= paths[m].fitness and paths[m].flag==0:
                     max_f = paths[m].fitness
@@ -136,13 +138,13 @@ class GA_class(object):
                     new_path1 = alg.cross_over(selected_path_list[j].points, selected_path_list[k].points, objectives, Kca)
                     new_path2 = alg.cross_over(selected_path_list[k].points, selected_path_list[j].points, objectives, Kca)
 
-                    new_path1_mutated = alg.mutate(new_path1, objectives, Kca)
+                    new_path1_mutated = alg.mutate(new_path1, objectives, Kca, grid_x, grid_y, grid_z)
                     new_path1_mutated.fitness = alg.get_fitness(new_path1_mutated, occ_grid, pri_grid,
                                                                     starting_point, end_point, privacy_sum,
                                                                     obstacle_num)
                     new_path_list.append(new_path1_mutated)
 
-                    new_path2_mutated = alg.mutate(new_path2, objectives, Kca)
+                    new_path2_mutated = alg.mutate(new_path2, objectives, Kca, grid_x, grid_y, grid_z)
                     new_path2_mutated.fitness = alg.get_fitness(new_path2_mutated, occ_grid, pri_grid,
                                                                     starting_point, end_point, privacy_sum,
                                                                     obstacle_num)
@@ -156,7 +158,7 @@ class GA_class(object):
             print("No Solution!")
             return max_f, max_path, max_flag
 
-    def motionplan (self, occ_grid_known, pri_grid_known, privacy_sum_known, obstacle_num,  current_p, next_p, T_plan, Kca):
+    def motionplan (self, occ_grid_known, pri_grid_known, privacy_sum_known, obstacle_num,  current_p, next_p, T_plan, Kca, grid_x, grid_y, grid_z):
         objectives = [next_p]
         Kca = Kca
         T_budget = T_plan
@@ -169,7 +171,7 @@ class GA_class(object):
 
         alg = gA.GeneticAlgorithm(self.population)
         print('\033[94m Generating random initial solutions for motion planning... \033[0m')
-        paths = alg.init_population(starting_point, objectives, Kca)
+        paths = alg.init_population(starting_point, objectives, Kca, grid_x, grid_y, grid_z)
 
         for p in range(len(paths)):
             paths[p].fitness = alg.get_fitness(paths[p], occ_grid, pri_grid,
@@ -181,7 +183,6 @@ class GA_class(object):
         max_path = copy.deepcopy(paths[0])
         delete_idx = []
         max_flag = 1
-
 
         for i in range(self.generation):
             print(i)
@@ -213,13 +214,13 @@ class GA_class(object):
                     new_path1 = alg.cross_over(selected_path_list[j].points, selected_path_list[k].points, objectives, Kca)
                     new_path2 = alg.cross_over(selected_path_list[k].points, selected_path_list[j].points, objectives, Kca)
 
-                    new_path1_mutated = alg.mutate(new_path1, objectives, Kca)
+                    new_path1_mutated = alg.mutate(new_path1, objectives, Kca, grid_x, grid_y, grid_z)
                     new_path1_mutated.fitness = alg.get_fitness(new_path1_mutated, occ_grid, pri_grid,
                                                                     starting_point, end_point, privacy_sum,
                                                                     obstacle_num)
                     new_path_list.append(new_path1_mutated)
 
-                    new_path2_mutated = alg.mutate(new_path2, objectives, Kca)
+                    new_path2_mutated = alg.mutate(new_path2, objectives, Kca, grid_x, grid_y, grid_z)
                     new_path2_mutated.fitness = alg.get_fitness(new_path2_mutated, occ_grid, pri_grid,
                                                                     starting_point, end_point, privacy_sum,
                                                                     obstacle_num)
@@ -248,17 +249,16 @@ def initialmap (grid_x, grid_y, grid_z, starting_point, end_point, safety_thresh
             for k in range (grid_z):
                 if occ_grid[i][j][k] == 2 or occ_grid[i][j][k] == 3 or occ_grid[i][j][k] == 4:
                     occ_grid_known[i][j][k] = 0
-                    #print (occ_grid_known[i][j][k], i,j,k)
+                    # print (occ_grid_known[i][j][k], i,j,k)
     pri_grid_known, privacy_sum_known = privacy_init(grid_x, grid_y, grid_z, occ_grid_known, privacy_radius)
-    #print (occ_grid, obstacle_num, occ_grid_known, pri_grid_known, privacy_sum_known)
+    # print (occ_grid, obstacle_num, occ_grid_known, pri_grid_known, privacy_sum_known)
     return occ_grid, obstacle_num, occ_grid_known, pri_grid_known, privacy_sum_known
 
 
-
 if __name__ == "__main__":
-    occ_grid, obstacle_num, occ_grid_known, pri_grid_known, privacy_sum_known = initialmap (grid_x, grid_y, grid_z, starting_point, end_point, safety_threshold, privacy_threshold, privacy_radius)
+    occ_grid, obstacle_num, occ_grid_known, pri_grid_known, privacy_sum_known = initialmap(grid_x, grid_y, grid_z, starting_point, end_point, safety_threshold, privacy_threshold, privacy_radius)
 
-    print (occ_grid, obstacle_num, occ_grid_known, pri_grid_known, privacy_sum_known)
+    print(occ_grid, obstacle_num, occ_grid_known, pri_grid_known, privacy_sum_known)
 
     ga = GA_class(population, generation, selection_size)
 
