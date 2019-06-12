@@ -1,0 +1,5 @@
+classes= 3
+train  = /home/jiangmingyue/UAV/zqf_darknet/darknet3/darknet/scripts/2019_train.txt
+valid  = /home/jiangmingyue/UAV/zqf_darknet/darknet3/darknet/scripts/2019_val.txt
+names = /home/jiangmingyue/UAV/zqf_darknet/darknet3/darknet/data/voc.names
+backup = backup
