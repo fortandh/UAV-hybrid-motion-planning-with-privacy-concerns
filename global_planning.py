@@ -27,7 +27,7 @@ starting_point = Point(3, 3, 3, 0)
 end_point = Point(7, 7, 7, 0)
 T_budget = 100
 viewradius = 2
-Kca = 0
+Kca = 10
 
 # GA parameter
 population = 500

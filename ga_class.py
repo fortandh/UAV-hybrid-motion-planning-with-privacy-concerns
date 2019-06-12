@@ -33,7 +33,7 @@ safety_threshold = 0.5
 privacy_threshold = 0.1
 privacy_radius = [0.5,1,2]
 # the tolerance of the times of camera off
-Kca = 3
+Kca = 8
 
 Tbudget = 100
 
@@ -252,7 +252,7 @@ if __name__ == "__main__":
 
     ga = GA_class(population, generation, selection_size)
 
-    max_f, max_path, max_flag = ga.initialsolution(occ_grid, pri_grid_known, privacy_sum_known, obstacle_num, starting_point, end_point, Tbudget, 0)
+    max_f, max_path, max_flag = ga.initialsolution(occ_grid, pri_grid_known, privacy_sum_known, obstacle_num, starting_point, end_point, Tbudget, Kca, grid_x, grid_y, grid_z)
     print(max_f, max_flag)
 
     for j in range(len(max_path.points)):

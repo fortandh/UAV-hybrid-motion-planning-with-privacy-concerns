@@ -503,12 +503,15 @@ class GeneticAlgorithm(object):
         flag = 0
         alpha = 1
         beta = 1
+        num_cam_off = 0.1
 
         for point in path.points:
             # The closer to an obstacle, the more points lost
             if occ_grid[point.x][point.y][point.z] == 1:
                 flag += -2
                 safety += occ_grid[point.x][point.y][point.z]
+            if point.ca == 1:
+                num_cam_off += 1
         # print (safety)
         for point in path.points:
             privacy += math.exp(point.ca) * pri_grid[point.x][point.y][point.z]
@@ -528,7 +531,8 @@ class GeneticAlgorithm(object):
         # print(sum_privacy,privacy)
         # print(flag)
         # maximize
-        fitness = flag + beta * efficiency + alpha * privacy
+        # fitness = flag + beta * efficiency + alpha * privacy
+        fitness = flag + beta * efficiency + alpha * privacy + 1/num_cam_off
         #fitness = beta * efficiency + alpha * privacy
         # print(fitness)
         if flag < 0:
