@@ -14,17 +14,17 @@ import sys
 sys.setrecursionlimit(1000000)
 
 #map parameter
-grid_x = 5
-grid_y = 5
-grid_z = 5
+grid_x = 10
+grid_y = 10
+grid_z = 10
 safety_threshold = 0.3
 privacy_threshold = 0.1
 # privacy_radius = 1 ##
 privacy_radius = [0.5,1,2]
 
 # drone parameter
-starting_point = Point(0, 0, 0, 0)
-end_point = Point(4, 4, 4, 0)
+starting_point = Point(3, 3, 3, 0)
+end_point = Point(7, 7, 7, 0)
 T_budget = 100
 viewradius = 2
 Kca = 0
@@ -191,7 +191,7 @@ if __name__ == "__main__":
                 trajectory_plan = copy.deepcopy(now_trajectory)
                 current_f = alg.get_fitness(trajectory_plan, occ_grid_known, pri_grid_known,
                                                    starting_point, end_point, privacy_sum_known, obstacle_num)
-                print("fitness", current_max_f,current_f)
+                print("fitness", current_max_f, current_f)
         time_step += 1
         idx = idx + 1
         print(idx,time_step, len(trajectory_plan.points))

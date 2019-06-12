@@ -10,21 +10,7 @@ import math
 
 
 class GeneticAlgorithm(object):
-    """
-    def __init__(self, population, sigma, mr, ts, sr, grid_map):
-        # population 种群数量
-        self.population = population
-        # std 标准差，进行变异时正态分布的参数
-        self.std = sigma
-        # mutation_rate 变异率
-        self.mutation_rate = mr
-        # tournament_size 进行锦标赛的个体的数量
-        self.tournament_size = ts
-        # smoothing_rate 进行平滑过程的概率
-        self.smoothing_rate = sr
-        self.scale = grid_map
 
-    """
     def __init__(self, population):
         # population 种群数量
         self.population = population
@@ -47,6 +33,7 @@ class GeneticAlgorithm(object):
                 next_x = 0
                 next_y = 0
                 next_z = 0
+                next_ca = 0
                 # range of x
                 '''
                 min_x = prev_x
@@ -110,9 +97,6 @@ class GeneticAlgorithm(object):
                     if (abs(prev_x - next_x) + abs(prev_y - next_y) + abs(prev_z - next_z)) == 1:
                         allowed_point = False
 
-                    if prev_x == next_x and prev_y == next_y and prev_z == next_z:
-                        allowed_point = True
-
                 # the next option for camera configuration
                 rand_ca = randint(0, 1)
                 if rand_ca == 1:
@@ -123,7 +107,8 @@ class GeneticAlgorithm(object):
                         next_ca = 0
                 else:
                     next_ca = rand_ca
-                #print(next_ca, num_of_ca_off, Kca)
+
+                # print(next_ca, num_of_ca_off, Kca)
                 # add the point to the ath
                 prev_x = next_x
                 prev_y = next_y
@@ -314,7 +299,8 @@ class GeneticAlgorithm(object):
                 num_of_ca_off += 1
 
         total_obj = len(objectives_)
-        tmp = [path.points[starting_point]]
+        # tmp = [path.points[starting_point]]
+        tmp = copy.deepcopy(path.points[:starting_point+1])
         # sort the objectives randomly
         # shuffle(objectives_)
         while total_obj > 0:
@@ -322,6 +308,7 @@ class GeneticAlgorithm(object):
             next_x = 0
             next_y = 0
             next_z = 0
+            next_ca = 0
 
             '''
             min_x = prev_x
@@ -384,10 +371,6 @@ class GeneticAlgorithm(object):
                 if prev_x == next_x and prev_y == next_y and prev_z == next_z:
                     allowed_point = True
 
-            prev_x = next_x
-            prev_y = next_y
-            prev_z = next_z
-
             # the next option for camera configuration
             rand_ca = randint(0, 1)
             if rand_ca == 1:
@@ -399,6 +382,10 @@ class GeneticAlgorithm(object):
             else:
                 next_ca = rand_ca
 
+            prev_x = next_x
+            prev_y = next_y
+            prev_z = next_z
+
             tmp.append(Point(next_x, next_y, next_z, next_ca))
             # print(next_x,next_y,next_z)
             # print(Point)
@@ -409,10 +396,11 @@ class GeneticAlgorithm(object):
                     if total_obj > 0:
                         shuffle(objectives_)
                     break
-        first_half = copy.deepcopy(path.points[:starting_point])
-        next_half = tmp
-        new_path = Path(first_half + next_half)
+        # first_half = copy.deepcopy(path.points[:starting_point])
+        # next_half = tmp
+        # new_path = Path(first_half + next_half)
 
+        new_path = Path(tmp)
         return new_path
 
     '''
@@ -432,6 +420,27 @@ class GeneticAlgorithm(object):
 
         return new_path
     '''
+
+    def smooth(self, path):
+        old_points = copy.deepcopy(path.points)
+        changed = True
+        while changed:
+            changed = False
+            a = 0
+            b = 0
+            # print("The length of old_points: ", len(old_points))
+            for i in range(0, len(old_points)):
+                # print("The value of i in smooth: ", i)
+                if old_points[i] in old_points[i+1:]:
+                    a = i
+                    b = old_points[i+1:].index(old_points[i])+i+1
+                    changed = True
+                    break
+            if changed:
+                new_points = old_points[:a]
+                new_points.extend(old_points[b:])
+                old_points = new_points
+        return Path(old_points)
 
     def tournament_select(self, paths):
         winner_index = 0
@@ -486,19 +495,6 @@ class GeneticAlgorithm(object):
         # 优胜劣汰
         quick_sort(tmp_paths)
         return tmp_paths[:population]
-
-    '''
-    def get_fitness(self, path, occ_grid):
-        fitness_ = 0
-
-        for point in path:
-            # The closer to an obstacle, the more points lost
-            fitness_ += occ_grid[point.x][point.y][point.z] * 10
-
-        fitness_ += len(path)
-
-        return 1.0 / fitness_
-    '''
 
     def get_fitness(self, path, occ_grid, pri_grid, start, end, sum_privacy, obstacle_num):
         # 系数设定

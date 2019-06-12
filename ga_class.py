@@ -62,6 +62,11 @@ class GA_class(object):
         alg = gA.GeneticAlgorithm(self.population)
         print('\033[94m Generating random initial solutions for global planning... \033[0m')
         paths = alg.init_population(starting_point, objectives, Kca, grid_x, grid_y, grid_z)
+        print('\033[94m Solutions generated.\033[0m')
+        for i in range(len(paths)):
+            # print("The value of i in ga_class: ", i)
+            paths[i] = alg.smooth(paths[i])
+        print('\033[94m Smooth method finished.\033[0m')
 
         for p in range(len(paths)):
             paths[p].fitness = alg.get_fitness(paths[p], occ_grid, pri_grid,
@@ -76,7 +81,7 @@ class GA_class(object):
         max_flag = 1
 
         for i in range(self.generation):
-            print(i)
+            print("The generation num: ", i)
             quick_sort(paths)
 
             for m in range(len(paths)):
@@ -155,6 +160,8 @@ class GA_class(object):
         alg = gA.GeneticAlgorithm(self.population)
         print('\033[94m Generating random initial solutions for motion planning... \033[0m')
         paths = alg.init_population(starting_point, objectives, Kca, grid_x, grid_y, grid_z)
+        for i in range(len(paths)):
+            paths[i] = alg.smooth(paths[i])
 
         for p in range(len(paths)):
             paths[p].fitness = alg.get_fitness(paths[p], occ_grid, pri_grid,
