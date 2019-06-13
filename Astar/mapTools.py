@@ -3,6 +3,27 @@
 import numpy as np
 from random import randint
 import math
+import copy
+from Point import Point
+from Configure import configure
+
+config = configure()
+
+grid_x = config.grid_x
+grid_y = config.grid_y
+grid_z = config.grid_z
+grid = config.grid
+safety_threshold = config.safety_threshold
+privacy_threshold = config.privacy_threshold
+# privacy_radius = 1 ##
+privacy_radius = config.privacy_radius
+
+# drone parameter
+starting_point = config.starting_point
+end_point = config.end_point
+T_budget = config.T_budget
+viewradius = config.viewradius
+Kca = config.Kca
 
 
 # 隐私部分的初始化
@@ -81,51 +102,46 @@ def map_generate(grid_x, grid_y, grid_z, start, end, safety_threshold, privacy_t
     return occ_grid, obstacle_num
 
 
-'''
-def map_init(grid_x, grid_y, grid_z, thickness, obstacles, goals):
-    occ_grid = np.zeros((grid_x, grid_y, grid_z))
-    objectives = []
+# import global map
+def initialmap (grid_x, grid_y, grid_z, starting_point, end_point, safety_threshold, privacy_threshold, privacy_radius):
+    #print("start")
+    occ_grid, obstacle_num = map_generate(grid_x, grid_y, grid_z, starting_point, end_point, safety_threshold, privacy_threshold)
+    pri_grid, privacy_sum = privacy_init(grid_x, grid_y, grid_z, occ_grid, privacy_radius)
 
-    # 产生多个立方柱 yoz平面
-    for i in range(obstacles):
-        ry = randint(0, grid_y - thickness - 1)
-        rz = randint(0, grid_z - thickness - 1)
-        for j in range(grid_x - 1):
-            for k in range(ry, ry + thickness):
-                for l in range(rz, rz + thickness):
-                    occ_grid[j][k][l] = 1
+    occ_grid_known = copy.deepcopy(occ_grid)
 
-    # 产生多个立方柱 xoz平面
-    for i in range(obstacles):
-        rx = randint(0, grid_y - thickness - 1)
-        rz = randint(0, grid_z - thickness - 1)
-        for j in range(grid_y - 1):
-            for k in range(rx, rx + thickness):
-                for l in range(rz, rz + thickness):
-                    occ_grid[k][j][l] = 1
+    for i in range (grid_x):
+        for j in range (grid_y):
+            for k in range (grid_z):
+                if occ_grid[i][j][k] == 2 or occ_grid[i][j][k] == 3 or occ_grid[i][j][k] == 4:
+                    occ_grid_known[i][j][k] = 0
+                    # print (occ_grid_known[i][j][k], i,j,k)
+    pri_grid_known, privacy_sum_known = privacy_init(grid_x, grid_y, grid_z, occ_grid_known, privacy_radius)
+    print(occ_grid, obstacle_num, occ_grid_known, pri_grid_known, privacy_sum_known,pri_grid,privacy_sum)
+    return occ_grid, obstacle_num, occ_grid_known, pri_grid_known, privacy_sum_known
 
-    # 产生多个立方柱 xoy平面
-    for i in range(obstacles):
-        rx = randint(0, grid_x - thickness - 1)
-        ry = randint(0, grid_y - thickness - 1)
-        for j in range(grid_x - 1):
-            for k in range(rx, rx + thickness):
-                for l in range(ry, ry + thickness):
-                    occ_grid[k][l][j] = 1
-
-    while len(objectives) < goals:
-        x = randint(0, grid_x - 1)
-        y = randint(0, grid_y - 1)
-        z = randint(0, grid_z - 1)
-        if occ_grid[x][y][z] == 0:
-            occ_grid[x][y][z] = 1
-            objectives.append(Point(x, y, z))
-    for i in range(goals):
-        occ_grid[objectives[i].x][objectives[i].y][objectives[i].z] = 0
-
-    s_p = Point(randint(0, grid_x - 1), randint(0, grid_z - 1), randint(0, grid_z - 1))
-    while occ_grid[s_p.x][s_p.y][s_p.z] > 0:
-        s_p = Point(randint(0, grid_x - 1), randint(0, grid_z - 1), randint(0, grid_z - 1))
-
-    return occ_grid, objectives, s_p
-'''
+def hasprivacythreat (position, occ_grid_known, occ_grid, pri_grid_known, privacy_sum_known, viewradius = 2):
+    x = position.x
+    y = position.y
+    z = position.z
+    r = viewradius
+    flag = 0
+    min_x = max(x - r, 0)
+    max_x = min(x + r, grid_x - 1)
+    min_y = max(y - r, 0)
+    max_y = min(y + r, grid_y - 1)
+    min_z = max(z - r, 0)
+    max_z = min(z + r, grid_z - 1)
+    for m in range(min_x, max_x + 1):
+        for n in range(min_y, max_y + 1):
+            for l in range(min_z, max_z + 1):
+                if occ_grid[m][n][l] == 2 or occ_grid[m][n][l] == 3 or occ_grid[m][n][l] == 4 :
+                    dis = np.sqrt(np.power((x - m), 2) + np.power((y - n), 2) + np.power((z - l), 2))
+                    ## different level of privacy threat has different radius to affect
+                    #if dis <= r[occ_grid[m][n][l]-2]:
+                    if dis <= r:
+                        flag = 1
+                        occ_grid_known[m][n][l] = occ_grid[m][n][l]
+    # update global risk model
+    pri_grid_known, privacy_sum_known = privacy_init(grid_x, grid_y, grid_z, occ_grid_known, privacy_radius)
+    return flag, occ_grid_known, pri_grid_known, privacy_sum_known

@@ -2,7 +2,7 @@ from Point import Point
 import numpy as np
 from mapTools import privacy_init, map_generate
 from Astar import AStar
-
+import copy
 
 #map parameter
 grid_x = 5
@@ -25,18 +25,26 @@ Kca = 10
 
 
 occ_grid, obstacle_num = map_generate(grid_x, grid_y, grid_z, starting_point, end_point, safety_threshold, privacy_threshold)
+pri_grid, sum_privacy = privacy_init(grid_x, grid_y, grid_z, occ_grid, privacy_radius)
 
 print(occ_grid)
-# 创建AStar对象,并设置起点为0,0终点为9,0
-aStar = AStar(occ_grid, grid, starting_point, end_point, passTag = 1)
+
+aStar = AStar(occ_grid, pri_grid, grid, sum_privacy, starting_point, end_point, passTag = [1])
+print (pri_grid)
 # 开始寻路
 pathList = aStar.start()
-# 遍历路径点,在map2d上以'8'显示\
+path_grid = copy.deepcopy(occ_grid)
+
 print(len(pathList))
-for point in pathList:
-    occ_grid[point.x][point.y][point.z] = 9
-    # print(point)
+sum = 0
+if pathList == None:
+    print("no solution!")
+else:
+    for point in pathList:
+        path_grid[point.x][point.y][point.z] = 9
+        sum += pri_grid[point.x][point.y][point.z]
+        print(point, pri_grid[point.x][point.y][point.z])
 print("----------------------")
 # 再次显示地图
-# map3d.showArray3D()
-print(occ_grid)
+
+print(path_grid, sum)
