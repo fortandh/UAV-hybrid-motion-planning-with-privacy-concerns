@@ -1,12 +1,10 @@
 #!/usr/bin/env python
 # main function
-import numpy as np
-from path import Path
 from point import Point
 import geneticAlgorithm as gA
 from quickSort import quick_sort
 from gridVisualization import grid_visualization
-from mapTools import privacy_init, map_generate
+from Dijistra.mapTools import privacy_init, map_generate
 import sys
 sys.setrecursionlimit(1000000)
 
