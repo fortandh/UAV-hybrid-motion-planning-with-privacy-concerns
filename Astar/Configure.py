@@ -1,4 +1,5 @@
-from Point import Point
+from Point2 import Point
+#from Point import Point
 
 class configure:
     def __init__(self):
@@ -12,8 +13,10 @@ class configure:
         self.privacy_radius = [0.5, 1, 2]
 
         # drone parameter
-        self.starting_point = Point(0, 0, 0)
-        self.end_point = Point(4, 4, 4)
+        #self.starting_point = Point(0, 0, 0)
+        #self.end_point = Point(4, 4, 4)
+        self.starting_point = Point(0, 0, 0, 0)
+        self.end_point = Point(4, 4, 4, 0)
         self.T_budget = 100
         self.viewradius = 2
         self.Kca = 10
