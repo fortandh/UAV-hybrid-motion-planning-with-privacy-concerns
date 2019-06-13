@@ -4,7 +4,7 @@ import numpy as np
 from path import Path
 from point import Point
 import geneticAlgorithm as gA
-from Dijistra.mapTools import privacy_init, map_generate
+from mapTools import privacy_init, map_generate
 from ga_class import GA_class
 import copy
 import math
