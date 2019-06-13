@@ -7,8 +7,8 @@ class configure:
         self.grid_y = 5
         self.grid_z = 5
         self.grid = [self.grid_x, self.grid_y, self.grid_z]
-        self.safety_threshold = 0.2
-        self.privacy_threshold = 0.1
+        self.safety_threshold = 0.3
+        self.privacy_threshold = 0.2
         # privacy_radius = 1 ##
         self.privacy_radius = [0.5, 1, 2]
 

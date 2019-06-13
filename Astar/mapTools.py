@@ -142,6 +142,34 @@ def hasprivacythreat (position, occ_grid_known, occ_grid, pri_grid_known, privac
                     if dis <= r:
                         flag = 1
                         occ_grid_known[m][n][l] = occ_grid[m][n][l]
-    # update global risk model
+                        # update global risk model
     pri_grid_known, privacy_sum_known = privacy_init(grid_x, grid_y, grid_z, occ_grid_known, privacy_radius)
     return flag, occ_grid_known, pri_grid_known, privacy_sum_known
+
+def hasprivacythreat2 (position, occ_grid_known, occ_grid, pri_grid_known, privacy_sum_known, viewradius = 2):
+    x = position.x
+    y = position.y
+    z = position.z
+    r = viewradius
+    flag = 0
+    min_x = max(x - r, 0)
+    max_x = min(x + r, grid_x - 1)
+    min_y = max(y - r, 0)
+    max_y = min(y + r, grid_y - 1)
+    min_z = max(z - r, 0)
+    max_z = min(z + r, grid_z - 1)
+    threat_list = []
+    for m in range(min_x, max_x + 1):
+        for n in range(min_y, max_y + 1):
+            for l in range(min_z, max_z + 1):
+                if occ_grid[m][n][l] == 2 or occ_grid[m][n][l] == 3 or occ_grid[m][n][l] == 4 :
+                    dis = np.sqrt(np.power((x - m), 2) + np.power((y - n), 2) + np.power((z - l), 2))
+                    ## different level of privacy threat has different radius to affect
+                    #if dis <= r[occ_grid[m][n][l]-2]:
+                    if dis <= r:
+                        flag = 1
+                        occ_grid_known[m][n][l] = occ_grid[m][n][l]
+                        threat_list.append([m,n,l])
+                        # update global risk model
+    pri_grid_known, privacy_sum_known = privacy_init(grid_x, grid_y, grid_z, occ_grid_known, privacy_radius)
+    return flag, occ_grid_known, pri_grid_known, privacy_sum_known, threat_list
