@@ -173,3 +173,60 @@ def hasprivacythreat2 (position, occ_grid_known, occ_grid, pri_grid_known, priva
                         # update global risk model
     pri_grid_known, privacy_sum_known = privacy_init(grid_x, grid_y, grid_z, occ_grid_known, privacy_radius)
     return flag, occ_grid_known, pri_grid_known, privacy_sum_known, threat_list
+
+def map_of_city (grid_x, grid_y, grid_z, start, end, safety_threshold, privacy_threshold):
+    occ_grid = np.zeros((grid_x, grid_y, grid_z))
+    map_volume = grid_x *  grid_z
+    building_num = map_volume * safety_threshold
+    #building_num = 3
+    restricted_area_num = map_volume * privacy_threshold
+    occ_grid[start.x][start.y][start.z] = 7
+    occ_grid[end.x][end.y][end.z] = 8
+    i = 0
+    # buildings
+    buildings_side = [1,2,3,4]
+    buildings_level = [1,2,3,4]
+    num_obstacle = 0
+    while i < building_num:
+        flag = 0
+        x = randint(0, grid_x - 1)
+        z = randint(0, grid_z - 1)
+        buildingside1 = buildings_side[randint(0, len(buildings_side)-1)]
+        buildingside2 = buildings_side[randint(0, len(buildings_side) - 1)]
+        buildinglevel = buildings_level[randint(0, len(buildings_level)-1)]
+
+        # find free space
+        if x + buildingside1 > grid_x or z + buildingside2 > grid_z :
+            flag = 1
+            continue
+        for j in range (x, x + buildingside1):
+            for k in range (z, z + buildingside2):
+                if occ_grid[j][0][k] != 0:
+                    flag = 1
+                    break
+        # house setting
+
+        if flag == 0:
+            i = i + 1
+            print(x, z, buildingside1, buildingside2, buildinglevel)
+            for j in range(x, x + buildingside1):
+                for k in range(z, z + buildingside2):
+                    for ll in range(0, buildinglevel):
+                        occ_grid[j][ll][k] = 1
+                        num_obstacle +=1
+
+    i = 0
+    while i < restricted_area_num:
+        x = randint(0, grid_x - 1)
+        #y = randint(0, grid_y - 1)
+        z = randint(0, grid_z - 1)
+        if occ_grid[x][0][z] == 0:
+            i = i + 1
+            occ_grid[x][0][z] = randint(2, 4)
+
+    return occ_grid, num_obstacle
+
+
+occ_grid, num_obstacle = map_of_city (10, 10, 10, Point(0, 0, 0), Point(9, 0, 9), 0.1
+                                      , 0.05)
+print (occ_grid, num_obstacle)

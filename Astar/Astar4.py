@@ -201,13 +201,13 @@ class AStar:
 
             # 判断这个节点的上下左右节点
             # turn on camera
-            actions = [[0, -1, 0, 0],[0, 1, 0, 0],[-1, 0, 0, 0],[1, 0, 0, 0],[0, 0, 1, 0],[0, 0, -1, 0],[0, -1, 0, 1],[0, 1, 0, 1],[-1, 0, 0, 1],[0, 0, 1, 1],[0, 0, -1, 1],[1, 0, 0, 1]]
-            actionlist = [0,1,2,3,4,5,6,7,8,9,10,11]
-            random.shuffle(actionlist)
+            #actions = [[0, -1, 0, 0],[0, 1, 0, 0],[-1, 0, 0, 0],[1, 0, 0, 0],[0, 0, 1, 0],[0, 0, -1, 0],[0, -1, 0, 1],[0, 1, 0, 1],[-1, 0, 0, 1],[0, 0, 1, 1],[0, 0, -1, 1],[1, 0, 0, 1]]
+            #actionlist = [0,1,2,3,4,5,6,7,8,9,10,11]
+            #random.shuffle(actionlist)
 
-            for i in range (len(actionlist)):
-                self.searchNear(minF, actions[actionlist[i]][0], actions[actionlist[i]][1], actions[actionlist[i]][2], actions[actionlist[i]][3])
-            """
+            #for i in range (len(actionlist)):
+            #    self.searchNear(minF, actions[actionlist[i]][0], actions[actionlist[i]][1], actions[actionlist[i]][2], actions[actionlist[i]][3])
+            #"""
             # turn on camera
             self.searchNear(minF, 0, -1, 0, 0)
             self.searchNear(minF, 0, 1, 0, 0)
@@ -222,7 +222,7 @@ class AStar:
             self.searchNear(minF, 1, 0, 0, 1)
             self.searchNear(minF, 0, 0, 1, 1)
             self.searchNear(minF, 0, 0, -1, 1)
-            """
+            #"""
 
             # 判断是否终止
             point = self.endPointInCloseList()
