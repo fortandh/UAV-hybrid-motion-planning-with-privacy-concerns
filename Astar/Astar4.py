@@ -77,20 +77,27 @@ class AStar:
             adaptive1 = math.exp(1 - rou1 / rou2)
             adaptive2 = math.exp(rou1 / rou2 - 1)
             #print(rou1,rou2, adaptive1, adaptive2)
-            #fathernode = node.father
+            fathernode = node.father
             #print("*******", node.point.x, fathernode.point.x)
             delta_h = 0
             for j in range(len(self.threatlist)):
                 # far away, oppisite
                 threat = self.threatlist[j]
                 #print(threat)
-
-                if (abs(node.point.x - threat[0]) + abs(node.point.y - threat[1]) + abs(node.point.z - threat[2])) > (
+                """
+                f (abs(node.point.x - threat[0]) + abs(node.point.y - threat[1]) + abs(node.point.z - threat[2])) > (
                         abs(self.endPoint.x - threat[0]) + abs(self.endPoint.y - threat[1]) +
                         abs(self.endPoint.z - threat[2])):
-                    delta_h += adaptive2 * self.map3d[threat[0]][threat[1]][threat[2]]
-                else:
                     delta_h += adaptive1 * self.map3d[threat[0]][threat[1]][threat[2]]
+                else:
+                    delta_h += adaptive2 * self.map3d[threat[0]][threat[1]][threat[2]]
+                """
+                if (abs(node.point.x - threat[0]) + abs(node.point.y - threat[1]) + abs(node.point.z - threat[2])) > (
+                        abs(fathernode.point.x - threat[0]) + abs(fathernode.point.y - threat[1]) +
+                        abs(fathernode.point.z - threat[2])):
+                    delta_h += adaptive1 * self.map3d[threat[0]][threat[1]][threat[2]]
+                else:
+                    delta_h += adaptive2 * self.map3d[threat[0]][threat[1]][threat[2]]
             node.h = node.h * delta_h
             #print("node.h:", node.h)
 

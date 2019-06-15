@@ -110,7 +110,7 @@ class AStar:
         if self.sumpri == 0:
             privacy_threat = 0
         else:
-            privacy_threat = self.prigrid[minF.point.x + offsetX][minF.point.y + offsetY][minF.point.z + offsetZ]/self.sumpri * math.exp(-(cam))
+            privacy_threat = self.prigrid[minF.point.x + offsetX][minF.point.y + offsetY][minF.point.z + offsetZ]  * math.exp(-(cam))/self.sumpri
         cam_off = cam/self.ideallength
        # delta_g = step + privacy_threat
         delta_g = step + cam_off + privacy_threat
@@ -246,7 +246,7 @@ if __name__ == '__main__':
 
         next_p = trajectory_plan[idx+1]
         next_idx = idx + 1
-        print (current_p,next_p,next_idx)
+        #print (current_p,next_p,next_idx)
 
         if current_ca == 1:
             time_step += 1
@@ -257,6 +257,8 @@ if __name__ == '__main__':
         # take picture
         # update occ_grid, pri_grid
         flag, occ_grid_known, pri_grid_known, privacy_sum_known = hasprivacythreat (current_p, occ_grid_known, occ_grid, pri_grid_known, privacy_sum_known, viewradius)
+        print("current p", current_p,flag)
+        print(pri_grid_known)
 
         if flag:
             # localization
@@ -274,14 +276,14 @@ if __name__ == '__main__':
                 elif k == len(trajectory_plan)-1 :
                     next_p = trajectory_plan[-1]
                     next_idx = len(trajectory_plan)-1
-            print(next_idx,next_p)
+            print("next_p: ",next_idx,next_p)
             if next_idx != idx + 1: # no need for motion planning
 
                 T_plan = T_budget - len(trajectory_plan) + (next_idx - idx)
                 #if T_plan < (abs(trajectory_plan.points[next_idx].x - trajectory_plan.points[idx].x) + abs(trajectory_plan.points[next_idx].y - trajectory_plan.points[idx].y) + \
                 #        abs(trajectory_plan.points[next_idx].z - trajectory_plan.points[idx].z)):
                 #    print("no solution!")
-                print(T_plan, current_p,  next_p)
+                print("T_plan:", T_plan, current_p,  next_p)
                 aStar = AStar(occ_grid, pri_grid_known, grid, privacy_sum_known, current_p, next_p, passTag=[1])
 
                 # 开始寻路
