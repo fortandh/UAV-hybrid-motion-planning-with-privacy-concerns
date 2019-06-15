@@ -106,7 +106,7 @@ class AStar:
         获得openlist中F值最小的节点
         :return: Node
         """
-        self.updateNodeHvalue()
+
         currentNode = self.openList[0]
 
         for node in self.openList:
@@ -230,6 +230,8 @@ class AStar:
             self.searchNear(minF, 0, 0, 1, 1)
             self.searchNear(minF, 0, 0, -1, 1)
             #"""
+
+            self.updateNodeHvalue()
 
             # 判断是否终止
             point = self.endPointInCloseList()

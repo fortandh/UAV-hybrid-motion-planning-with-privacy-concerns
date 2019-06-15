@@ -227,6 +227,6 @@ def map_of_city (grid_x, grid_y, grid_z, start, end, safety_threshold, privacy_t
     return occ_grid, num_obstacle
 
 
-occ_grid, num_obstacle = map_of_city (10, 10, 10, Point(0, 0, 0), Point(9, 0, 9), 0.1
-                                      , 0.05)
-print (occ_grid, num_obstacle)
+#occ_grid, num_obstacle = map_of_city (10, 10, 10, Point(0, 0, 0), Point(9, 0, 9), 0.1
+#                                      , 0.05)
+#print (occ_grid, num_obstacle)
