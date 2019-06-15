@@ -295,10 +295,6 @@ if __name__ == '__main__':
                                                                                            privacy_radius)
 
     aStar = AStar(occ_grid, pri_grid_known, grid, privacy_sum_known, starting_point, end_point, [1], T_budget, threat_list)
-    print("The occ_grid is: ")
-    for m in range(grid_x):
-        print("The value of x: ", m)
-        print(occ_grid[m])
 
     # 开始寻路
     trajectory_ref = aStar.start()
@@ -314,7 +310,7 @@ if __name__ == '__main__':
             path_grid[point.x][point.y][point.z] = 9
             sum += pri_grid_known[point.x][point.y][point.z]
            # print(point, pri_grid_known[point.x][point.y][point.z])
-        print("----------------------", len(trajectory_ref))
+        # print("----------------------", len(trajectory_ref))
         print("The occ_grid is: ")
         for m in range(grid_x):
             print("The value of x: ", m)
@@ -387,14 +383,15 @@ if __name__ == '__main__':
             print("The index of next point: ", next_idx)
             print("The next point: ", next_p, "\n")
 
-
             if  (next_idx == idx + 1)  and (pri_grid_known[trajectory_plan[next_idx].x][trajectory_plan[next_idx].y][trajectory_plan[next_idx].z] > 0) :
                 trajectory_plan[next_idx].ca = 1
                 print ("change sensor configuration for next point")
 
             if next_idx != idx + 1: # no need for motion planning
 
+                print("The length of trajectory_plan: ", len(trajectory_plan))
                 T_plan = T_budget - len(trajectory_plan) + (next_idx - idx)
+                print("The time limit: ", T_plan)
                 #if T_plan < (abs(trajectory_plan.points[next_idx].x - trajectory_plan.points[idx].x) + abs(trajectory_plan.points[next_idx].y - trajectory_plan.points[idx].y) + \
                 #        abs(trajectory_plan.points[next_idx].z - trajectory_plan.points[idx].z)):
                 #    print("no solution!")
@@ -406,13 +403,13 @@ if __name__ == '__main__':
                     # 开始寻路
                     trajectory_optimal = aStar.start()
 
-                    if trajectory_plan == None:
+                    if trajectory_optimal == None:
                         print ("no solution for local planning!")
                         for kk in range(idx + 1, next_idx + 1):
                             trajectory_plan[kk].ca = 1
 
                     else :
-
+                        print("The length of locaal planning: ", len(trajectory_optimal))
                         previous_trajectory = copy.deepcopy(trajectory_plan[ :idx])
                         following_trajectory = copy.deepcopy(trajectory_plan[next_idx+1: ])
 
