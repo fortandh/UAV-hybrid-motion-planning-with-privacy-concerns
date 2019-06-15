@@ -48,6 +48,7 @@ class AStar:
         self.sumpri = sum_privacy
         self.ideallength = abs(endPoint.x - startPoint.x) + abs(endPoint.y - startPoint.y) + abs(endPoint.z - startPoint.z)
         self.Tbudget = Tbudget
+        print("timebudget",self.Tbudget)
         self.threatlist = threat_list
         self.timestep = 0
         #self.startPoint = startPoint
@@ -111,7 +112,10 @@ class AStar:
         currentNode = self.openList[0]
 
         for node in self.openList:
-            if node.g + node.h < currentNode.g + currentNode.h:
+            #if node.g + node.h < currentNode.g + currentNode.h:
+            #    currentNode = node
+            """new"""
+            if node.g + node.h < currentNode.g + currentNode.h and node.step < self.Tbudget:
                 currentNode = node
         return currentNode
 
@@ -159,10 +163,11 @@ class AStar:
             return
 
         """new setting for time limit"""
-        print("time limit", minF, minF.step)
 
-        #if minF.step + 1 > T_budget:
-        #    return
+
+        if minF.step + 1 > T_budget:
+            print("time limit", minF, minF.step)
+            return
 
         # 设置单位花费
 
@@ -210,6 +215,9 @@ class AStar:
         while True:
             # 找到F值最小的点
             minF = self.getMinNode()
+            if minF == None :
+                print("no solution!")
+                return None
             # 把这个点加入closeList中，并且在openList中删除它
             self.closeList.append(minF)
             self.openList.remove(minF)
@@ -287,7 +295,10 @@ if __name__ == '__main__':
                                                                                            privacy_radius)
 
     aStar = AStar(occ_grid, pri_grid_known, grid, privacy_sum_known, starting_point, end_point, [1], T_budget, threat_list)
-
+    print("The occ_grid is: ")
+    for m in range(grid_x):
+        print("The value of x: ", m)
+        print(occ_grid[m])
 
     # 开始寻路
     trajectory_ref = aStar.start()
@@ -297,15 +308,20 @@ if __name__ == '__main__':
     sum = 0
     if trajectory_ref == None:
         print("no solution!")
+        exit(0)
     else:
         for point in trajectory_ref:
             path_grid[point.x][point.y][point.z] = 9
             sum += pri_grid_known[point.x][point.y][point.z]
            # print(point, pri_grid_known[point.x][point.y][point.z])
-    print("----------------------", len(trajectory_ref))
+        print("----------------------", len(trajectory_ref))
+        print("The occ_grid is: ")
+        for m in range(grid_x):
+            print("The value of x: ", m)
+            print(occ_grid[m])
     # 再次显示地图
 
-    print(path_grid, sum)
+    #print(path_grid, sum)
 
     trajectory_plan = copy.deepcopy(trajectory_ref)
     sensor_initial = np.zeros(len(trajectory_plan))
@@ -328,6 +344,10 @@ if __name__ == '__main__':
         next_p = trajectory_plan[idx+1]
         next_idx = idx + 1
         #print (current_p,next_p,next_idx)
+        print("The UAV moves a step: ")
+        print("The current point: ", current_p)
+        print("The next point: ", next_p)
+        print("The index of next point: ", next_idx, "\n")
 
         if current_ca == 1:
             time_step += 1
@@ -339,6 +359,9 @@ if __name__ == '__main__':
         # take picture
         # update occ_grid, pri_grid
         flag, occ_grid_known, pri_grid_known, privacy_sum_known, threat_list = hasprivacythreat2 (current_p, occ_grid_known, occ_grid, pri_grid_known, privacy_sum_known, viewradius)
+        print("The length of privacy_list: ", len(threat_list))
+        for m in range(len(threat_list)):
+            print(threat_list[m])
 
         if flag:
             # localization
@@ -356,7 +379,14 @@ if __name__ == '__main__':
                 elif k == len(trajectory_plan)-1 :
                     next_p = trajectory_plan[-1]
                     next_idx = len(trajectory_plan)-1
-            print(next_idx,next_p)
+            #print(next_idx,next_p)
+            print("---------------------------------")
+            print("The UAV produce a temporory plan!")
+            print("The index of current point: ", idx)
+            print("The current point: ", current_p)
+            print("The index of next point: ", next_idx)
+            print("The next point: ", next_p, "\n")
+
 
             if  (next_idx == idx + 1)  and (pri_grid_known[trajectory_plan[next_idx].x][trajectory_plan[next_idx].y][trajectory_plan[next_idx].z] > 0) :
                 trajectory_plan[next_idx].ca = 1
@@ -368,34 +398,41 @@ if __name__ == '__main__':
                 #if T_plan < (abs(trajectory_plan.points[next_idx].x - trajectory_plan.points[idx].x) + abs(trajectory_plan.points[next_idx].y - trajectory_plan.points[idx].y) + \
                 #        abs(trajectory_plan.points[next_idx].z - trajectory_plan.points[idx].z)):
                 #    print("no solution!")
-                print(T_plan, current_p,  next_p)
+                #print(T_plan, current_p,  next_p)
 
-                if T_plan > (next_idx - idx):
+                if T_plan >= (next_idx - idx):
                     aStar = AStar(occ_grid, pri_grid_known, grid, privacy_sum_known, current_p, next_p, [1], T_plan, threat_list)
 
                     # 开始寻路
                     trajectory_optimal = aStar.start()
 
-                    previous_trajectory = copy.deepcopy(trajectory_plan[ :idx])
-                    following_trajectory = copy.deepcopy(trajectory_plan[next_idx+1: ])
+                    if trajectory_plan == None:
+                        print ("no solution for local planning!")
+                        for kk in range(idx + 1, next_idx + 1):
+                            trajectory_plan[kk].ca = 1
 
-                    now_trajectory = []
-                    for ll in range(idx+1):
-                        temp = Point(trajectory_plan[ll].x, trajectory_plan[ll].y,
+                    else :
+
+                        previous_trajectory = copy.deepcopy(trajectory_plan[ :idx])
+                        following_trajectory = copy.deepcopy(trajectory_plan[next_idx+1: ])
+
+                        now_trajectory = []
+                        for ll in range(idx+1):
+                            temp = Point(trajectory_plan[ll].x, trajectory_plan[ll].y,
                                  trajectory_plan[ll].z, trajectory_plan[ll].ca)
-                        now_trajectory.append(temp)
+                            now_trajectory.append(temp)
 
-                    for ll in range(0, len(trajectory_optimal)):
-                        temp = Point(trajectory_optimal[ll].x,trajectory_optimal[ll].y,trajectory_optimal[ll].z,trajectory_optimal[ll].ca)
-                        now_trajectory.append(temp)
-
-
-                    for ll in range(next_idx+1,len(trajectory_plan)):
-                        temp = Point(trajectory_plan[ll].x,trajectory_plan[ll].y,trajectory_plan[ll].z,trajectory_plan[ll].ca)
-                        now_trajectory.append(temp)
+                        for ll in range(0, len(trajectory_optimal)):
+                            temp = Point(trajectory_optimal[ll].x,trajectory_optimal[ll].y,trajectory_optimal[ll].z,trajectory_optimal[ll].ca)
+                            now_trajectory.append(temp)
 
 
-                    trajectory_plan = copy.deepcopy(now_trajectory)
+                        for ll in range(next_idx+1,len(trajectory_plan)):
+                            temp = Point(trajectory_plan[ll].x,trajectory_plan[ll].y,trajectory_plan[ll].z,trajectory_plan[ll].ca)
+                            now_trajectory.append(temp)
+
+
+                        trajectory_plan = copy.deepcopy(now_trajectory)
 
                 else :
                     for kk in range(idx+1, next_idx+1):
@@ -405,7 +442,7 @@ if __name__ == '__main__':
                 for ll in range(len(trajectory_plan)):
                     sum += pri_grid_known[trajectory_plan[ll].x][trajectory_plan[ll].y][trajectory_plan[ll].z]
                     cam_off += trajectory_plan[ll].ca
-                    print("now", trajectory_plan[ll])
+                    #print("now", trajectory_plan[ll])
                 #print("The length of now_trajectory_plan: ", len(trajectory_plan), sum, cam_off)
 
                 current_f = sum + len(trajectory_plan) + cam_off
@@ -413,7 +450,7 @@ if __name__ == '__main__':
                 #print("fitness", current_f)
         time_step += 1
         idx = idx + 1
-        print("next point", idx,time_step, len(trajectory_plan))
+        #print("next point", idx,time_step, len(trajectory_plan))
 
     path_grid = copy.deepcopy(occ_grid)
     sum = 0
@@ -424,7 +461,12 @@ if __name__ == '__main__':
             path_grid[point.x][point.y][point.z] = 10
         sum += pri_grid_known[point.x][point.y][point.z]
         # print(point, pri_grid_known[point.x][point.y][point.z])
-    print("----------------------", len(trajectory_plan))
+    #print("----------------------", len(trajectory_plan))
     # 再次显示地图
 
-    print(path_grid, sum)
+    #print(path_grid, sum)
+    print("---------------------------------")
+    print("The last plan is finished!")
+    print("The length of last plan is: ", len(trajectory_plan))
+    for m in range(len(trajectory_plan)):
+        print("The No.", m, " step: ", trajectory_plan[m])
