@@ -98,6 +98,7 @@ class AStar:
                     delta_h += adaptive1 * self.map3d[threat[0]][threat[1]][threat[2]]
                 else:
                     delta_h += adaptive2 * self.map3d[threat[0]][threat[1]][threat[2]]
+            node.h = (abs(self.endPoint.x - node.point.x) + abs(self.endPoint.y - node.point.y) + abs(self.endPoint.z - node.point.z))/self.ideallength
             node.h = node.h * delta_h
             #print("node.h:", node.h)
 
