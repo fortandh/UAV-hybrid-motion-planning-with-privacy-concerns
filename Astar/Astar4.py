@@ -115,9 +115,12 @@ class AStar:
             #if node.g + node.h < currentNode.g + currentNode.h:
             #    currentNode = node
             """new"""
-            if node.g + node.h < currentNode.g + currentNode.h and node.step < self.Tbudget:
+            if node.g + node.h < currentNode.g + currentNode.h and node.step <= self.Tbudget:
                 currentNode = node
-        return currentNode
+        if currentNode.step <= self.Tbudget:
+            return currentNode
+        else:
+            return None
 
 
 
@@ -309,8 +312,8 @@ if __name__ == '__main__':
         for point in trajectory_ref:
             path_grid[point.x][point.y][point.z] = 9
             sum += pri_grid_known[point.x][point.y][point.z]
-           # print(point, pri_grid_known[point.x][point.y][point.z])
-        # print("----------------------", len(trajectory_ref))
+            print(point, pri_grid_known[point.x][point.y][point.z])
+        print("----------------------", len(trajectory_ref))
         print("The occ_grid is: ")
         for m in range(grid_x):
             print("The value of x: ", m)
@@ -401,12 +404,13 @@ if __name__ == '__main__':
 
                 if T_plan >= distance:
                     aStar = AStar(occ_grid, pri_grid_known, grid, privacy_sum_known, current_p, next_p, [1], T_plan, threat_list)
-
+                    print("current_p, next_p", current_p,next_p)
                     # 开始寻路
+                    #print('\033[94m finding solution for local planning... \033[0m')
                     trajectory_optimal = aStar.start()
 
                     if trajectory_optimal == None:
-                        print ("no solution for local planning!")
+                        print ('\033[94m no solution for local planning... \033[0m')
                         for kk in range(idx + 1, next_idx + 1):
                             trajectory_plan[kk].ca = 1
 
@@ -441,8 +445,8 @@ if __name__ == '__main__':
                 for ll in range(len(trajectory_plan)):
                     sum += pri_grid_known[trajectory_plan[ll].x][trajectory_plan[ll].y][trajectory_plan[ll].z]
                     cam_off += trajectory_plan[ll].ca
-                    #print("now", trajectory_plan[ll])
-                #print("The length of now_trajectory_plan: ", len(trajectory_plan), sum, cam_off)
+                    print("now", trajectory_plan[ll])
+                print("The length of now_trajectory_plan: ", len(trajectory_plan), sum, cam_off)
 
                 current_f = sum + len(trajectory_plan) + cam_off
 
@@ -453,14 +457,16 @@ if __name__ == '__main__':
 
     path_grid = copy.deepcopy(occ_grid)
     sum = 0
+    num_ca = 0
     for point in trajectory_plan:
         if point.ca == 0:
             path_grid[point.x][point.y][point.z] = 9
         else :
             path_grid[point.x][point.y][point.z] = 10
+            num_ca += 1
         sum += pri_grid_known[point.x][point.y][point.z]
-        # print(point, pri_grid_known[point.x][point.y][point.z])
-    #print("----------------------", len(trajectory_plan))
+        print(point, pri_grid_known[point.x][point.y][point.z])
+    print("---------------------- \n", len(trajectory_plan),sum,num_ca)
     # 再次显示地图
 
     #print(path_grid, sum)
@@ -469,3 +475,4 @@ if __name__ == '__main__':
     print("The length of last plan is: ", len(trajectory_plan))
     for m in range(len(trajectory_plan)):
         print("The No.", m, " step: ", trajectory_plan[m])
+
