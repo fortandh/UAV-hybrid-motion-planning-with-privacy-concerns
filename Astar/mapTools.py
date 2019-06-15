@@ -117,7 +117,7 @@ def initialmap (grid_x, grid_y, grid_z, starting_point, end_point, safety_thresh
                     occ_grid_known[i][j][k] = 0
                     # print (occ_grid_known[i][j][k], i,j,k)
     pri_grid_known, privacy_sum_known = privacy_init(grid_x, grid_y, grid_z, occ_grid_known, privacy_radius)
-    print(occ_grid, obstacle_num, occ_grid_known, pri_grid_known, privacy_sum_known,pri_grid,privacy_sum)
+    # print(occ_grid, obstacle_num, occ_grid_known, pri_grid_known, privacy_sum_known,pri_grid,privacy_sum)
     return occ_grid, obstacle_num, occ_grid_known, pri_grid_known, privacy_sum_known
 
 def hasprivacythreat (position, occ_grid_known, occ_grid, pri_grid_known, privacy_sum_known, viewradius = 2):
