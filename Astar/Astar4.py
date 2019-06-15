@@ -397,7 +397,9 @@ if __name__ == '__main__':
                 #    print("no solution!")
                 #print(T_plan, current_p,  next_p)
 
-                if T_plan >= (next_idx - idx):
+                distance = abs(trajectory_plan[next_idx].x-trajectory_plan[idx].x) + abs(trajectory_plan[next_idx].y-trajectory_plan[idx].y) + abs(trajectory_plan[next_idx].z-trajectory_plan[idx].z)
+
+                if T_plan >= distance:
                     aStar = AStar(occ_grid, pri_grid_known, grid, privacy_sum_known, current_p, next_p, [1], T_plan, threat_list)
 
                     # 开始寻路
@@ -409,7 +411,7 @@ if __name__ == '__main__':
                             trajectory_plan[kk].ca = 1
 
                     else :
-                        print("The length of locaal planning: ", len(trajectory_optimal))
+                        print("The length of local planning: ", len(trajectory_optimal))
                         previous_trajectory = copy.deepcopy(trajectory_plan[ :idx])
                         following_trajectory = copy.deepcopy(trajectory_plan[next_idx+1: ])
 
