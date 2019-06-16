@@ -9,7 +9,7 @@ import copy
 from Configure import configure
 import math
 import random
-
+from quickSort import quick_sort
 
 class AStar:
     """
@@ -52,8 +52,7 @@ class AStar:
         self.threatlist = threat_list
         self.timestep = 0
         #self.startPoint = startPoint
-        ## 结束点的第二种可能性 - 0615
-        self.endPoint2 = Point(endPoint.x,endPoint.y,endPoint.z, 1-endPoint.ca)
+
 
         # 起点终点
         if isinstance(startPoint, Point) and isinstance(endPoint, Point):
@@ -63,8 +62,11 @@ class AStar:
             self.startPoint = Point(*startPoint)
             self.endPoint = Point(*endPoint)
 
+        ## 结束点的第二种可能性 - 0615
+        self.endPoint2 = Point(endPoint.x,endPoint.y,endPoint.z, 1-endPoint.ca)
+
         # 障碍物标记
-        self.passTag = passTag
+        self.passTag = 1
 
         #print("endpoint",self.endPoint, self.endPoint2)
 
@@ -113,29 +115,30 @@ class AStar:
         """
         """
         currentNode = self.openList[0]
-
         for node in self.openList:
-            #if node.g + node.h < currentNode.g + currentNode.h:
-            #    currentNode = node
-            new
-            if node.g + node.h < currentNode.g + currentNode.h and node.step <= self.Tbudget:
+            if node.g + node.h < currentNode.g + currentNode.h:
                 currentNode = node
-        if currentNode.step <= self.Tbudget:
-            return currentNode
-        else:
-            return None"""
-
+        return currentNode
+        """
+        #""""
         currentNode = self.openList[0]
         for node in self.openList:
-            if node.g + node.h < currentNode.g + currentNode.h: ## 0615 why not <=, but =?????
+            if node.g + node.h < currentNode.g + currentNode.h: ## 0615 why not <=, but <?????
                 if node.step <= self.Tbudget:
                     currentNode = node
-
-        print("MinF: " , currentNode.step, currentNode.point)
+        if currentNode.point != self.startPoint:
+            print("MinF: " , currentNode.father.step, currentNode.father.point, currentNode.step, currentNode.point)
         if currentNode.step <= self.Tbudget:
             return currentNode
         else:
             return None
+        """
+        quick_sort(self.openList)
+        self.openList = list(reversed(self.openList))
+        #currentNode = self.openList[0]
+        for node in self.openList:
+            if node.step <= self.Tbudget:
+                return node"""
 
 
     def pointInCloseList(self, point):
@@ -158,7 +161,7 @@ class AStar:
 
     def endPointInOpenList(self):
         for node in self.openList:
-            if node.point == self.endPoint :  # 0615
+            if node.point == self.endPoint or node.point == self.endPoint2: # 0615
                 return node
         return None
 
@@ -177,24 +180,25 @@ class AStar:
         # 如果是障碍，就忽略
         #if self.map3d[minF.point.x + offsetX][minF.point.y + offsetY][minF.point.z + offsetZ] != self.passTag:
         #if self.map3d[minF.point.x + offsetX][minF.point.y + offsetY][minF.point.z + offsetZ] in self.passTag:
-
-        if self.map3d[minF.point.x + offsetX][minF.point.y + offsetY][minF.point.z + offsetZ] in self.passTag:
+        #print("$$$$$$$$$", currentPoint, minF, minF.step)
+        if self.map3d[minF.point.x + offsetX][minF.point.y + offsetY][minF.point.z + offsetZ] == self.passTag:
             return
         # 如果在关闭表中，就忽略
         currentPoint = Point(minF.point.x + offsetX, minF.point.y + offsetY, minF.point.z + offsetZ, cam)
+        #print("##########", currentPoint, minF, minF.step)
         if self.pointInCloseList(currentPoint):
             return
 
         """new setting for time limit"""
-
-
-        if minF.step + 1 > T_budget:
-            print("time limit", minF, minF.step)
+        #print()
+        if minF.step + 1 > self.Tbudget:
+            #print("time limit", minF, minF.step, currentPoint )
             return
 
         # 设置单位花费
 
-        step = 1/self.ideallength
+        #step = 1/self.ideallength
+        step = 1
 
         if self.sumpri == 0:
             privacy_threat = 0
@@ -207,22 +211,23 @@ class AStar:
 
         # 如果不再openList中，就把它加入openlist
         currentNode = self.pointInOpenList(currentPoint)
-        currentNode2 = self.pointInCloseList(currentPoint)  ## 0615
         if not currentNode:
-            if not currentNode2:
-                print("currentPoint:", currentPoint, currentNode, currentNode2)
-                currentNode = AStar.Node(currentPoint, self.endPoint, self.ideallength, g=minF.g + delta_g)
-                currentNode.father = minF
-                currentNode.cam = minF.cam + cam
-                currentNode.step = minF.step + 1
-                self.openList.append(currentNode)
-                return
+            #print("currentPoint:", currentPoint, currentNode)
+            currentNode = AStar.Node(currentPoint, self.endPoint, self.ideallength, g=minF.g + delta_g)
+            currentNode.father = minF
+            currentNode.cam = minF.cam + cam
+            currentNode.step = minF.step + 1
+            self.openList.append(currentNode)
+
+            #print("MinF$$$$$: ", minF.step, minF.point, currentNode.step, currentNode.point)
+            return
         # 如果在openList中，判断minF到当前点的G是否更小
         if minF.g + delta_g < currentNode.g:  # 如果更小，就重新计算g值，并且改变father
             currentNode.g = minF.g + delta_g
             currentNode.father = minF
             currentNode.step = minF.step + 1
             currentNode.cam = minF.cam
+            #print("MinF#####: ", currentNode.father.step, currentNode.father.point, currentNode.step, currentNode.point)
 
     def start(self):
         """
@@ -232,7 +237,7 @@ class AStar:
         # 判断寻路终点是否是障碍
         #if self.map3d[self.endPoint.x][self.endPoint.y][self.endPoint.z] != self.passTag:
         #if self.map3d[self.endPoint.x][self.endPoint.y][self.endPoint.z] in self.passTag:
-        if self.map3d[self.endPoint.x][self.endPoint.y][self.endPoint.z] in self.passTag:
+        if self.map3d[self.endPoint.x][self.endPoint.y][self.endPoint.z] == self.passTag:
             return None
         # 1.将起点放入开启列表
         startNode = AStar.Node(self.startPoint, self.endPoint, self.ideallength)
@@ -251,27 +256,39 @@ class AStar:
 
             # 判断这个节点的上下左右节点
             # turn on camera
-            actions = [[0, -1, 0, 0],[0, 1, 0, 0],[-1, 0, 0, 0],[1, 0, 0, 0],[0, 0, 1, 0],[0, 0, -1, 0],[0, -1, 0, 1],[0, 1, 0, 1],[-1, 0, 0, 1],[0, 0, 1, 1],[0, 0, -1, 1],[1, 0, 0, 1]]
-            actionlist = [0,1,2,3,4,5,6,7,8,9,10,11]
-            random.shuffle(actionlist)
+            #actions = [[0, -1, 0, 0],[0, 1, 0, 0],[-1, 0, 0, 0],[1, 0, 0, 0],[0, 0, 1, 0],[0, 0, -1, 0],[0, -1, 0, 1],[0, 1, 0, 1],[-1, 0, 0, 1],[0, 0, 1, 1],[0, 0, -1, 1],[1, 0, 0, 1]]
+            #actionlist = [0,1,2,3,4,5,6,7,8,9,10,11]
+            #random.shuffle(actionlist)
 
-            for i in range (len(actionlist)):
-                self.searchNear(minF, actions[actionlist[i]][0], actions[actionlist[i]][1], actions[actionlist[i]][2], actions[actionlist[i]][3])
-            """
+            #for i in range (len(actionlist)):
+            #    self.searchNear(minF, actions[actionlist[i]][0], actions[actionlist[i]][1], actions[actionlist[i]][2], actions[actionlist[i]][3])
+            #"""
             # turn on camera
             self.searchNear(minF, 0, -1, 0, 0)
+            #print("1")
             self.searchNear(minF, 0, 1, 0, 0)
+            #print("2")
             self.searchNear(minF, -1, 0, 0, 0)
+            #print("3")
             self.searchNear(minF, 1, 0, 0, 0)
+            #print("4")
             self.searchNear(minF, 0, 0, 1, 0)
+            #print("5")
             self.searchNear(minF, 0, 0, -1, 0)
+            #print("6")
             # turn off camera
             self.searchNear(minF, 0, -1, 0, 1)
+            #print("7")
             self.searchNear(minF, 0, 1, 0, 1)
+            #print("8")
             self.searchNear(minF, -1, 0, 0, 1)
+            #print("9")
             self.searchNear(minF, 1, 0, 0, 1)
+            #print("10")
             self.searchNear(minF, 0, 0, 1, 1)
+            #print("11")
             self.searchNear(minF, 0, 0, -1, 1)
+            #print("12")
             #"""
 
             self.updateNodeHvalue()
@@ -292,6 +309,7 @@ class AStar:
                         # print(pathList.reverse())
                         return list(reversed(pathList))
             if len(self.openList) == 0:
+                print("找不到解")
                 return None
 
 if __name__ == '__main__':
