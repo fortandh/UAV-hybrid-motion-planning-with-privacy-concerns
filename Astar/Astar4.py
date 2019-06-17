@@ -48,7 +48,7 @@ class AStar:
         self.sumpri = sum_privacy
         self.ideallength = abs(endPoint.x - startPoint.x) + abs(endPoint.y - startPoint.y) + abs(endPoint.z - startPoint.z)
         self.Tbudget = Tbudget
-        print("timebudget",self.Tbudget)
+        # print("Time limit: ", self.Tbudget)
         self.threatlist = threat_list
         self.timestep = 0
         #self.startPoint = startPoint
@@ -77,14 +77,15 @@ class AStar:
             node = self.openList[i]
             #print("#######",node)
             #print("$$$", node.point.x)
-            rou1 = (abs(node.point.x - self.startPoint.x) + abs(node.point.y - self.startPoint.y) + abs(
-                node.point.z - self.startPoint.z)) / self.ideallength
+            rou1 = (abs(node.point.x - self.startPoint.x) +
+                    abs(node.point.y - self.startPoint.y) +
+                    abs(node.point.z - self.startPoint.z)) / self.ideallength
             rou2 = node.step / self.Tbudget
             adaptive1 = math.exp(1 - rou1 / rou2)
             adaptive2 = math.exp(rou1 / rou2 - 1)
-            #print(rou1,rou2, adaptive1, adaptive2)
+            # print(rou1,rou2, adaptive1, adaptive2)
             fathernode = node.father
-            #print("*******", node.point.x, fathernode.point.x)
+            # print("*******", node.point.x, fathernode.point.x)
             delta_h = 0
             for j in range(len(self.threatlist)):
                 # far away, oppisite
@@ -106,7 +107,7 @@ class AStar:
                     delta_h += adaptive2 * self.map3d[threat[0]][threat[1]][threat[2]]
             node.h = (abs(self.endPoint.x - node.point.x) + abs(self.endPoint.y - node.point.y) + abs(self.endPoint.z - node.point.z))/self.ideallength
             node.h = node.h * delta_h
-            #print("node.h:", node.h)
+            # print("node.h:", node.h)
 
     def getMinNode(self):
         """
@@ -120,30 +121,35 @@ class AStar:
                 currentNode = node
         return currentNode
         """
-        #""""
-        currentNode = self.openList[0]
-        for node in self.openList:
-            if node.g + node.h < currentNode.g + currentNode.h: ## 0615 why not <=, but <?????
-                if node.step <= self.Tbudget:
-                    currentNode = node
-        if currentNode.point != self.startPoint:
-            print("MinF: " , currentNode.father.step, currentNode.father.point, currentNode.step, currentNode.point)
-        if currentNode.step <= self.Tbudget:
-            return currentNode
-        else:
-            return None
-        """
+        # currentNode = self.openList[0]
+        # for node in self.openList:
+        #     if node.g + node.h < currentNode.g + currentNode.h: ## 0615 why not <=, but <?????
+        #         if node.step <= self.Tbudget:
+        #             currentNode = node
+        # if currentNode.point != self.startPoint:
+        #     print("MinF: " , currentNode.father.step, currentNode.father.point, currentNode.step, currentNode.point)
+        # if currentNode.step <= self.Tbudget:
+        #     return currentNode
+        # else:
+        #     return None
+
         quick_sort(self.openList)
         self.openList = list(reversed(self.openList))
-        #currentNode = self.openList[0]
+        # currentNode = self.openList[0]
         for node in self.openList:
             if node.step <= self.Tbudget:
-                return node"""
-
+                return node
+        return None
 
     def pointInCloseList(self, point):
         for node in self.closeList:
             if node.point == point:
+                return True
+        return False
+
+    def point_in_close_list(self, point, step_num):
+        for node in self.closeList:
+            if node.point == point and node.step == step_num:
                 return True
         return False
 
@@ -152,6 +158,13 @@ class AStar:
             if node.point == point:
                 return node
         return None
+
+    def the_same_points_in_open_list(self, point):
+        same_points_list = []
+        for node in self.openList:
+            if node.point == point:
+                same_points_list.append(node)
+        return same_points_list
 
     def endPointInCloseList(self):
         for node in self.closeList: ## 0615
@@ -174,30 +187,33 @@ class AStar:
         :return:
         """
         # 越界检测
-        if minF.point.x + offsetX < 0 or minF.point.x + offsetX > self.grid[0] - 1 or minF.point.y + offsetY < 0 or minF.point.y + offsetY > self.grid[1] - 1 or minF.point.z + offsetZ < 0 or \
-                minF.point.z + offsetZ > self.grid[2] - 1:
+        if (minF.point.x + offsetX < 0 or minF.point.x + offsetX > self.grid[0] - 1 or
+            minF.point.y + offsetY < 0 or minF.point.y + offsetY > self.grid[1] - 1 or
+            minF.point.z + offsetZ < 0 or minF.point.z + offsetZ > self.grid[2] - 1):
             return
         # 如果是障碍，就忽略
-        #if self.map3d[minF.point.x + offsetX][minF.point.y + offsetY][minF.point.z + offsetZ] != self.passTag:
-        #if self.map3d[minF.point.x + offsetX][minF.point.y + offsetY][minF.point.z + offsetZ] in self.passTag:
-        #print("$$$$$$$$$", currentPoint, minF, minF.step)
+        # if self.map3d[minF.point.x + offsetX][minF.point.y + offsetY][minF.point.z + offsetZ] != self.passTag:
+        # if self.map3d[minF.point.x + offsetX][minF.point.y + offsetY][minF.point.z + offsetZ] in self.passTag:
+        # print("$$$$$$$$$", currentPoint, minF, minF.step)
         if self.map3d[minF.point.x + offsetX][minF.point.y + offsetY][minF.point.z + offsetZ] == self.passTag:
             return
         # 如果在关闭表中，就忽略
         currentPoint = Point(minF.point.x + offsetX, minF.point.y + offsetY, minF.point.z + offsetZ, cam)
-        #print("##########", currentPoint, minF, minF.step)
-        if self.pointInCloseList(currentPoint):
+        # print("##########", currentPoint, minF, minF.step)
+        # if self.pointInCloseList(currentPoint):
+        #     return
+        if self.point_in_close_list(currentPoint, minF.step+1):
             return
 
         """new setting for time limit"""
-        #print()
+        # print()
         if minF.step + 1 > self.Tbudget:
-            #print("time limit", minF, minF.step, currentPoint )
+            # print("time limit", minF, minF.step, currentPoint )
             return
 
         # 设置单位花费
 
-        #step = 1/self.ideallength
+        # step = 1/self.ideallength
         step = 1
 
         if self.sumpri == 0:
@@ -209,10 +225,12 @@ class AStar:
        # delta_g = step + privacy_threat
         delta_g = step + cam_off + privacy_threat
 
-        # 如果不再openList中，就把它加入openlist
-        currentNode = self.pointInOpenList(currentPoint)
-        if not currentNode:
-            #print("currentPoint:", currentPoint, currentNode)
+        # 如果不在openList中，就把它加入openlist
+        # currentNode = self.pointInOpenList(currentPoint)
+        # 用一个列表来收集相同的点
+        same_point_list = self.the_same_points_in_open_list(currentPoint)
+        if not same_point_list:
+            # print("currentPoint:", currentPoint, currentNode)
             currentNode = AStar.Node(currentPoint, self.endPoint, self.ideallength, g=minF.g + delta_g)
             currentNode.father = minF
             currentNode.cam = minF.cam + cam
@@ -221,13 +239,41 @@ class AStar:
 
             #print("MinF$$$$$: ", minF.step, minF.point, currentNode.step, currentNode.point)
             return
-        # 如果在openList中，判断minF到当前点的G是否更小
-        if minF.g + delta_g < currentNode.g:  # 如果更小，就重新计算g值，并且改变father
-            currentNode.g = minF.g + delta_g
-            currentNode.father = minF
-            currentNode.step = minF.step + 1
-            currentNode.cam = minF.cam
-            #print("MinF#####: ", currentNode.father.step, currentNode.father.point, currentNode.step, currentNode.point)
+        # # 如果在openList中，判断minF到当前点的G是否更小
+        # if minF.g + delta_g < currentNode.g:  # 如果更小，就重新计算g值，并且改变father
+        #     currentNode.g = minF.g + delta_g
+        #     currentNode.father = minF
+        #     currentNode.step = minF.step + 1
+        #     currentNode.cam = minF.cam
+        #     # print("MinF#####: ", currentNode.father.step, currentNode.father.point, currentNode.step, currentNode.point)
+
+        # 检查这些相同的点的step值，如果有相同的，就更新相同的
+        # 如果没有相同的，就看看当前的step值和最小的step值
+        # 如果最小的step值小，说明当前的step没用
+        # 如果当前的step小，说明当前的step值有用，添加到openlist中
+        smallest_step_num = self.Tbudget
+        same_step_in_list = False
+        same_node = None
+        for node in same_point_list:
+            if minF.step+1 == node.step:
+                same_step_in_list = True
+                same_node = node
+                break
+            if smallest_step_num > node.step:
+                smallest_step_num = node.step
+        if same_step_in_list:
+            if minF.g + delta_g < same_node.g:  # 如果更小，就重新计算g值，并且改变father
+                same_node.g = minF.g + delta_g
+                same_node.father = minF
+                same_node.step = minF.step + 1
+                same_node.cam = minF.cam
+        else:
+            if minF.step+1 < smallest_step_num:
+                currentNode = AStar.Node(currentPoint, self.endPoint, self.ideallength, g=minF.g + delta_g)
+                currentNode.father = minF
+                currentNode.cam = minF.cam + cam
+                currentNode.step = minF.step + 1
+                self.openList.append(currentNode)
 
     def start(self):
         """
@@ -246,7 +292,7 @@ class AStar:
         while True:
             # 找到F值最小的点
             minF = self.getMinNode()
-            #print("minF: ", minF.point, minF.step)
+            # print("minF: ", minF.point, minF.step)
             if minF == None :
                 print("no solution for minF!")
                 return None
@@ -256,13 +302,13 @@ class AStar:
 
             # 判断这个节点的上下左右节点
             # turn on camera
-            #actions = [[0, -1, 0, 0],[0, 1, 0, 0],[-1, 0, 0, 0],[1, 0, 0, 0],[0, 0, 1, 0],[0, 0, -1, 0],[0, -1, 0, 1],[0, 1, 0, 1],[-1, 0, 0, 1],[0, 0, 1, 1],[0, 0, -1, 1],[1, 0, 0, 1]]
-            #actionlist = [0,1,2,3,4,5,6,7,8,9,10,11]
-            #random.shuffle(actionlist)
+            # actions = [[0, -1, 0, 0],[0, 1, 0, 0],[-1, 0, 0, 0],[1, 0, 0, 0],[0, 0, 1, 0],[0, 0, -1, 0],[0, -1, 0, 1],[0, 1, 0, 1],[-1, 0, 0, 1],[0, 0, 1, 1],[0, 0, -1, 1],[1, 0, 0, 1]]
+            # actionlist = [0,1,2,3,4,5,6,7,8,9,10,11]
+            # random.shuffle(actionlist)
 
-            #for i in range (len(actionlist)):
+            # for i in range (len(actionlist)):
             #    self.searchNear(minF, actions[actionlist[i]][0], actions[actionlist[i]][1], actions[actionlist[i]][2], actions[actionlist[i]][3])
-            #"""
+            # """
             # turn on camera
             self.searchNear(minF, 0, -1, 0, 0)
             #print("1")
@@ -296,7 +342,7 @@ class AStar:
             # 判断是否终止
             point = self.endPointInCloseList()
             if point:  # 如果终点在关闭表中，就返回结果
-                print("关闭表中")
+                print("The plan found!")
                 cPoint = point
                 pathList = []
                 while True:
@@ -309,8 +355,9 @@ class AStar:
                         # print(pathList.reverse())
                         return list(reversed(pathList))
             if len(self.openList) == 0:
-                print("找不到解")
+                print("No plan could meet the time limit!")
                 return None
+
 
 if __name__ == '__main__':
 
@@ -338,6 +385,10 @@ if __name__ == '__main__':
                                                                                            safety_threshold,
                                                                                            privacy_threshold,
                                                                                            privacy_radius)
+    print("The occ_grid is: ")
+    for m in range(grid_x):
+        print("The value of x: ", m)
+        print(occ_grid[m])
 
     aStar = AStar(occ_grid, pri_grid_known, grid, privacy_sum_known, starting_point, end_point, [1], T_budget, threat_list)
 
@@ -345,29 +396,31 @@ if __name__ == '__main__':
     trajectory_ref = aStar.start()
     path_grid = copy.deepcopy(occ_grid)
 
-    #print(len(pathList))
+    # print(len(pathList))
     sum = 0
     if trajectory_ref == None:
-        print("no solution!")
+        print("No solution!")
         exit(0)
     else:
         for point in trajectory_ref:
             path_grid[point.x][point.y][point.z] = 9
             sum += pri_grid_known[point.x][point.y][point.z]
-            print(point, pri_grid_known[point.x][point.y][point.z])
-        print("----------------------", len(trajectory_ref))
-        print("The occ_grid is: ")
-        for m in range(grid_x):
-            print("The value of x: ", m)
-            print(occ_grid[m])
+            # print(point, pri_grid_known[point.x][point.y][point.z])
+        # print("----------------------", len(trajectory_ref))
+
     # 再次显示地图
 
-    print(path_grid, sum)
+    # print(path_grid, sum)
     trajectory_ref = [starting_point] + trajectory_ref
     trajectory_plan = copy.deepcopy(trajectory_ref)
-    sensor_initial = np.zeros(len(trajectory_plan))
-    sensor_plan = copy.deepcopy(sensor_initial)
+    # sensor_initial = np.zeros(len(trajectory_plan))
+    # sensor_plan = copy.deepcopy(sensor_initial)
     time_step = 0
+    print("---------------------------------")
+    print("The length of original plan is: ", len(trajectory_plan))
+    for m in range(len(trajectory_plan)):
+        print("The No.", m, " step: ", trajectory_plan[m])
+    print()
 
     idx = 0
     current_f = sum + len(trajectory_plan)
@@ -379,13 +432,13 @@ if __name__ == '__main__':
         #print("currentnow:", current_p, idx)
 
         if current_p.x == end_point.x and current_p.y == end_point.y and current_p.z == end_point.z :
-            #print("current:", current_p, idx)
+            # print("current:", current_p, idx)
             break
 
         next_p = trajectory_plan[idx+1]
         next_idx = idx + 1
-        #print (current_p,next_p,next_idx)
-        print("The UAV moves a step: ")
+        # print (current_p,next_p,next_idx)
+        print("The UAV would move a step: ")
         print("The current point: ", current_p)
         print("The next point: ", next_p)
         print("The index of next point: ", next_idx, "\n")
@@ -394,7 +447,8 @@ if __name__ == '__main__':
             time_step += 1
             current_p = next_p
             idx += 1
-            print("next point", idx, time_step, len(trajectory_plan))
+            # print("next point", idx, time_step, len(trajectory_plan))
+            print("The UAV has finished this step.\n")
             continue
 
         # take picture
@@ -420,7 +474,7 @@ if __name__ == '__main__':
                 elif k == len(trajectory_plan)-1 :
                     next_p = trajectory_plan[-1]
                     next_idx = len(trajectory_plan)-1
-            #print(next_idx,next_p)
+            # print(next_idx,next_p)
             print("---------------------------------")
             print("The UAV produce a temporory plan!")
             print("The index of current point: ", idx)
@@ -428,45 +482,46 @@ if __name__ == '__main__':
             print("The index of next point: ", next_idx)
             print("The next point: ", next_p, "\n")
 
-            #if  (next_idx == idx + 1)  and (pri_grid_known[trajectory_plan[next_idx].x][trajectory_plan[next_idx].y][trajectory_plan[next_idx].z] > 0) :
+            # if  (next_idx == idx + 1)  and (pri_grid_known[trajectory_plan[next_idx].x][trajectory_plan[next_idx].y][trajectory_plan[next_idx].z] > 0) :
             #    trajectory_plan[next_idx].ca = 1
             #    print ("change sensor configuration for next point")
 
-            if next_idx != idx + 1: # no need for motion planning
+            if next_idx != idx + 1:  # no need for motion planning
 
                 """删除冗余路径"""
-                if current_p == next_p :
+                if current_p == next_p:
                     print("delete redundant route", current_p, next_p)
                     first_part = trajectory_plan[:idx]
                     next_part = trajectory_plan[next_idx+1:]
                     trajectory_plan = first_part + next_part
                     break
 
-
                 print("The length of trajectory_plan: ", len(trajectory_plan))
                 T_plan = T_budget - (len(trajectory_plan)-1) + (next_idx - idx)
-                print("The time limit: ", T_plan)
+                print("The time limit: ", T_plan, "\n")
                 #if T_plan < (abs(trajectory_plan.points[next_idx].x - trajectory_plan.points[idx].x) + abs(trajectory_plan.points[next_idx].y - trajectory_plan.points[idx].y) + \
                 #        abs(trajectory_plan.points[next_idx].z - trajectory_plan.points[idx].z)):
                 #    print("no solution!")
-                #print(T_plan, current_p,  next_p)
+                # print(T_plan, current_p,  next_p)
 
                 distance = abs(trajectory_plan[next_idx].x-trajectory_plan[idx].x) + abs(trajectory_plan[next_idx].y-trajectory_plan[idx].y) + abs(trajectory_plan[next_idx].z-trajectory_plan[idx].z)
                 ## have enough time for planning
                 if T_plan >= distance:
                     aStar = AStar(occ_grid, pri_grid_known, grid, privacy_sum_known, current_p, next_p, [1], T_plan, threat_list)
-                    print("current_p, next_p", current_p,next_p)
+                    # print("current_p, next_p", current_p,next_p)
                     # 开始寻路
                     #print('\033[94m finding solution for local planning... \033[0m')
                     trajectory_optimal = aStar.start()
 
                     if trajectory_optimal == None:
-                        print ('\033[94m no solution for local planning... \033[0m')
+                        print('\033[94mNo solution for local planning... \033[0m')
+                        print()
                         for kk in range(idx + 1, next_idx + 1):
                             trajectory_plan[kk].ca = 1
 
-                    else :
+                    else:
                         print("The length of local planning: ", len(trajectory_optimal))
+                        print()
                         previous_trajectory = copy.deepcopy(trajectory_plan[ :idx])
                         following_trajectory = copy.deepcopy(trajectory_plan[next_idx+1: ])
 
@@ -474,6 +529,10 @@ if __name__ == '__main__':
                         first_part = trajectory_plan[0:idx+1]
                         following_part = trajectory_plan[next_idx+1:]
                         now_trajectory = first_part + trajectory_optimal + following_part
+                        print("The length of now plan is: ", len(now_trajectory))
+                        for m in range(len(now_trajectory)):
+                            print("The No.", m, " step: ", now_trajectory[m])
+                        print()
                         """
                         for ll in range(idx+1):
                             temp = Point(trajectory_plan[ll].x, trajectory_plan[ll].y,
@@ -491,8 +550,12 @@ if __name__ == '__main__':
                         """
 
                         trajectory_plan = copy.deepcopy(now_trajectory)
-                ## turn off camera never exist
-                else :
+                        print("The UAV would move a step: ")
+                        print("The current point: ", current_p)
+                        print("The next point: ", trajectory_plan[idx+1])
+                        print("The index of next point: ", idx+1, "\n")
+                # turn off camera never exist
+                else:
                     print("sensor reconfigured for the next points in the path!!!")
                     for kk in range(idx+1, next_idx+1):
                         trajectory_plan[kk].ca = 1
@@ -501,12 +564,12 @@ if __name__ == '__main__':
                 for ll in range(len(trajectory_plan)):
                     sum += pri_grid_known[trajectory_plan[ll].x][trajectory_plan[ll].y][trajectory_plan[ll].z]
                     cam_off += trajectory_plan[ll].ca
-                    print("now", trajectory_plan[ll])
-                print("The length of now_trajectory_plan: ", len(trajectory_plan), sum, cam_off)
+                    # print("now", trajectory_plan[ll])
+                # print("The length of now_trajectory_plan: ", len(trajectory_plan), sum, cam_off)
 
                 current_f = sum + len(trajectory_plan) + cam_off
 
-                #print("fitness", current_f)
+                # print("fitness", current_f)
 
             elif pri_grid_known[trajectory_plan[next_idx].x][trajectory_plan[next_idx].y][trajectory_plan[next_idx].z] > 0:
                 trajectory_plan[next_idx].ca = 1
@@ -514,20 +577,24 @@ if __name__ == '__main__':
 
         time_step += 1
         idx = idx + 1
-        #print("next point", idx,time_step, len(trajectory_plan))
-    print(occ_grid)
+        print("The UAV has finished this step.\n")
+
+        if idx == 4:
+            print("the debug begin!")
+        # print("next point", idx,time_step, len(trajectory_plan))
+    # print(occ_grid)
     path_grid2 = copy.deepcopy(occ_grid)
     sum = 0
     num_ca = 0
     for point in trajectory_plan:
         if point.ca == 0:
             path_grid2[point.x][point.y][point.z] = 7
-        else :
+        else:
             path_grid2[point.x][point.y][point.z] = 10
             num_ca += 1
         sum += pri_grid_known[point.x][point.y][point.z]
-        print(point, pri_grid_known[point.x][point.y][point.z])
-    print("---------------------- \n", len(trajectory_plan),sum,num_ca)
+        # print(point, pri_grid_known[point.x][point.y][point.z])
+    # print("---------------------- \n", len(trajectory_plan),sum,num_ca)
     # 再次显示地图
 
     print(path_grid2, sum)
