@@ -121,32 +121,12 @@ class AStar:
         获得openlist中F值最小的节点
         :return: Node
         """
-        """
+
         currentNode = self.openList[0]
         for node in self.openList:
             if node.g + node.h < currentNode.g + currentNode.h:
                 currentNode = node
         return currentNode
-        """
-        # currentNode = self.openList[0]
-        # for node in self.openList:
-        #     if node.g + node.h < currentNode.g + currentNode.h: ## 0615 why not <=, but <?????
-        #         if node.step <= self.Tbudget:
-        #             currentNode = node
-        # if currentNode.point != self.startPoint:
-        #     print("MinF: " , currentNode.father.step, currentNode.father.point, currentNode.step, currentNode.point)
-        # if currentNode.step <= self.Tbudget:
-        #     return currentNode
-        # else:
-        #     return None
-
-        quick_sort(self.openList)
-        self.openList = list(reversed(self.openList))
-        # currentNode = self.openList[0]
-        for node in self.openList:
-            if node.step <= self.Tbudget:
-                return node
-        return None
 
     def pointInCloseList(self, point):
         for node in self.closeList:
@@ -329,20 +309,7 @@ class AStar:
             #print("5")
             self.searchNear(minF, 0, 0, -1, 0)
             #print("6")
-            # turn off camera
-            self.searchNear(minF, 0, -1, 0, 1)
-            #print("7")
-            self.searchNear(minF, 0, 1, 0, 1)
-            #print("8")
-            self.searchNear(minF, -1, 0, 0, 1)
-            #print("9")
-            self.searchNear(minF, 1, 0, 0, 1)
-            #print("10")
-            self.searchNear(minF, 0, 0, 1, 1)
-            #print("11")
-            self.searchNear(minF, 0, 0, -1, 1)
-            #print("12")
-            #"""
+
 
             self.updateNodeHvalue()
 
@@ -515,12 +482,23 @@ if __name__ == '__main__':
                 # print(T_plan, current_p,  next_p)
 
                 distance = abs(trajectory_plan[next_idx].x-trajectory_plan[idx].x) + abs(trajectory_plan[next_idx].y-trajectory_plan[idx].y) + abs(trajectory_plan[next_idx].z-trajectory_plan[idx].z)
+
+                for ll in range(len(trajectory_plan)):
+                    sum += pri_grid_known[trajectory_plan[ll].x][trajectory_plan[ll].y][trajectory_plan[ll].z]
+                    # print("now", trajectory_plan[ll])
+                print("\033[94mThe length of pre22_trajectory_plan: \033[0m", len(trajectory_plan), sum)
+
                 ## have enough time for planning
                 if T_plan >= distance:
                     # 开始寻路
                     start1 = time.time()
                     aStar = AStar(occ_grid, pri_grid_known, grid, privacy_sum_known, current_p, next_p, [1], T_plan, threat_list)
                     # print("current_p, next_p", current_p,next_p)
+
+                    for ll in range(len(trajectory_plan)):
+                        sum += pri_grid_known[trajectory_plan[ll].x][trajectory_plan[ll].y][trajectory_plan[ll].z]
+                        # print("now", trajectory_plan[ll])
+                    print("\033[94mThe length of pre_trajectory_plan: \033[0m", len(trajectory_plan), sum)
 
                     #print('\033[94m finding solution for local planning... \033[0m')
                     trajectory_optimal = aStar.start()
@@ -554,21 +532,7 @@ if __name__ == '__main__':
                         for m in range(len(now_trajectory)):
                             print("The No.", m, " step: ", now_trajectory[m])
                         print()
-                        """
-                        for ll in range(idx+1):
-                            temp = Point(trajectory_plan[ll].x, trajectory_plan[ll].y,
-                                 trajectory_plan[ll].z, trajectory_plan[ll].ca)
-                            now_trajectory.append(temp)
 
-                        for ll in range(0, len(trajectory_optimal)):
-                            temp = Point(trajectory_optimal[ll].x,trajectory_optimal[ll].y,trajectory_optimal[ll].z,trajectory_optimal[ll].ca)
-                            now_trajectory.append(temp)
-
-
-                        for ll in range(next_idx+1,len(trajectory_plan)):
-                            temp = Point(trajectory_plan[ll].x,trajectory_plan[ll].y,trajectory_plan[ll].z,trajectory_plan[ll].ca)
-                            now_trajectory.append(temp)
-                        """
 
                         trajectory_plan = copy.deepcopy(now_trajectory)
                         print("The UAV would move a step: ")
@@ -576,25 +540,25 @@ if __name__ == '__main__':
                         print("The next point: ", trajectory_plan[idx+1])
                         print("The index of next point: ", idx+1, "\n")
                 # turn off camera never exist
-                else:
-                    print("sensor reconfigured for the next points in the path!!!")
-                    for kk in range(idx+1, next_idx+1):
-                        trajectory_plan[kk].ca = 1
+                #else:
+                #    print("sensor reconfigured for the next points in the path!!!")
+                #    for kk in range(idx+1, next_idx+1):
+                #        trajectory_plan[kk].ca = 1
                 sum = 0
                 cam_off = 0
                 for ll in range(len(trajectory_plan)):
                     sum += pri_grid_known[trajectory_plan[ll].x][trajectory_plan[ll].y][trajectory_plan[ll].z]
                     cam_off += trajectory_plan[ll].ca
                     # print("now", trajectory_plan[ll])
-                # print("The length of now_trajectory_plan: ", len(trajectory_plan), sum, cam_off)
+                print("\033[94mThe length of now_trajectory_plan: \033[0m", len(trajectory_plan), sum)
 
                 current_f = sum + len(trajectory_plan) + cam_off
 
                 # print("fitness", current_f)
 
-            elif pri_grid_known[trajectory_plan[next_idx].x][trajectory_plan[next_idx].y][trajectory_plan[next_idx].z] > 0:
-                trajectory_plan[next_idx].ca = 1
-                print("change sensor configuration for next point")
+            #elif pri_grid_known[trajectory_plan[next_idx].x][trajectory_plan[next_idx].y][trajectory_plan[next_idx].z] > 0:
+            #    trajectory_plan[next_idx].ca = 1
+            #    print("change sensor configuration for next point")
 
         time_step += 1
         idx = idx + 1
@@ -627,5 +591,5 @@ if __name__ == '__main__':
     end = time.time()
     dtime = end - starttime
     print("程序运行时间：%.8s s" % dtime)
-    grid_visualization(occ_grid, starting_point, end_point, trajectory_plan, trajectory_ref)
+    #grid_visualization(occ_grid, starting_point, end_point, trajectory_plan, trajectory_ref)
 
