@@ -18,6 +18,6 @@ class configure:
 
         self.starting_point = Point(0, 7, 0, 0)
         self.end_point = Point(14, 7, 14, 0)
-        self.T_budget = 30
+        self.T_budget = 56
         self.viewradius = 2
         self.Kca = 10

@@ -485,6 +485,7 @@ if __name__ == '__main__':
     path_grid2 = copy.deepcopy(occ_grid)
     sum = 0
     num_ca = 0
+    num_intruder = 0
     for point in trajectory_plan:
         if point.ca == 0:
             path_grid2[point.x][point.y][point.z] = 7
@@ -492,16 +493,21 @@ if __name__ == '__main__':
             path_grid2[point.x][point.y][point.z] = 10
             num_ca += 1
             sum += pri_grid[point.x][point.y][point.z] * math.exp(-(point.ca))
+        if pri_grid[point.x][point.y][point.z] > 0:
+            num_intruder += 1
         # print(point, pri_grid_known[point.x][point.y][point.z])
-    print("\033[94mFitness for replanned path:\033[0m\n", len(trajectory_plan),sum,num_ca)
+    print("\033[94mFitness for replanned path:\033[0m\n", len(trajectory_plan)-1, sum, num_ca, num_intruder)
     # 再次显示地图
     sum = 0
     num_ca = 0
+    num_intruder = 0
     for point in trajectory_ref:
         sum += pri_grid[point.x][point.y][point.z] * math.exp(-(point.ca))
         num_ca += point.ca
+        if pri_grid[point.x][point.y][point.z] > 0:
+            num_intruder += 1
         # print(point, pri_grid_known[point.x][point.y][point.z])
-    print("\033[94m Fitness for reference path:\033[0m \n", len(trajectory_ref), sum, num_ca)
+    print("\033[94m Fitness for reference path:\033[0m \n", len(trajectory_ref)-1, sum, num_ca, num_intruder)
 
     #print(path_grid2, sum)
     print("---------------------------------")
