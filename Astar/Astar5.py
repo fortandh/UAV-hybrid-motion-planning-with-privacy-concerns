@@ -630,18 +630,20 @@ if __name__ == '__main__':
         else:
             path_grid2[point.x][point.y][point.z] = 10
             num_ca += 1
-        sum += pri_grid_known[point.x][point.y][point.z]* math.exp(-(point.ca))
+        sum += pri_grid[point.x][point.y][point.z]* math.exp(-(point.ca))
         # print(point, pri_grid_known[point.x][point.y][point.z])
-    print("---------------------- \n", len(trajectory_plan),sum,num_ca)
+    print("\033[94m Fitness for replanned path:\033[0m \n", len(trajectory_plan),sum,num_ca)
     sum = 0
+    num_ca = 0
     for point in trajectory_ref:
-        sum += pri_grid_known[point.x][point.y][point.z]* math.exp(-(point.ca))
+        sum += pri_grid[point.x][point.y][point.z]* math.exp(-(point.ca))
+        num_ca += point.ca
         # print(point, pri_grid_known[point.x][point.y][point.z])
-    print("---------------------- \n", len(trajectory_ref),sum)
+    print("\033[94m Fitness for reference path:\033[0m \n", len(trajectory_ref),sum,num_ca)
 
     # 再次显示地图
 
-    print(path_grid2, sum)
+    #print(path_grid2, sum)
     print("---------------------------------")
     print("The last plan is finished!")
     print("The length of last plan is: ", len(trajectory_plan))
@@ -652,6 +654,6 @@ if __name__ == '__main__':
     print("程序运行时间：%.8s s" % dtime)
     #print("sumpri:", sum)
     #print("num_ca:", num_ca)
-    print("replantimes: ", replantime)
+    print("\033[94m Replan times: \033[0m", replantime)
     #grid_visualization(occ_grid, starting_point, end_point, trajectory_plan, trajectory_ref)
 

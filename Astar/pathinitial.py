@@ -388,6 +388,6 @@ if __name__ == '__main__':
 
     np.save(file="refpath.npy", arr=refpath)
     b = np.load(file="refpath.npy")
-    print(b)
+    print(b, len(b))
 
 

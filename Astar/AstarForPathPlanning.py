@@ -370,6 +370,7 @@ if __name__ == '__main__':
     occ_grid_known, pri_grid_known, privacy_sum_known = initialmapwithknowngrid(grid_x, grid_y, grid_z,
                                                                                 privacy_threshold, privacy_radius,
                                                                                 occ_grid)
+    pri_grid, privacy_sum = privacy_init(grid_x, grid_y, grid_z, occ_grid, privacy_radius)
     print("The occ_grid is: ")
     for m in range(grid_x):
         print("The value of x: ", m)
@@ -526,8 +527,8 @@ if __name__ == '__main__':
                     if trajectory_optimal == None:
                         print('\033[94mNo solution for local planning... \033[0m')
                         print()
-                        for kk in range(idx + 1, next_idx + 1):
-                            trajectory_plan[kk].ca = 1
+                        #for kk in range(idx + 1, next_idx + 1):
+                        #    trajectory_plan[kk].ca = 1
 
                     else:
                         print("The length of local planning: ", len(trajectory_optimal))
@@ -596,15 +597,19 @@ if __name__ == '__main__':
         else:
             path_grid2[point.x][point.y][point.z] = 10
             num_ca += 1
-        sum += pri_grid_known[point.x][point.y][point.z] * math.exp(-(point.ca))
+        sum += pri_grid[point.x][point.y][point.z] * math.exp(-(point.ca))
         # print(point, pri_grid_known[point.x][point.y][point.z])
-    print("---------------------- \n now:", len(trajectory_plan),sum,num_ca)
+    print("\033[94mFitness for replanned path:\033[0m \n ", len(trajectory_plan),sum,num_ca)
     # 再次显示地图
+    sum = 0
+    num_ca = 0
     for point in trajectory_ref:
-        sum += pri_grid_known[point.x][point.y][point.z] * math.exp(-(point.ca))
-    print("---------------------- \n previous:", len(trajectory_ref), sum)
+        sum += pri_grid[point.x][point.y][point.z] * math.exp(-(point.ca))
+        num_ca += point.ca
+        # print(point, pri_grid_known[point.x][point.y][point.z])
+    print("\033[94m Fitness for reference path:\033[0m \n", len(trajectory_ref), sum, num_ca)
 
-    print(path_grid2, sum)
+    #print(path_grid2, sum)
     print("---------------------------------")
     print("The last plan is finished!")
     print("The length of last plan is: ", len(trajectory_plan))
@@ -613,6 +618,6 @@ if __name__ == '__main__':
     end = time.time()
     dtime = end - starttime
     print("程序运行时间：%.8s s" % dtime)
-    print("replantimes: ", replantime)
+    print("\033[94m Replan times: \033[0m", replantime)
     #grid_visualization(occ_grid, starting_point, end_point, trajectory_plan, trajectory_ref)
 
