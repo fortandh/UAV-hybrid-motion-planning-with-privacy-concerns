@@ -3,9 +3,9 @@ from Point2 import Point
 
 class configure:
     def __init__(self):
-        self.grid_x = 5
-        self.grid_y = 5
-        self.grid_z = 5
+        self.grid_x = 15
+        self.grid_y = 15
+        self.grid_z = 15
         self.grid = [self.grid_x, self.grid_y, self.grid_z]
         self.safety_threshold = 0.3
         self.privacy_threshold = 0.1
@@ -15,8 +15,9 @@ class configure:
         # drone parameter
         #self.starting_point1 = Point(0, 0, 0)
         #self.end_point1 = Point(4, 4, 4)
-        self.starting_point = Point(0, 0, 0, 0)
-        self.end_point = Point(4, 4, 4, 0)
-        self.T_budget = 200
+
+        self.starting_point = Point(0, 7, 0, 0)
+        self.end_point = Point(14, 7, 14, 0)
+        self.T_budget = 35
         self.viewradius = 2
         self.Kca = 10

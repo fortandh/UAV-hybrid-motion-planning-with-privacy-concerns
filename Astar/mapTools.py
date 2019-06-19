@@ -154,6 +154,23 @@ def initialmap (grid_x, grid_y, grid_z, starting_point, end_point, safety_thresh
     # print(occ_grid, obstacle_num, occ_grid_known, pri_grid_known, privacy_sum_known,pri_grid,privacy_sum)
     return occ_grid, obstacle_num, occ_grid_known, pri_grid_known, privacy_sum_known
 
+def initialmapwithknowngrid (grid_x, grid_y, grid_z, privacy_threshold, privacy_radius, occ_grid):
+
+    pri_grid, privacy_sum = privacy_init(grid_x, grid_y, grid_z, occ_grid, privacy_radius)
+
+    occ_grid_known = copy.deepcopy(occ_grid)
+
+    for i in range (grid_x):
+        for j in range (grid_y):
+            for k in range (grid_z):
+                if occ_grid[i][j][k] == 2 or occ_grid[i][j][k] == 3 or occ_grid[i][j][k] == 4:
+                    occ_grid_known[i][j][k] = 0
+                    # print (occ_grid_known[i][j][k], i,j,k)
+    pri_grid_known, privacy_sum_known = privacy_init(grid_x, grid_y, grid_z, occ_grid_known, privacy_radius)
+    # print(occ_grid, obstacle_num, occ_grid_known, pri_grid_known, privacy_sum_known,pri_grid,privacy_sum)
+    return occ_grid_known, pri_grid_known, privacy_sum_known
+
+
 def hasprivacythreat (position, occ_grid_known, occ_grid, pri_grid_known, privacy_sum_known, viewradius = 2):
     x = position.x
     y = position.y
@@ -264,3 +281,35 @@ def map_of_city (grid_x, grid_y, grid_z, start, end, safety_threshold, privacy_t
 #occ_grid, num_obstacle = map_of_city (10, 10, 10, Point(0, 0, 0), Point(9, 0, 9), 0.1
 #                                      , 0.05)
 #print (occ_grid, num_obstacle)
+
+
+if __name__ == '__main__':
+    config = configure()
+
+    grid_x = config.grid_x
+    grid_y = config.grid_y
+    grid_z = config.grid_z
+    grid = config.grid
+    safety_threshold = config.safety_threshold
+    privacy_threshold = config.privacy_threshold
+    # privacy_radius = 1 ##
+    privacy_radius = config.privacy_radius
+
+    # drone parameter
+    starting_point = config.starting_point
+    end_point = config.end_point
+    T_budget = config.T_budget
+    viewradius = config.viewradius
+    Kca = config.Kca
+
+
+    occ_grid, obstacle_num, occ_grid_known, pri_grid_known, privacy_sum_known = initialmap(grid_x, grid_y, grid_z,
+                                                                                           starting_point, end_point,
+                                                                                           safety_threshold,
+                                                                                           privacy_threshold,
+                                                                                           privacy_radius)
+    np.save(file="occ_grid.npy", arr=occ_grid)
+    b = np.load(file="occ_grid.npy")
+    for m in range(grid_x):
+        print("The value of x: ", m)
+        print(b[m])

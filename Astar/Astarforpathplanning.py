@@ -4,7 +4,7 @@ add camera into searching space
 import time
 from Point2 import Point
 import numpy as np
-from mapTools import privacy_init, map_generate, hasprivacythreat, initialmap, hasprivacythreat2
+from mapTools import privacy_init, map_generate, hasprivacythreat, initialmap, hasprivacythreat2, initialmapwithknowngrid
 import copy
 from Configure import configure
 import math
@@ -265,7 +265,8 @@ class AStar:
                 currentNode.father = minF
                 currentNode.cam = minF.cam + cam
                 currentNode.step = minF.step + 1
-                self.openList.append(currentNode)
+                #self.openList.append(currentNode)
+                heappush(self.openList, currentNode)
 
     def start(self):
         """
@@ -360,11 +361,15 @@ if __name__ == '__main__':
     Kca = config.Kca
     threat_list = []
 
-    occ_grid, obstacle_num, occ_grid_known, pri_grid_known, privacy_sum_known = initialmap(grid_x, grid_y, grid_z,
-                                                                                           starting_point, end_point,
-                                                                                           safety_threshold,
-                                                                                           privacy_threshold,
-                                                                                           privacy_radius)
+    #occ_grid, obstacle_num, occ_grid_known, pri_grid_known, privacy_sum_known = initialmap(grid_x, grid_y, grid_z,
+    #                                                                                       starting_point, end_point,
+    #                                                                                       safety_threshold,
+    #                                                                                       privacy_threshold,
+    #                                                                                       privacy_radius)
+    occ_grid = np.load(file="occ_grid.npy")
+    occ_grid_known, pri_grid_known, privacy_sum_known = initialmapwithknowngrid(grid_x, grid_y, grid_z,
+                                                                                privacy_threshold, privacy_radius,
+                                                                                occ_grid)
     print("The occ_grid is: ")
     for m in range(grid_x):
         print("The value of x: ", m)
@@ -372,7 +377,13 @@ if __name__ == '__main__':
     starttime = time.time()
     aStar = AStar(occ_grid, pri_grid_known, grid, privacy_sum_known, starting_point, end_point, [1], T_budget, threat_list)
     # 开始寻路
-    trajectory_ref = aStar.start()
+    #trajectory_ref = aStar.start()
+    trajectory_ref_temp = np.load(file="refpath.npy")
+    trajectory_ref = []
+    for i in range (len(trajectory_ref_temp)):
+        point = Point(int(trajectory_ref_temp[i][0]),int(trajectory_ref_temp[i][1]),int(trajectory_ref_temp[i][2]),int(trajectory_ref_temp[i][3]))
+        trajectory_ref.append(point)
+
     endtime = time.time()
     dtime = endtime - starttime
     print("程序运行时间：%.8s s" % dtime)
@@ -394,7 +405,7 @@ if __name__ == '__main__':
     # 再次显示地图
 
     # print(path_grid, sum)
-    trajectory_ref = [starting_point] + trajectory_ref
+    #trajectory_ref = [starting_point] + trajectory_ref
     trajectory_plan = copy.deepcopy(trajectory_ref)
     # sensor_initial = np.zeros(len(trajectory_plan))
     # sensor_plan = copy.deepcopy(sensor_initial)
@@ -407,7 +418,7 @@ if __name__ == '__main__':
 
     idx = 0
     current_f = sum + len(trajectory_plan)
-
+    replantime = 0
 
     while not (idx >= len(trajectory_plan)):
         current_p = trajectory_plan[idx]
@@ -498,6 +509,7 @@ if __name__ == '__main__':
                 if T_plan >= distance:
                     # 开始寻路
                     start1 = time.time()
+                    replantime += 1
                     aStar = AStar(occ_grid, pri_grid_known, grid, privacy_sum_known, current_p, next_p, [1], T_plan, threat_list)
                     # print("current_p, next_p", current_p,next_p)
                     sum = 0
@@ -584,10 +596,13 @@ if __name__ == '__main__':
         else:
             path_grid2[point.x][point.y][point.z] = 10
             num_ca += 1
-        sum += pri_grid_known[point.x][point.y][point.z]
+        sum += pri_grid_known[point.x][point.y][point.z] * math.exp(-(point.ca))
         # print(point, pri_grid_known[point.x][point.y][point.z])
-    # print("---------------------- \n", len(trajectory_plan),sum,num_ca)
+    print("---------------------- \n now:", len(trajectory_plan),sum,num_ca)
     # 再次显示地图
+    for point in trajectory_ref:
+        sum += pri_grid_known[point.x][point.y][point.z] * math.exp(-(point.ca))
+    print("---------------------- \n previous:", len(trajectory_ref), sum)
 
     print(path_grid2, sum)
     print("---------------------------------")
@@ -598,5 +613,6 @@ if __name__ == '__main__':
     end = time.time()
     dtime = end - starttime
     print("程序运行时间：%.8s s" % dtime)
+    print("replantimes: ", replantime)
     #grid_visualization(occ_grid, starting_point, end_point, trajectory_plan, trajectory_ref)
 
