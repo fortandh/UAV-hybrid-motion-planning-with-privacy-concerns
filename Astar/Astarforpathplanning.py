@@ -482,11 +482,12 @@ if __name__ == '__main__':
                 # print(T_plan, current_p,  next_p)
 
                 distance = abs(trajectory_plan[next_idx].x-trajectory_plan[idx].x) + abs(trajectory_plan[next_idx].y-trajectory_plan[idx].y) + abs(trajectory_plan[next_idx].z-trajectory_plan[idx].z)
-
+                sum = 0
                 for ll in range(len(trajectory_plan)):
                     sum += pri_grid_known[trajectory_plan[ll].x][trajectory_plan[ll].y][trajectory_plan[ll].z]
                     # print("now", trajectory_plan[ll])
-                print("\033[94mThe length of pre22_trajectory_plan: \033[0m", len(trajectory_plan), sum)
+                print("\033[94mThe length of pre22_trajectory_plan: \033[0m", len(trajectory_plan))
+                print("\033[94mThe sum of privacy of pre22_trajectory_plan: \033[0m", sum)
 
                 ## have enough time for planning
                 if T_plan >= distance:
@@ -494,11 +495,12 @@ if __name__ == '__main__':
                     start1 = time.time()
                     aStar = AStar(occ_grid, pri_grid_known, grid, privacy_sum_known, current_p, next_p, [1], T_plan, threat_list)
                     # print("current_p, next_p", current_p,next_p)
-
+                    sum = 0
                     for ll in range(len(trajectory_plan)):
                         sum += pri_grid_known[trajectory_plan[ll].x][trajectory_plan[ll].y][trajectory_plan[ll].z]
                         # print("now", trajectory_plan[ll])
-                    print("\033[94mThe length of pre_trajectory_plan: \033[0m", len(trajectory_plan), sum)
+                    print("\033[94mThe length of pre_trajectory_plan: \033[0m", len(trajectory_plan))
+                    print("\033[94mThe sum of privacy of pre_trajectory_plan: \033[0m", sum)
 
                     #print('\033[94m finding solution for local planning... \033[0m')
                     trajectory_optimal = aStar.start()
@@ -550,7 +552,8 @@ if __name__ == '__main__':
                     sum += pri_grid_known[trajectory_plan[ll].x][trajectory_plan[ll].y][trajectory_plan[ll].z]
                     cam_off += trajectory_plan[ll].ca
                     # print("now", trajectory_plan[ll])
-                print("\033[94mThe length of now_trajectory_plan: \033[0m", len(trajectory_plan), sum)
+                print("\033[94mThe length of now_trajectory_plan: \033[0m", len(trajectory_plan))
+                print("\033[94mThe sum of privacy of now_trajectory_plan: \033[0m", sum)
 
                 current_f = sum + len(trajectory_plan) + cam_off
 
