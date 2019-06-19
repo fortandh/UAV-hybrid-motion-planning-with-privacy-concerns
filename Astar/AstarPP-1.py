@@ -3,7 +3,7 @@ pass restricted areas with the least cost
 
 """
 
-from Point import Point
+from Point2 import Point
 import numpy as np
 from mapTools import privacy_init, map_generate, hasprivacythreat, initialmap
 import copy
@@ -76,12 +76,12 @@ class AStar:
         return None
 
     def endPointInCloseList(self):
-        for node in self.openList:
+        for node in self.closeList:
             if node.point == self.endPoint:
                 return node
         return None
 
-    def searchNear(self, minF, offsetX, offsetY, offsetZ):
+    def searchNear(self, minF, offsetX, offsetY, offsetZ, cam):
         """
         搜索节点周围的点
         :param minF:F值最小的节点
@@ -98,18 +98,18 @@ class AStar:
         if self.map3d[minF.point.x + offsetX][minF.point.y + offsetY][minF.point.z + offsetZ] in self.passTag:
             return
         # 如果在关闭表中，就忽略
-        currentPoint = Point(minF.point.x + offsetX, minF.point.y + offsetY, minF.point.z + offsetZ)
+        currentPoint = Point(minF.point.x + offsetX, minF.point.y + offsetY, minF.point.z + offsetZ, cam)
         if self.pointInCloseList(currentPoint):
             return
         # 设置单位花费
         #if offsetX == 0 or offsetY == 0 or offsetZ == 0:
-        step = 1/self.ideallength
+        step = 1
         #else:
         #    step = 14
         if self.sumpri == 0:
             privacy_threat = 0
         else:
-            privacy_threat = self.prigrid[minF.point.x + offsetX][minF.point.y + offsetY][minF.point.z + offsetZ]/self.sumpri
+            privacy_threat = self.prigrid[minF.point.x + offsetX][minF.point.y + offsetY][minF.point.z + offsetZ]
 
         delta_g = step + privacy_threat
 
@@ -146,12 +146,12 @@ class AStar:
             self.closeList.append(minF)
             self.openList.remove(minF)
             # 判断这个节点的上下左右节点
-            self.searchNear(minF, 0, -1, 0)
-            self.searchNear(minF, 0, 1, 0)
-            self.searchNear(minF, -1, 0, 0)
-            self.searchNear(minF, 1, 0, 0)
-            self.searchNear(minF, 0, 0, 1)
-            self.searchNear(minF, 0, 0, -1)
+            self.searchNear(minF, 0, -1, 0, 0)
+            self.searchNear(minF, 0, 1, 0, 0)
+            self.searchNear(minF, -1, 0, 0, 0)
+            self.searchNear(minF, 1, 0, 0, 0)
+            self.searchNear(minF, 0, 0, 1, 0)
+            self.searchNear(minF, 0, 0, -1, 0)
             # 判断是否终止
             point = self.endPointInCloseList()
             if point:  # 如果终点在关闭表中，就返回结果

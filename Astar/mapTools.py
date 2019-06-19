@@ -105,37 +105,37 @@ def map_generate(grid_x, grid_y, grid_z, start, end, safety_threshold, privacy_t
 # import global map
 def initialmap (grid_x, grid_y, grid_z, starting_point, end_point, safety_threshold, privacy_threshold, privacy_radius):
     #print("start")
-    #occ_grid, obstacle_num = map_generate(grid_x, grid_y, grid_z, starting_point, end_point, safety_threshold, privacy_threshold)
+    occ_grid, obstacle_num = map_generate(grid_x, grid_y, grid_z, starting_point, end_point, safety_threshold, privacy_threshold)
     #""" for testing
-    occ_grid = np.array([[[7, 4, 1, 4, 0.],
-  [0, 4, 0, 1, 1.],
-  [0, 1, 0, 1, 1.],
-  [1, 2, 1, 0, 4.],
-  [0, 0, 4, 4, 0.]],
+    occ_grid = np.array([[[7, 1, 1, 0, 0.],
+ [3, 0, 0, 4, 0.],
+ [4, 0, 1, 0, 1.],
+ [1, 0, 0, 3, 1.],
+ [0, 0, 1, 0, 1.]],
+[[1, 1, 0, 0, 0.],
+ [4, 0, 1, 1, 0.],
+ [0, 2, 0, 1, 0.],
+ [1, 0, 0, 1, 1.],
+ [0, 3, 0, 0, 0.]],
 
- [[1, 1, 0, 1, 1.],
-  [0, 0, 1, 1, 0.],
-  [0, 1, 3, 1, 0.],
-  [0, 0, 0, 0, 1.],
-  [0, 1, 0, 1, 4.]],
+[[0, 1, 1, 1, 0.],
+ [0, 0, 1, 0, 0.],
+ [0, 0, 0, 0, 1.],
+ [1, 0, 0, 4, 1.],
+ [0, 1, 0, 1, 0.]],
 
- [[0, 1, 1, 1, 0.],
-  [0, 1, 0, 0, 0],
-  [1, 0, 0, 0, 3.],
-  [0, 1, 4, 1, 0.],
-  [1, 1, 1, 1, 3.]],
+[[1, 0, 4, 1, 0.],
+ [0, 0, 0, 0, 1.],
+ [0, 0, 0, 0, 0.],
+ [0, 0, 4, 2, 1.],
+ [1, 1, 1, 0, 0.]],
 
- [[1, 0, 0, 0, 0.],
-  [0, 0, 0, 0, 4.],
-  [0, 3, 0, 3, 0.],
-  [2, 1, 3, 4, 0.],
-  [4, 0, 0, 0, 0.]],
-
- [[2, 4, 1, 0, 0.],
-  [1, 0, 1, 3, 4.],
-  [1, 0, 0, 0, 4.],
-  [0, 4, 0, 0, 0.],
-  [0, 1, 1, 0, 8]]],
+[[0, 4, 0, 0, 0.],
+ [1, 1, 0, 0, 0.],
+ [0, 1, 0, 1, 1.],
+ [1, 0, 0, 0, 3.],
+ [0, 0, 0, 0, 8.]],
+],
 
 )
     obstacle_num = 0
