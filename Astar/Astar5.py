@@ -9,9 +9,10 @@ import copy
 from Configure import configure
 import math
 import random
-from quickSort import quick_sort
+# from quickSort import quick_sort
 from gridVisualization import grid_visualization
 import sys
+from heapq import heappush, heappop
 sys.setrecursionlimit(1000000)
 
 
@@ -33,13 +34,8 @@ class AStar:
             return "point as the node: x:" + str(self.point.x) + ",y:" + str(self.point.y) + ",z:" + str(self.point.z) + ",ca:" + str(self.point.ca)
 
         # 堆需要节点与节点之间的比较，因此必须实现这个魔术方法
-        def __cmp__(self, other):
-            if self.g+self.h < other.g+other.h:
-                return 1
-            elif self.g+self.h > other.g+other.h:
-                return -1
-            else:
-                return 0
+        def __lt__(self, other):
+            return self.g+self.h < other.g+other.h
 
     def __init__(self, occ_grid, pri_grid, grid, sum_privacy, startPoint, endPoint, passTag, Tbudget, threat_list):
         """
@@ -76,7 +72,7 @@ class AStar:
             self.endPoint = Point(*endPoint)
 
         ## 结束点的第二种可能性 - 0615
-        self.endPoint2 = Point(endPoint.x,endPoint.y,endPoint.z, 1-endPoint.ca)
+        self.endPoint2 = Point(endPoint.x, endPoint.y, endPoint.z, 1-endPoint.ca)
 
         # 障碍物标记
         self.passTag = 1
@@ -88,14 +84,14 @@ class AStar:
     def updateNodeHvalue(self):
         for i in range(len(self.openList)):
             node = self.openList[i]
-            #print("#######",node)
-            #print("$$$", node.point.x)
-            #rou1 = (abs(node.point.x - self.startPoint.x) +
-            #        abs(node.point.y - self.startPoint.y) +
-            #        abs(node.point.z - self.startPoint.z)) / self.ideallength
+            # print("#######",node)
+            # print("$$$", node.point.x)
+            # rou1 = (abs(node.point.x - self.startPoint.x) +
+            #         abs(node.point.y - self.startPoint.y) +
+            #         abs(node.point.z - self.startPoint.z)) / self.ideallength
             rou1 = 1- (abs(node.point.x - self.endPoint.x) +
-                    abs(node.point.y - self.endPoint.y) +
-                    abs(node.point.z - self.endPoint.z)) / self.ideallength
+                       abs(node.point.y - self.endPoint.y) +
+                       abs(node.point.z - self.endPoint.z)) / self.ideallength
             rou2 = node.step / self.Tbudget
             adaptive1 = math.exp(1 - rou1 / rou2)
             adaptive2 = math.exp(rou1 / rou2 - 1)
@@ -125,25 +121,37 @@ class AStar:
             node.h = node.h * delta_h
             # print("node.h:", node.h)
 
-    def getMinNode(self):
-        """
-        获得openlist中F值最小的节点
-        :return: Node
-        """
-        """
-        currentNode = self.openList[0]
-        for node in self.openList:
-            if node.g + node.h < currentNode.g + currentNode.h:
-                currentNode = node
-        return currentNode
-        """
-        quick_sort(self.openList)
-        self.openList = list(reversed(self.openList))
-        # currentNode = self.openList[0]
-        for node in self.openList:
-            if node.step <= self.Tbudget:
-                return node
-        return None
+    # def getMinNode(self):
+    #     """
+    #     获得openlist中F值最小的节点
+    #     :return: Node
+    #     """
+    #     """
+    #     currentNode = self.openList[0]
+    #     for node in self.openList:
+    #         if node.g + node.h < currentNode.g + currentNode.h:
+    #             currentNode = node
+    #     return currentNode
+    #     """
+    #     # currentNode = self.openList[0]
+    #     # for node in self.openList:
+    #     #     if node.g + node.h < currentNode.g + currentNode.h: ## 0615 why not <=, but <?????
+    #     #         if node.step <= self.Tbudget:
+    #     #             currentNode = node
+    #     # if currentNode.point != self.startPoint:
+    #     #     print("MinF: " , currentNode.father.step, currentNode.father.point, currentNode.step, currentNode.point)
+    #     # if currentNode.step <= self.Tbudget:
+    #     #     return currentNode
+    #     # else:
+    #     #     return None
+    #
+    #     quick_sort(self.openList)
+    #     self.openList = list(reversed(self.openList))
+    #     # currentNode = self.openList[0]
+    #     for node in self.openList:
+    #         if node.step <= self.Tbudget:
+    #             return node
+    #     return None
 
     def pointInCloseList(self, point):
         for node in self.closeList:
@@ -192,8 +200,8 @@ class AStar:
         """
         # 越界检测
         if (minF.point.x + offsetX < 0 or minF.point.x + offsetX > self.grid[0] - 1 or
-            minF.point.y + offsetY < 0 or minF.point.y + offsetY > self.grid[1] - 1 or
-            minF.point.z + offsetZ < 0 or minF.point.z + offsetZ > self.grid[2] - 1):
+                minF.point.y + offsetY < 0 or minF.point.y + offsetY > self.grid[1] - 1 or
+                minF.point.z + offsetZ < 0 or minF.point.z + offsetZ > self.grid[2] - 1):
             return
         # 如果是障碍，就忽略
         # if self.map3d[minF.point.x + offsetX][minF.point.y + offsetY][minF.point.z + offsetZ] != self.passTag:
@@ -226,7 +234,7 @@ class AStar:
             privacy_threat = (self.prigrid[minF.point.x + offsetX][minF.point.y + offsetY][minF.point.z + offsetZ] * math.exp(-(cam)))
         cam_off = cam
 
-       # delta_g = step + privacy_threat
+        # delta_g = step + privacy_threat
         delta_g = step + cam_off + privacy_threat
 
         # 如果不在openList中，就把它加入openlist
@@ -239,7 +247,8 @@ class AStar:
             currentNode.father = minF
             currentNode.cam = minF.cam + cam
             currentNode.step = minF.step + 1
-            self.openList.append(currentNode)
+            # self.openList.append(currentNode)
+            heappush(self.openList, currentNode)
 
             #print("MinF$$$$$: ", minF.step, minF.point, currentNode.step, currentNode.point)
             return
@@ -277,7 +286,8 @@ class AStar:
                 currentNode.father = minF
                 currentNode.cam = minF.cam + cam
                 currentNode.step = minF.step + 1
-                self.openList.append(currentNode)
+                # self.openList.append(currentNode)
+                heappush(self.openList, currentNode)
 
     def start(self):
         """
@@ -291,15 +301,22 @@ class AStar:
             return None
         # 1.将起点放入开启列表
         startNode = AStar.Node(self.startPoint, self.endPoint, self.ideallength)
-        self.openList.append(startNode)
+        # self.openList.append(startNode)
+        heappush(self.openList, startNode)
         # 2.主循环逻辑
         while True:
             # 找到F值最小的点
-            minF = self.getMinNode()
-            # print("minF: ", minF.point, minF.step)
-            if minF == None :
-                print("no solution for minF!")
+            # minF = self.getMinNode()
+            # # print("minF: ", minF.point, minF.step)
+            # if minF == None :
+            #     print("no solution for minF!")
+            #     return None
+            minF = None
+            if len(self.openList) == 0:
+                print("No solution for minF!")
                 return None
+            else:
+                minF = self.openList[0]
             # 把这个点加入closeList中，并且在openList中删除它
             self.closeList.append(minF)
             self.openList.remove(minF)
