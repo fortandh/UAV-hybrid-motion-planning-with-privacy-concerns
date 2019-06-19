@@ -3,7 +3,7 @@
 from point import Point
 import geneticAlgorithm as gA
 from quickSort import quick_sort
-from Dijistra.mapTools import privacy_init, map_generate
+from mapTools import privacy_init, map_generate
 #from global_planning import initialmap
 import copy
 import sys

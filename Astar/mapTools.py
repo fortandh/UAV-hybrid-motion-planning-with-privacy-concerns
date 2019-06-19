@@ -106,7 +106,7 @@ def map_generate(grid_x, grid_y, grid_z, start, end, safety_threshold, privacy_t
 def initialmap (grid_x, grid_y, grid_z, starting_point, end_point, safety_threshold, privacy_threshold, privacy_radius):
     #print("start")
     occ_grid, obstacle_num = map_generate(grid_x, grid_y, grid_z, starting_point, end_point, safety_threshold, privacy_threshold)
-    #""" for testing
+    """ for testing
     occ_grid = np.array([[[7, 1, 1, 0, 0.],
  [3, 0, 0, 4, 0.],
  [4, 0, 1, 0, 1.],

@@ -12,9 +12,9 @@ import sys
 sys.setrecursionlimit(1000000)
 
 #map parameter
-grid_x = 10
-grid_y = 10
-grid_z = 10
+grid_x = 50
+grid_y = 50
+grid_z = 50
 safety_threshold = 0.3
 privacy_threshold = 0.1
 # privacy_radius = 1 ##

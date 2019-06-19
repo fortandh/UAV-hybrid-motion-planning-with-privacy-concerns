@@ -11,6 +11,7 @@ import math
 import random
 from quickSort import quick_sort
 from gridVisualization import grid_visualization
+from heapq import heappush, heappop
 import sys
 sys.setrecursionlimit(1000000)
 
@@ -27,10 +28,14 @@ class AStar:
             self.g = g  # g值，g值在用到的时候会重新算
             self.step = 0
             self.cam = 0
-            self.h = (abs(endPoint.x - point.x) + abs(endPoint.y - point.y) + abs(endPoint.z - point.z))/ideallength # 计算h值 曼哈顿距离
+            self.h = (abs(endPoint.x - point.x) + abs(endPoint.y - point.y) + abs(endPoint.z - point.z)) # 计算h值 曼哈顿距离
 
         def __str__(self):
             return "point as the node: x:" + str(self.point.x) + ",y:" + str(self.point.y) + ",z:" + str(self.point.z) + ",ca:" + str(self.point.ca)
+
+        # 堆需要节点与节点之间的比较，因此必须实现这个魔术方法
+        def __lt__(self, other):
+            return self.g + self.h < other.g + other.h
 
     def __init__(self, occ_grid, pri_grid, grid, sum_privacy, startPoint, endPoint, passTag, Tbudget):
         """
@@ -115,25 +120,26 @@ class AStar:
             node.h = (abs(self.endPoint.x - node.point.x) + abs(self.endPoint.y - node.point.y) + abs(self.endPoint.z - node.point.z))/self.ideallength
             node.h = node.h * delta_h
             # print("node.h:", node.h)
-    """
+   
     def getMinNode(self):
-        """
+
         获得openlist中F值最小的节点
         :return: Node
-        """
-        """
+
+
         currentNode = self.openList[0]
         for node in self.openList:
             if node.g + node.h < currentNode.g + currentNode.h:
                 currentNode = node
         return currentNode
-        """
+ 
         currentNode = self.openList[0]
         for node in self.openList:
             if node.g + node.h < currentNode.g + currentNode.h:
                 currentNode = node
         return currentNode
 
+    """
 
 
     def pointInCloseList(self, point):
@@ -189,7 +195,6 @@ class AStar:
         # 如果是障碍，就忽略
         # if self.map3d[minF.point.x + offsetX][minF.point.y + offsetY][minF.point.z + offsetZ] != self.passTag:
         # if self.map3d[minF.point.x + offsetX][minF.point.y + offsetY][minF.point.z + offsetZ] in self.passTag:
-        # print("$$$$$$$$$", currentPoint, minF, minF.step)
         if self.map3d[minF.point.x + offsetX][minF.point.y + offsetY][minF.point.z + offsetZ] == self.passTag:
             return
         # 如果在关闭表中，就忽略
@@ -277,15 +282,22 @@ class AStar:
             return None
         # 1.将起点放入开启列表
         startNode = AStar.Node(self.startPoint, self.endPoint, self.ideallength)
-        self.openList.append(startNode)
+        #self.openList.append(startNode)
+        heappush(self.openList, startNode)
         # 2.主循环逻辑
         while True:
             # 找到F值最小的点
-            minF = self.getMinNode()
+            #minF = self.getMinNode()
             # print("minF: ", minF.point, minF.step)
-            if minF == None :
-                print("no solution for minF!")
+            #if minF == None :
+            #    print("no solution for minF!")
+            #    return None
+            minF = None
+            if len(self.openList) == 0:
+                print("No solution for minF!")
                 return None
+            else:
+                minF = self.openList[0]
             # 把这个点加入closeList中，并且在openList中删除它
             self.closeList.append(minF)
             self.openList.remove(minF)

@@ -37,7 +37,7 @@ class AStar:
         def __lt__(self, other):
             return self.g+self.h < other.g+other.h
 
-    def __init__(self, occ_grid, pri_grid, grid, sum_privacy, startPoint, endPoint, passTag, Tbudget, threat_list):
+    def __init__(self, occ_grid, pri_grid, grid, sum_privacy, startPoint, endPoint, passTag, Tbudget, threat_list, flag):
         """
         构造AStar算法的启动条件
         :param map3d: Array2D类型的寻路数组
@@ -61,6 +61,7 @@ class AStar:
         self.threatlist = threat_list
         self.timestep = 0
         #self.startPoint = startPoint
+        self.flag = flag
 
 
         # 起点终点
@@ -331,32 +332,26 @@ class AStar:
             #    self.searchNear(minF, actions[actionlist[i]][0], actions[actionlist[i]][1], actions[actionlist[i]][2], actions[actionlist[i]][3])
             # """
             # turn on camera
-            self.searchNear(minF, 0, -1, 0, 0)
-            #print("1")
-            self.searchNear(minF, 0, 1, 0, 0)
-            #print("2")
-            self.searchNear(minF, -1, 0, 0, 0)
-            #print("3")
-            self.searchNear(minF, 1, 0, 0, 0)
-            #print("4")
-            self.searchNear(minF, 0, 0, 1, 0)
-            #print("5")
-            self.searchNear(minF, 0, 0, -1, 0)
-            #print("6")
-            # turn off camera
-            self.searchNear(minF, 0, -1, 0, 1)
-            #print("7")
-            self.searchNear(minF, 0, 1, 0, 1)
-            #print("8")
-            self.searchNear(minF, -1, 0, 0, 1)
-            #print("9")
-            self.searchNear(minF, 1, 0, 0, 1)
-            #print("10")
-            self.searchNear(minF, 0, 0, 1, 1)
-            #print("11")
-            self.searchNear(minF, 0, 0, -1, 1)
-            #print("12")
-            #"""
+            if self.flag == 0:
+                self.searchNear(minF, 0, -1, 0, 0)
+                self.searchNear(minF, 0, 1, 0, 0)
+                self.searchNear(minF, -1, 0, 0, 0)
+                self.searchNear(minF, 1, 0, 0, 0)
+                self.searchNear(minF, 0, 0, 1, 0)
+                self.searchNear(minF, 0, 0, -1, 0)
+            else:
+                self.searchNear(minF, 0, -1, 0, 0)
+                self.searchNear(minF, 0, 1, 0, 0)
+                self.searchNear(minF, -1, 0, 0, 0)
+                self.searchNear(minF, 1, 0, 0, 0)
+                self.searchNear(minF, 0, 0, 1, 0)
+                self.searchNear(minF, 0, 0, -1, 0)
+                self.searchNear(minF, 0, -1, 0, 1)
+                self.searchNear(minF, 0, 1, 0, 1)
+                self.searchNear(minF, -1, 0, 0, 1)
+                self.searchNear(minF, 1, 0, 0, 1)
+                self.searchNear(minF, 0, 0, 1, 1)
+                self.searchNear(minF, 0, 0, -1, 1)
 
             self.updateNodeHvalue()
 
@@ -411,7 +406,7 @@ if __name__ == '__main__':
         print("The value of x: ", m)
         print(occ_grid[m])
     starttime = time.time()
-    aStar = AStar(occ_grid, pri_grid_known, grid, privacy_sum_known, starting_point, end_point, [1], T_budget, threat_list)
+    aStar = AStar(occ_grid, pri_grid_known, grid, privacy_sum_known, starting_point, end_point, [1], T_budget, threat_list, 0)
     # 开始寻路
     trajectory_ref = aStar.start()
     endtime = time.time()
@@ -533,7 +528,7 @@ if __name__ == '__main__':
                 if T_plan >= distance:
                     # 开始寻路
                     start1 = time.time()
-                    aStar = AStar(occ_grid, pri_grid_known, grid, privacy_sum_known, current_p, next_p, [1], T_plan, threat_list)
+                    aStar = AStar(occ_grid, pri_grid_known, grid, privacy_sum_known, current_p, next_p, [1], T_plan, threat_list, 1)
                     # print("current_p, next_p", current_p,next_p)
 
                     #print('\033[94m finding solution for local planning... \033[0m')
