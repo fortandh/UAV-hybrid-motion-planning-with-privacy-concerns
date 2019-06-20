@@ -536,9 +536,9 @@ if __name__ == '__main__':
 
     np.save(file="occ_grid_known.npy", arr=occ_grid_known)
     b = np.load(file="occ_grid_known.npy")
-    for m in range(grid_x):
-        print("The value of x: ", m)
-        print(b[m])
+    # for m in range(grid_x):
+    #     print("The value of x: ", m)
+    #     print(b[m])
 
     plan_path = np.zeros((len(trajectory_plan), 4))
     for i in range(len(trajectory_plan)):
