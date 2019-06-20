@@ -18,6 +18,7 @@ class configure:
 
         self.starting_point = Point(0, 0, 0, 0)
         self.end_point = Point(9, 9, 9, 0)
-        self.T_budget = 36
+        self.T_budget = (4/3)*(abs(self.end_point.x-self.starting_point.x) + abs(self.end_point.y-self.starting_point.y) + abs(self.end_point.z-self.starting_point.z))
+        self.T_optimal = self.T_budget * 0.9
         self.viewradius = 2
         self.Kca = 10
