@@ -356,15 +356,17 @@ if __name__ == '__main__':
     Kca = config.Kca
     threat_list = []
 
-    #occ_grid = np.load(file="occ_grid.npy")
+    occ_grid = np.load(file="occ_grid.npy")
     #occ_grid_known, pri_grid_known, privacy_sum_known = initialmapwithknowngrid(grid_x, grid_y, grid_z,
     #                                                                            privacy_threshold, privacy_radius,
     #                                                                            occ_grid)
+    occ_grid_known = np.load(file="occ_grid_known.npy")
     ##全局地图信息
     #pri_grid, privacy_sum = privacy_init(grid_x, grid_y, grid_z, occ_grid, privacy_radius)
-    occ_grid = np.load(file="occ_grid.npy")
+    #occ_grid = np.load(file="occ_grid.npy")
     pri_grid, privacy_sum = privacy_init(grid_x, grid_y, grid_z, occ_grid, privacy_radius)
-    occ_grid_known = np.load(file="occ_grid_known.npy")
+
+    #occ_grid_known = np.load(file="occ_grid_known.npy")
     pri_grid_known, privacy_sum_known = privacy_init(grid_x, grid_y, grid_z, occ_grid_known, privacy_radius)
 
     print("The occ_grid is: ")
@@ -422,4 +424,10 @@ if __name__ == '__main__':
         #if pri_grid[point.x][point.y][point.z] > 0:
     # print(point, pri_grid_known[point.x][point.y][point.z])
     print("\033[94m Fitness for replanned path:\033[0m \n", len(trajectory_plan) - 1, sum, num_ca)
+
+    np.save(file="occ_grid_known.npy", arr=occ_grid_known)
+    c = np.load(file="occ_grid_known.npy")
+    for m in range(grid_x):
+        print("The value of x: ", m)
+        print(c[m])
 

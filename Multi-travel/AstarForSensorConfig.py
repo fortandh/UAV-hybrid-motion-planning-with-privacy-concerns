@@ -382,8 +382,8 @@ if __name__ == '__main__':
     aStar = AStar(occ_grid, pri_grid_known, grid, privacy_sum_known, starting_point, end_point, 1 , T_budget)
     # 开始寻路
     #trajectory_ref = aStar.start()
-    trajectory_ref_temp = np.load(file="plan_path.npy")
-    #trajectory_ref_temp = np.load(file="refpath.npy")
+    #trajectory_ref_temp = np.load(file="plan_path.npy")
+    trajectory_ref_temp = np.load(file="refpathforsensor.npy")
     trajectory_ref = []
     for i in range (len(trajectory_ref_temp)):
         point = Point(int(trajectory_ref_temp[i][0]),int(trajectory_ref_temp[i][1]),int(trajectory_ref_temp[i][2]),int(trajectory_ref_temp[i][3]))
