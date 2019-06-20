@@ -7,7 +7,7 @@ privacy_threshold = 0.01
 
 from Point import Point
 import numpy as np
-from mapTools import privacy_init, map_generate, hasprivacythreat, initialmap
+from mapTools import hasprivacythreat, initialmap
 import copy
 from Configure import configure
 

@@ -1,20 +1,20 @@
 #!/usr/bin/env python
 # main function
 import numpy as np
-from path import Path
-from point import Point
-import geneticAlgorithm as gA
-from mapTools import privacy_init, map_generate
-from ga_class import GA_class
+from GA.path import Path
+from GA.point import Point
+from GA import geneticAlgorithm as gA
+from GA.mapTools import privacy_init, map_generate
+from GA.ga_class import GA_class
 import copy
 import math
 import sys
 sys.setrecursionlimit(1000000)
 
 #map parameter
-grid_x = 10
-grid_y = 10
-grid_z = 10
+grid_x = 50
+grid_y = 50
+grid_z = 50
 safety_threshold = 0.3
 privacy_threshold = 0.1
 # privacy_radius = 1 ##

@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 # main function
-from point import Point
-import geneticAlgorithm as gA
-from quickSort import quick_sort
-from mapTools import privacy_init, map_generate
+from GA.point import Point
+from GA import geneticAlgorithm as gA
+from GA.quickSort import quick_sort
+from GA.mapTools import privacy_init, map_generate
 #from global_planning import initialmap
 import copy
 import sys

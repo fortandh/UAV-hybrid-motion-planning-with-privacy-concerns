@@ -1,5 +1,4 @@
 from Point import Point
-import numpy as np
 from mapTools import privacy_init, map_generate
 from Astar import AStar
 import copy

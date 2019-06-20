@@ -2,7 +2,6 @@
 
 import numpy as np
 from random import randint
-from point import Point
 import math
 
 

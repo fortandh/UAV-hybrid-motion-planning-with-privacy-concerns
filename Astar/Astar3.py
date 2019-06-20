@@ -4,7 +4,7 @@ add camera into searching space
 
 from Point2 import Point
 import numpy as np
-from mapTools import privacy_init, map_generate, hasprivacythreat, initialmap
+from mapTools import hasprivacythreat, initialmap
 import copy
 from Configure import configure
 import math

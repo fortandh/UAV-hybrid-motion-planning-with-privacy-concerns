@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 # main function
-from point import Point
-from quickSort import quick_sort
-from gridVisualization import grid_visualization
+from GA.point import Point
+from GA.quickSort import quick_sort
+from GA.gridVisualization import grid_visualization
 from Dijistra.mapTools import privacy_init, map_generate
 import copy
 

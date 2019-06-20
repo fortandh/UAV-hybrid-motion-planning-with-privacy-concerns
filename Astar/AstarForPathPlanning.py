@@ -4,15 +4,13 @@ add camera into searching space
 import time
 from Point2 import Point
 import numpy as np
-from mapTools import privacy_init, map_generate, hasprivacythreat, initialmap, hasprivacythreat2, initialmapwithknowngrid
+from mapTools import privacy_init, hasprivacythreat2, initialmapwithknowngrid
 import copy
 from Configure import configure
 import math
-import random
-from quickSort import quick_sort
-from gridVisualization import grid_visualization
 import sys
-from heapq import heappush, heappop
+from heapq import heappush
+
 sys.setrecursionlimit(1000000)
 
 

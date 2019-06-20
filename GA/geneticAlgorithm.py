@@ -1,11 +1,10 @@
 # multi-objective genetic algorithm
 import copy
 from random import randint, shuffle, uniform
-from point import Point
-from path import Path
-from numpy import random
-from commonPoint import CommonPoint
-from quickSort import quick_sort
+from GA.point import Point
+from GA.path import Path
+from GA.commonPoint import CommonPoint
+from GA.quickSort import quick_sort
 import math
 
 

@@ -3,13 +3,14 @@ add camera into searching space
 """
 import time
 from Point2 import Point
-from mapTools import initialmap, hasprivacythreat2
+import numpy as np
+from mapTools import privacy_init, hasprivacythreat2, initialmapwithknowngrid
 import copy
 from Configure import configure
 import math
-from quickSort import quick_sort
-from gridVisualization import grid_visualization
 import sys
+from heapq import heappush
+
 sys.setrecursionlimit(1000000)
 
 
@@ -25,19 +26,14 @@ class AStar:
             self.g = g  # g值，g值在用到的时候会重新算
             self.step = 0
             self.cam = 0
-            self.h = (abs(endPoint.x - point.x) + abs(endPoint.y - point.y) + abs(endPoint.z - point.z))/ideallength # 计算h值 曼哈顿距离
+            self.h = (abs(endPoint.x - point.x) + abs(endPoint.y - point.y) + abs(endPoint.z - point.z)) # 计算h值 曼哈顿距离
 
         def __str__(self):
             return "point as the node: x:" + str(self.point.x) + ",y:" + str(self.point.y) + ",z:" + str(self.point.z) + ",ca:" + str(self.point.ca)
 
         # 堆需要节点与节点之间的比较，因此必须实现这个魔术方法
-        def __cmp__(self, other):
-            if self.g+self.h < other.g+other.h:
-                return 1
-            elif self.g+self.h > other.g+other.h:
-                return -1
-            else:
-                return 0
+        def __lt__(self, other):
+            return self.g + self.h < other.g + other.h
 
     def __init__(self, occ_grid, pri_grid, grid, sum_privacy, startPoint, endPoint, passTag, Tbudget, threat_list):
         """
@@ -123,26 +119,18 @@ class AStar:
             node.h = node.h * delta_h
             # print("node.h:", node.h)
 
+    #"""
     def getMinNode(self):
-        """
-        获得openlist中F值最小的节点
-        :return: Node
-        """
-        """
+       
+        #获得openlist中F值最小的节点
+
         currentNode = self.openList[0]
         for node in self.openList:
             if node.g + node.h < currentNode.g + currentNode.h:
                 currentNode = node
         return currentNode
-        """
-        quick_sort(self.openList)
-        self.openList = list(reversed(self.openList))
-        # currentNode = self.openList[0]
-        for node in self.openList:
-            if node.step <= self.Tbudget:
-                return node
-        return None
 
+    #"""
     def pointInCloseList(self, point):
         for node in self.closeList:
             if node.point == point:
@@ -225,7 +213,7 @@ class AStar:
         cam_off = cam
 
        # delta_g = step + privacy_threat
-        delta_g = step + cam_off + privacy_threat
+        delta_g = step + privacy_threat
 
         # 如果不在openList中，就把它加入openlist
         # currentNode = self.pointInOpenList(currentPoint)
@@ -275,7 +263,8 @@ class AStar:
                 currentNode.father = minF
                 currentNode.cam = minF.cam + cam
                 currentNode.step = minF.step + 1
-                self.openList.append(currentNode)
+                #self.openList.append(currentNode)
+                heappush(self.openList, currentNode)
 
     def start(self):
         """
@@ -289,15 +278,22 @@ class AStar:
             return None
         # 1.将起点放入开启列表
         startNode = AStar.Node(self.startPoint, self.endPoint, self.ideallength)
-        self.openList.append(startNode)
+        #self.openList.append(startNode)
+        heappush(self.openList, startNode)
         # 2.主循环逻辑
         while True:
             # 找到F值最小的点
             minF = self.getMinNode()
-            # print("minF: ", minF.point, minF.step)
+            #print("minF: ", minF.point, minF.step)
             if minF == None :
                 print("no solution for minF!")
                 return None
+            #minF = None
+            #if len(self.openList) == 0:
+            #    print("No solution for minF!")
+            #    return None
+            #else:
+            #    minF = self.openList[0]
             # 把这个点加入closeList中，并且在openList中删除它
             self.closeList.append(minF)
             self.openList.remove(minF)
@@ -313,33 +309,14 @@ class AStar:
             # """
             # turn on camera
             self.searchNear(minF, 0, -1, 0, 0)
-            #print("1")
             self.searchNear(minF, 0, 1, 0, 0)
-            #print("2")
             self.searchNear(minF, -1, 0, 0, 0)
-            #print("3")
             self.searchNear(minF, 1, 0, 0, 0)
-            #print("4")
             self.searchNear(minF, 0, 0, 1, 0)
-            #print("5")
             self.searchNear(minF, 0, 0, -1, 0)
-            #print("6")
-            # turn off camera
-            self.searchNear(minF, 0, -1, 0, 1)
-            #print("7")
-            self.searchNear(minF, 0, 1, 0, 1)
-            #print("8")
-            self.searchNear(minF, -1, 0, 0, 1)
-            #print("9")
-            self.searchNear(minF, 1, 0, 0, 1)
-            #print("10")
-            self.searchNear(minF, 0, 0, 1, 1)
-            #print("11")
-            self.searchNear(minF, 0, 0, -1, 1)
-            #print("12")
-            #"""
 
-            self.updateNodeHvalue()
+
+            #self.updateNodeHvalue()
 
             # 判断是否终止
             point = self.endPointInCloseList()
@@ -382,11 +359,22 @@ if __name__ == '__main__':
     Kca = config.Kca
     threat_list = []
 
-    occ_grid, obstacle_num, occ_grid_known, pri_grid_known, privacy_sum_known = initialmap(grid_x, grid_y, grid_z,
-                                                                                           starting_point, end_point,
-                                                                                           safety_threshold,
-                                                                                           privacy_threshold,
-                                                                                           privacy_radius)
+    #occ_grid, obstacle_num, occ_grid_known, pri_grid_known, privacy_sum_known = initialmap(grid_x, grid_y, grid_z,
+    #                                                                                       starting_point, end_point,
+    #                                                                                       safety_threshold,
+    #                                                                                       privacy_threshold,
+    #                                                                                       privacy_radius)
+    occ_grid = np.load(file="occ_grid.npy")
+    pri_grid, privacy_sum = privacy_init(grid_x, grid_y, grid_z, occ_grid, privacy_radius)
+    #occ_grid = np.load(file="occ_grid_known.npy")
+    #occ_grid_known, pri_grid_known, privacy_sum_known = initialmapwithknowngrid(grid_x, grid_y, grid_z,
+    #                                                                            privacy_threshold, privacy_radius,
+    #                                                                            occ_grid)
+
+
+    occ_grid_known = np.load(file="occ_grid_known.npy")
+    pri_grid_known, privacy_sum_known = privacy_init(grid_x, grid_y, grid_z, occ_grid_known, privacy_radius)
+
     print("The occ_grid is: ")
     for m in range(grid_x):
         print("The value of x: ", m)
@@ -394,7 +382,18 @@ if __name__ == '__main__':
     starttime = time.time()
     aStar = AStar(occ_grid, pri_grid_known, grid, privacy_sum_known, starting_point, end_point, [1], T_budget, threat_list)
     # 开始寻路
-    trajectory_ref = aStar.start()
+    #trajectory_ref = aStar.start()
+    trajectory_ref_temp = np.load(file="plan_path.npy")
+    #trajectory_ref_temp = np.load(file="refpath.npy")
+    #pri_grid_known = pri_grid
+    #privacy_sum_known = privacy_sum
+    #occ_grid_known = occ_grid
+
+    trajectory_ref = []
+    for i in range (len(trajectory_ref_temp)):
+        point = Point(int(trajectory_ref_temp[i][0]),int(trajectory_ref_temp[i][1]),int(trajectory_ref_temp[i][2]),int(trajectory_ref_temp[i][3]))
+        trajectory_ref.append(point)
+
     endtime = time.time()
     dtime = endtime - starttime
     print("程序运行时间：%.8s s" % dtime)
@@ -416,7 +415,7 @@ if __name__ == '__main__':
     # 再次显示地图
 
     # print(path_grid, sum)
-    trajectory_ref = [starting_point] + trajectory_ref
+    #trajectory_ref = [starting_point] + trajectory_ref
     trajectory_plan = copy.deepcopy(trajectory_ref)
     # sensor_initial = np.zeros(len(trajectory_plan))
     # sensor_plan = copy.deepcopy(sensor_initial)
@@ -429,7 +428,7 @@ if __name__ == '__main__':
 
     idx = 0
     current_f = sum + len(trajectory_plan)
-
+    replantime = 0
 
     while not (idx >= len(trajectory_plan)):
         current_p = trajectory_plan[idx]
@@ -458,7 +457,7 @@ if __name__ == '__main__':
 
         # take picture
         # update occ_grid, pri_grid
-        flag, occ_grid_known, pri_grid_known, privacy_sum_known, threat_list = hasprivacythreat2 (current_p, occ_grid_known, occ_grid, pri_grid_known, privacy_sum_known, viewradius)
+        flag, occ_grid_known, pri_grid_known, privacy_sum_known, threat_list = hasprivacythreat2 (current_p, occ_grid_known, occ_grid, pri_grid_known, privacy_sum_known, config)
         print("The length of privacy_list: ", len(threat_list))
         for m in range(len(threat_list)):
             print(threat_list[m])
@@ -510,12 +509,24 @@ if __name__ == '__main__':
                 # print(T_plan, current_p,  next_p)
 
                 distance = abs(trajectory_plan[next_idx].x-trajectory_plan[idx].x) + abs(trajectory_plan[next_idx].y-trajectory_plan[idx].y) + abs(trajectory_plan[next_idx].z-trajectory_plan[idx].z)
+                sum = 0
+                for ll in range(len(trajectory_plan)):
+                    sum += pri_grid_known[trajectory_plan[ll].x][trajectory_plan[ll].y][trajectory_plan[ll].z]
+                    # print("now", trajectory_plan[ll])
+                print("\033[94mThe sum of privacy of pre22_trajectory_plan: \033[0m", sum)
+
                 ## have enough time for planning
                 if T_plan >= distance:
                     # 开始寻路
                     start1 = time.time()
+                    replantime += 1
                     aStar = AStar(occ_grid, pri_grid_known, grid, privacy_sum_known, current_p, next_p, [1], T_plan, threat_list)
                     # print("current_p, next_p", current_p,next_p)
+                    sum = 0
+                    for ll in range(len(trajectory_plan)):
+                        sum += pri_grid_known[trajectory_plan[ll].x][trajectory_plan[ll].y][trajectory_plan[ll].z]
+                        # print("now", trajectory_plan[ll])
+                    print("\033[94mThe sum of privacy of pre_trajectory_plan: \033[0m", sum)
 
                     #print('\033[94m finding solution for local planning... \033[0m')
                     trajectory_optimal = aStar.start()
@@ -525,8 +536,8 @@ if __name__ == '__main__':
                     if trajectory_optimal == None:
                         print('\033[94mNo solution for local planning... \033[0m')
                         print()
-                        for kk in range(idx + 1, next_idx + 1):
-                            trajectory_plan[kk].ca = 1
+                        #for kk in range(idx + 1, next_idx + 1):
+                        #    trajectory_plan[kk].ca = 1
 
                     else:
                         print("The length of local planning: ", len(trajectory_optimal))
@@ -540,6 +551,12 @@ if __name__ == '__main__':
                         now_trajectory = first_part + trajectory_optimal + following_part
                         for m in range(idx+1, next_idx+1):
                             print("original， The No.", m, " step: ", trajectory_plan[m])
+                            if (trajectory_plan[m]!=trajectory_optimal[m-idx-1]):
+                                break
+                            if m == next_idx:
+                                #print("replantime--")
+                                replantime -= 1 ## 排除重复规划的相同路径 0620
+
 
                         print("The length of now plan is: ", len(trajectory_optimal))
                         for m in range(len(trajectory_optimal)):
@@ -549,21 +566,7 @@ if __name__ == '__main__':
                         for m in range(len(now_trajectory)):
                             print("The No.", m, " step: ", now_trajectory[m])
                         print()
-                        """
-                        for ll in range(idx+1):
-                            temp = Point(trajectory_plan[ll].x, trajectory_plan[ll].y,
-                                 trajectory_plan[ll].z, trajectory_plan[ll].ca)
-                            now_trajectory.append(temp)
 
-                        for ll in range(0, len(trajectory_optimal)):
-                            temp = Point(trajectory_optimal[ll].x,trajectory_optimal[ll].y,trajectory_optimal[ll].z,trajectory_optimal[ll].ca)
-                            now_trajectory.append(temp)
-
-
-                        for ll in range(next_idx+1,len(trajectory_plan)):
-                            temp = Point(trajectory_plan[ll].x,trajectory_plan[ll].y,trajectory_plan[ll].z,trajectory_plan[ll].ca)
-                            now_trajectory.append(temp)
-                        """
 
                         trajectory_plan = copy.deepcopy(now_trajectory)
                         print("The UAV would move a step: ")
@@ -571,25 +574,26 @@ if __name__ == '__main__':
                         print("The next point: ", trajectory_plan[idx+1])
                         print("The index of next point: ", idx+1, "\n")
                 # turn off camera never exist
-                else:
-                    print("sensor reconfigured for the next points in the path!!!")
-                    for kk in range(idx+1, next_idx+1):
-                        trajectory_plan[kk].ca = 1
+                #else:
+                #    print("sensor reconfigured for the next points in the path!!!")
+                #    for kk in range(idx+1, next_idx+1):
+                #        trajectory_plan[kk].ca = 1
                 sum = 0
                 cam_off = 0
                 for ll in range(len(trajectory_plan)):
                     sum += pri_grid_known[trajectory_plan[ll].x][trajectory_plan[ll].y][trajectory_plan[ll].z]
                     cam_off += trajectory_plan[ll].ca
                     # print("now", trajectory_plan[ll])
-                # print("The length of now_trajectory_plan: ", len(trajectory_plan), sum, cam_off)
+                print("\033[94mThe length of now_trajectory_plan: \033[0m", len(trajectory_plan))
+                print("\033[94mThe sum of privacy of now_trajectory_plan: \033[0m", sum)
 
                 current_f = sum + len(trajectory_plan) + cam_off
 
                 # print("fitness", current_f)
 
-            elif pri_grid_known[trajectory_plan[next_idx].x][trajectory_plan[next_idx].y][trajectory_plan[next_idx].z] > 0:
-                trajectory_plan[next_idx].ca = 1
-                print("change sensor configuration for next point")
+            #elif pri_grid_known[trajectory_plan[next_idx].x][trajectory_plan[next_idx].y][trajectory_plan[next_idx].z] > 0:
+            #    trajectory_plan[next_idx].ca = 1
+            #    print("change sensor configuration for next point")
 
         time_step += 1
         idx = idx + 1
@@ -602,18 +606,31 @@ if __name__ == '__main__':
     path_grid2 = copy.deepcopy(occ_grid)
     sum = 0
     num_ca = 0
+    num_intruder = 0
     for point in trajectory_plan:
         if point.ca == 0:
             path_grid2[point.x][point.y][point.z] = 7
         else:
             path_grid2[point.x][point.y][point.z] = 10
             num_ca += 1
-        sum += pri_grid_known[point.x][point.y][point.z]
+        sum += pri_grid[point.x][point.y][point.z] * math.exp(-(point.ca))
+        if pri_grid[point.x][point.y][point.z] > 0:
+            num_intruder += 1
         # print(point, pri_grid_known[point.x][point.y][point.z])
-    # print("---------------------- \n", len(trajectory_plan),sum,num_ca)
+    print("\033[94mFitness for replanned path:\033[0m \n ", len(trajectory_plan)-1, sum, num_ca, num_intruder)
     # 再次显示地图
+    sum = 0
+    num_ca = 0
+    num_intruder = 0
+    for point in trajectory_ref:
+        sum += pri_grid[point.x][point.y][point.z] * math.exp(-(point.ca))
+        num_ca += point.ca
+        # print(point, pri_grid_known[point.x][point.y][point.z])
+        if pri_grid[point.x][point.y][point.z] > 0:
+            num_intruder += 1
+    print("\033[94m Fitness for reference path:\033[0m \n", len(trajectory_ref)-1, sum, num_ca, num_intruder)
 
-    print(path_grid2, sum)
+    #print(path_grid2, sum)
     print("---------------------------------")
     print("The last plan is finished!")
     print("The length of last plan is: ", len(trajectory_plan))
@@ -622,5 +639,19 @@ if __name__ == '__main__':
     end = time.time()
     dtime = end - starttime
     print("程序运行时间：%.8s s" % dtime)
-    grid_visualization(occ_grid, starting_point, end_point, trajectory_plan, trajectory_ref)
+    print("\033[94m Replan times: \033[0m", replantime)
+    #grid_visualization(occ_grid, starting_point, end_point, trajectory_plan, trajectory_ref)
 
+    np.save(file="occ_grid_known.npy", arr=occ_grid_known)
+    b = np.load(file="occ_grid_known.npy")
+    for m in range(grid_x):
+        print("The value of x: ", m)
+        print(b[m])
+
+    plan_path = np.zeros((len(trajectory_plan),4))
+    for i in range(len(trajectory_plan)):
+        plan_path[i] = [trajectory_plan[i].x,trajectory_plan[i].y, trajectory_plan[i].z, trajectory_plan[i].ca]
+
+    np.save(file="plan_path.npy", arr=plan_path)
+    c = np.load(file="plan_path.npy")
+    print(c, len(c))
