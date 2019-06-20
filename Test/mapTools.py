@@ -210,7 +210,7 @@ def hasprivacythreat2 (position, occ_grid_known, occ_grid, pri_grid_known, priva
                         if occ_grid_known[m][n][l] != occ_grid[m][n][l]:
                             flag = 1
                             occ_grid_known[m][n][l] = occ_grid[m][n][l]
-                        threat_list.append([m,n,l])
+                            threat_list.append([m,n,l])
                         # update global risk model
     pri_grid_known, privacy_sum_known = privacy_init(grid_x, grid_y, grid_z, occ_grid_known, privacy_radius)
     return flag, occ_grid_known, pri_grid_known, privacy_sum_known, threat_list

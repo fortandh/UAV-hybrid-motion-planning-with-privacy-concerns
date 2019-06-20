@@ -234,8 +234,8 @@ class AStar:
             privacy_threat = (self.prigrid[minF.point.x + offsetX][minF.point.y + offsetY][minF.point.z + offsetZ] * math.exp(-(cam)))
         cam_off = cam
 
-        # delta_g = step + privacy_threat
-        delta_g = step + cam_off + privacy_threat
+        delta_g = step + privacy_threat
+        #delta_g = step + cam_off + privacy_threat
 
         # 如果不在openList中，就把它加入openlist
         # currentNode = self.pointInOpenList(currentPoint)
@@ -401,9 +401,15 @@ if __name__ == '__main__':
     #                                                                                       safety_threshold,
     #                                                                                       privacy_threshold,
     #                                                                                       privacy_radius)
+    #occ_grid = np.load(file="occ_grid.npy")
+    #occ_grid_known, pri_grid_known, privacy_sum_known = initialmapwithknowngrid(grid_x, grid_y, grid_z, privacy_threshold, privacy_radius, occ_grid)
+    #pri_grid, privacy_sum = privacy_init(grid_x, grid_y, grid_z, occ_grid, privacy_radius)
+
     occ_grid = np.load(file="occ_grid.npy")
-    occ_grid_known, pri_grid_known, privacy_sum_known = initialmapwithknowngrid(grid_x, grid_y, grid_z, privacy_threshold, privacy_radius, occ_grid)
     pri_grid, privacy_sum = privacy_init(grid_x, grid_y, grid_z, occ_grid, privacy_radius)
+    occ_grid_known = np.load(file="occ_grid_known.npy")
+    pri_grid_known, privacy_sum_known = privacy_init(grid_x, grid_y, grid_z, occ_grid_known, privacy_radius)
+
     print("The occ_grid is: ")
     for m in range(grid_x):
         print("The value of x: ", m)
@@ -412,7 +418,7 @@ if __name__ == '__main__':
     aStar = AStar(occ_grid, pri_grid_known, grid, privacy_sum_known, starting_point, end_point, [1], T_budget, threat_list, 0)
     # 开始寻路
     #trajectory_ref = aStar.start()
-    trajectory_ref_temp = np.load(file="refpath.npy")
+    trajectory_ref_temp = np.load(file="reference_path.npy")
     trajectory_ref = []
     for i in range (len(trajectory_ref_temp)):
         point = Point(int(trajectory_ref_temp[i][0]),int(trajectory_ref_temp[i][1]),int(trajectory_ref_temp[i][2]),int(trajectory_ref_temp[i][3]))
@@ -479,7 +485,7 @@ if __name__ == '__main__':
 
         # take picture
         # update occ_grid, pri_grid
-        flag, occ_grid_known, pri_grid_known, privacy_sum_known, threat_list = hasprivacythreat2 (current_p, occ_grid_known, occ_grid, pri_grid_known, privacy_sum_known, viewradius)
+        flag, occ_grid_known, pri_grid_known, privacy_sum_known, threat_list = hasprivacythreat2 (current_p, occ_grid_known, occ_grid, pri_grid_known, privacy_sum_known, config)
         print("The length of privacy_list: ", len(threat_list))
         for m in range(len(threat_list)):
             print(threat_list[m])
@@ -559,6 +565,16 @@ if __name__ == '__main__':
                         first_part = trajectory_plan[0:idx+1]
                         following_part = trajectory_plan[next_idx+1:]
                         now_trajectory = first_part + trajectory_optimal + following_part
+
+                        for m in range(idx+1, next_idx+1):
+                            print("original， The No.", m, " step: ", trajectory_plan[m])
+                            if (trajectory_plan[m]!=trajectory_optimal[m-idx-1]):
+                                break
+                            if m == next_idx:
+                                print("replantime--")
+                                replantime -= 1 ## 排除重复规划的相同路径 0620
+
+
                         for m in range(idx+1, next_idx+1):
                             print("original， The No.", m, " step: ", trajectory_plan[m])
 
@@ -616,8 +632,8 @@ if __name__ == '__main__':
         idx = idx + 1
         print("The UAV has finished this step.\n")
 
-        if idx == 4:
-            print("the debug begin!")
+        #if idx == 4:
+        #    print("the debug begin!")
         # print("next point", idx,time_step, len(trajectory_plan))
     # print(occ_grid)
     path_grid2 = copy.deepcopy(occ_grid)
@@ -663,3 +679,27 @@ if __name__ == '__main__':
     print("\033[94m Replan times: \033[0m", replantime)
     #grid_visualization(occ_grid, starting_point, end_point, trajectory_plan, trajectory_ref)
 
+
+    np.save(file="occ_grid_known.npy", arr=occ_grid_known)
+    b = np.load(file="occ_grid_known.npy")
+    for m in range(grid_x):
+        print("The value of x: ", m)
+        print(b[m])
+
+    plan_path = np.zeros((len(trajectory_plan),4))
+    for i in range(len(trajectory_plan)):
+        plan_path[i] = [trajectory_plan[i].x,trajectory_plan[i].y, trajectory_plan[i].z, trajectory_plan[i].ca]
+
+    np.save(file="plan_path_Hybrid.npy", arr=plan_path)
+    c = np.load(file="plan_path_Hybrid.npy")
+    print(c, len(c))
+
+    exploration_rate = 0
+
+    for i in range(grid_x):
+        for j in range(grid_y):
+            for k in range(grid_z):
+                if occ_grid_known[i][j][k]!=occ_grid[i][j][k]:
+                    exploration_rate += 1
+    exploration_rate =  1 -  exploration_rate/(grid_x * grid_y * grid_z * privacy_threshold)
+    print("\033[94m exploration rate: \033[0m", exploration_rate)
