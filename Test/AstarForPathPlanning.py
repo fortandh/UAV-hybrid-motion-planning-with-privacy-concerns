@@ -35,7 +35,7 @@ class AStar:
         def __lt__(self, other):
             return self.g + self.h < other.g + other.h
 
-    def __init__(self, occ_grid, pri_grid, grid, sum_privacy, startPoint, endPoint, passTag, Tbudget, threat_list):
+    def __init__(self, occ_grid, pri_grid, grid, sum_privacy, startPoint, endPoint, passTag, Tbudget, threat_list, Toptimal):
         """
         构造AStar算法的启动条件
         :param map3d: Array2D类型的寻路数组
@@ -55,6 +55,7 @@ class AStar:
         self.sumpri = sum_privacy
         self.ideallength = abs(endPoint.x - startPoint.x) + abs(endPoint.y - startPoint.y) + abs(endPoint.z - startPoint.z)
         self.Tbudget = Tbudget
+        self.Toptimal = Toptimal
         # print("Time limit: ", self.Tbudget)
         self.threatlist = threat_list
         self.timestep = 0
@@ -209,11 +210,14 @@ class AStar:
         if self.sumpri == 0:
             privacy_threat = 0
         else:
-            privacy_threat = (self.prigrid[minF.point.x + offsetX][minF.point.y + offsetY][minF.point.z + offsetZ] * math.exp(-(cam)))
+            privacy_threat = self.prigrid[minF.point.x + offsetX][minF.point.y + offsetY][minF.point.z + offsetZ] * math.exp(-(cam) + 1/2)
         cam_off = cam
 
-       # delta_g = step + privacy_threat
-        delta_g = step + privacy_threat
+        #delta_g = step + privacy_threat
+        time_punishment = 1
+        if minF.step + 1 > self.Toptimal:
+            time_punishment = math.exp((minF.step + 1 -self.Toptimal)/(self.Tbudget-self.Toptimal))
+        delta_g = time_punishment * step + privacy_threat
 
         # 如果不在openList中，就把它加入openlist
         # currentNode = self.pointInOpenList(currentPoint)
@@ -355,6 +359,7 @@ if __name__ == '__main__':
     starting_point = config.starting_point
     end_point = config.end_point
     T_budget = config.T_budget
+    T_optimal = config.T_optimal
     viewradius = config.viewradius
     Kca = config.Kca
     threat_list = []
@@ -472,7 +477,7 @@ if __name__ == '__main__':
             for j in range (idx+1, len(trajectory_plan)):
                 sigma_privacy = 0
                 for k in range (j,len(trajectory_plan)):
-                    sigma_privacy += pri_grid_known[trajectory_plan[k].x][trajectory_plan[k].y][trajectory_plan[k].z]* math.exp(-(trajectory_plan[k].ca))
+                    sigma_privacy += pri_grid_known[trajectory_plan[k].x][trajectory_plan[k].y][trajectory_plan[k].z]* math.exp(-(trajectory_plan[k].ca) + 1/2)
                 if sigma_privacy == 0:
                     next_p = trajectory_plan[j]
                     next_idx = j
@@ -522,7 +527,7 @@ if __name__ == '__main__':
                     # 开始寻路
                     start1 = time.time()
                     replantime += 1
-                    aStar = AStar(occ_grid, pri_grid_known, grid, privacy_sum_known, current_p, next_p, [1], T_plan, threat_list)
+                    aStar = AStar(occ_grid, pri_grid_known, grid, privacy_sum_known, current_p, next_p, [1], T_plan, threat_list, T_optimal)
                     # print("current_p, next_p", current_p,next_p)
                     sum = 0
                     for ll in range(len(trajectory_plan)):
@@ -615,7 +620,7 @@ if __name__ == '__main__':
         else:
             path_grid2[point.x][point.y][point.z] = 10
             num_ca += 1
-        sum += pri_grid[point.x][point.y][point.z] * math.exp(-(point.ca))
+        sum += pri_grid[point.x][point.y][point.z] * math.exp(-(point.ca) + 1/2)
         if pri_grid[point.x][point.y][point.z] > 0:
             num_intruder += 1
         # print(point, pri_grid_known[point.x][point.y][point.z])
@@ -625,7 +630,7 @@ if __name__ == '__main__':
     num_ca = 0
     num_intruder = 0
     for point in trajectory_ref:
-        sum += pri_grid[point.x][point.y][point.z] * math.exp(-(point.ca))
+        sum += pri_grid[point.x][point.y][point.z] * math.exp(-(point.ca) +1/2 )
         num_ca += point.ca
         # print(point, pri_grid_known[point.x][point.y][point.z])
         if pri_grid[point.x][point.y][point.z] > 0:

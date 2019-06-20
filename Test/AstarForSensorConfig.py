@@ -34,7 +34,7 @@ class AStar:
         def __lt__(self, other):
             return self.g + self.h < other.g + other.h
 
-    def __init__(self, occ_grid, pri_grid, grid, sum_privacy, startPoint, endPoint, passTag, Tbudget):
+    def __init__(self, occ_grid, pri_grid, grid, sum_privacy, startPoint, endPoint, passTag, Tbudget, Toptimal):
         """
         构造AStar算法的启动条件
         :param map3d: Array2D类型的寻路数组
@@ -54,6 +54,7 @@ class AStar:
         self.sumpri = sum_privacy
         self.ideallength = abs(endPoint.x - startPoint.x) + abs(endPoint.y - startPoint.y) + abs(endPoint.z - startPoint.z)
         self.Tbudget = Tbudget
+        self.Toptimal = Toptimal
         # print("Time limit: ", self.Tbudget)
         #self.threatlist = threat_list
         self.timestep = 0
@@ -204,10 +205,14 @@ class AStar:
         # 设置单位花费
         # step = 1/self.ideallength
         step = 1
-        privacy_threat = (self.prigrid[minF.point.x + offsetX][minF.point.y + offsetY][minF.point.z + offsetZ] * math.exp(-(cam)))
+        privacy_threat = (self.prigrid[minF.point.x + offsetX][minF.point.y + offsetY][minF.point.z + offsetZ] * math.exp(-(cam)) + 1/2)
 
-       # delta_g = step + privacy_threat
-        delta_g = step + privacy_threat
+        time_punishment = 1
+        if minF.step + 1 > self.Toptimal:
+            time_punishment = math.exp((minF.step + 1 - self.Toptimal) / (self.Tbudget - self.Toptimal))
+        delta_g = time_punishment * step + privacy_threat
+
+        #delta_g = step + privacy_threat
 
         # 如果不在openList中，就把它加入openlist
         # currentNode = self.pointInOpenList(currentPoint)
@@ -357,6 +362,7 @@ if __name__ == '__main__':
     starting_point = config.starting_point
     end_point = config.end_point
     T_budget = config.T_budget
+    T_optimal = config.T_optimal
     viewradius = config.viewradius
     Kca = config.Kca
     threat_list = []
@@ -499,7 +505,7 @@ if __name__ == '__main__':
         else:
             path_grid2[point.x][point.y][point.z] = 10
             num_ca += 1
-            sum += pri_grid[point.x][point.y][point.z] * math.exp(-(point.ca))
+        sum += pri_grid[point.x][point.y][point.z] * math.exp(-(point.ca) + 1/2 )
         if pri_grid[point.x][point.y][point.z] > 0:
             num_intruder += 1
         # print(point, pri_grid_known[point.x][point.y][point.z])
@@ -509,7 +515,7 @@ if __name__ == '__main__':
     num_ca = 0
     num_intruder = 0
     for point in trajectory_ref:
-        sum += pri_grid[point.x][point.y][point.z] * math.exp(-(point.ca))
+        sum += pri_grid[point.x][point.y][point.z] * math.exp(-(point.ca) + 1/2)
         num_ca += point.ca
         if pri_grid[point.x][point.y][point.z] > 0:
             num_intruder += 1
@@ -538,8 +544,8 @@ if __name__ == '__main__':
     for i in range(len(trajectory_plan)):
         plan_path[i] = [trajectory_plan[i].x, trajectory_plan[i].y, trajectory_plan[i].z, trajectory_plan[i].ca]
 
-    np.save(file="plan_path.npy", arr=plan_path)
-    c = np.load(file="plan_path.npy")
+    np.save(file="plan_path_SC.npy", arr=plan_path)
+    c = np.load(file="plan_path_SC.npy")
     print(c, len(c))
 
     exploration_rate = 0
