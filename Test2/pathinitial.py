@@ -9,10 +9,9 @@ from Configure import configure
 import math
 import sys
 from heapq import heappush
-from log import Log
 
-
-log = Log(__name__).getlog()
+# from log import Log
+# log = Log(__name__).getlog()
 
 sys.setrecursionlimit(1000000)
 
@@ -330,7 +329,7 @@ class AStar:
             # 判断是否终止
             point = self.endPointInCloseList()
             if point:  # 如果终点在关闭表中，就返回结果
-                print("The plan found!")
+                # print("The plan found!")
                 cPoint = point
                 pathList = []
                 while True:
@@ -348,7 +347,7 @@ class AStar:
 
 
 
-def PathInitial(config, reinitial_flag):
+def PathInitial(config, reinitial_flag, iteration, log):
     grid_x = config.grid_x
     grid_y = config.grid_y
     grid_z = config.grid_z
@@ -369,7 +368,9 @@ def PathInitial(config, reinitial_flag):
     reinitial_flag = reinitial_flag
 
     # 全局信息，用作baseline
-    occ_grid = np.load(file="occ_grid.npy")
+    occ_grid_name = "occ_grid" + str(iteration) + ".npy"
+    occ_grid = np.load(file=occ_grid_name)
+    # occ_grid = np.load(file="occ_grid.npy")
     pri_grid, privacy_sum = privacy_init(grid_x, grid_y, grid_z, occ_grid, privacy_radius)
 
     if reinitial_flag:
@@ -378,7 +379,9 @@ def PathInitial(config, reinitial_flag):
                                                                                     occ_grid)
     else:
         # 本局地图信息，更新后的
-        occ_grid_known = np.load(file="occ_grid_known.npy")
+        occ_grid_known_name = "occ_grid_known" + str(iteration) + ".npy"
+        occ_grid_known = np.load(file=occ_grid_known_name)
+        # occ_grid_known = np.load(file="occ_grid_known.npy")
         pri_grid_known, privacy_sum_known = privacy_init(grid_x, grid_y, grid_z, occ_grid_known, privacy_radius)
 
     # print("The occ_grid is: ")
@@ -401,8 +404,10 @@ def PathInitial(config, reinitial_flag):
     for i in range(len(trajectory_ref)):
         refpath[i] = [trajectory_ref[i].x, trajectory_ref[i].y, trajectory_ref[i].z, trajectory_ref[i].ca]
 
-    np.save(file="reference_path.npy", arr=refpath)
-    b = np.load(file="reference_path.npy")
+    reference_path_name = "reference_path" + str(iteration) + ".npy"
+    np.save(file=reference_path_name, arr=refpath)
+    # np.save(file="reference_path.npy", arr=refpath)
+    # b = np.load(file="reference_path.npy")
     # print(b, len(b))
 
     sum_ref = 0
@@ -425,9 +430,12 @@ def PathInitial(config, reinitial_flag):
         planpath = np.zeros((len(trajectory_plan), 4))
         for i in range(len(trajectory_plan)):
             planpath[i] = [trajectory_plan[i].x, trajectory_plan[i].y, trajectory_plan[i].z, trajectory_plan[i].ca]
-        np.save(file="plan_path.npy", arr=planpath)
-        c = np.load(file="plan_path.npy")
-        print(c, len(c))
+
+        plan_path_name = "plan_path" + str(iteration) + ".npy"
+        np.save(file=plan_path_name, arr=planpath)
+        # np.save(file="plan_path.npy", arr=planpath)
+        # c = np.load(file="plan_path.npy")
+        # print(c, len(c))
         sum_plan = 0
         num_ca = 0
         num_intruder_plan = 0
@@ -440,8 +448,10 @@ def PathInitial(config, reinitial_flag):
         log.info("Initial_planning: Sum of privacy threat of best trajectory: %f" % sum_plan)
 
     if reinitial_flag:
-        np.save(file="occ_grid_known.npy", arr=occ_grid_known)
-        c = np.load(file="occ_grid_known.npy")
+        occ_grid_known_name = "occ_grid_known" + str(iteration) + ".npy"
+        np.save(file=occ_grid_known_name, arr=occ_grid_known)
+        # np.save(file="occ_grid_known.npy", arr=occ_grid_known)
+        # c = np.load(file="occ_grid_known.npy")
         # for m in range(grid_x):
         #    print("The value of x: ", m)
         #    print(c[m])

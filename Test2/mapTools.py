@@ -278,7 +278,7 @@ def map_of_city (grid_x, grid_y, grid_z, start, end, safety_threshold, privacy_t
 #                                      , 0.05)
 #print (occ_grid, num_obstacle)
 
-def SaveMap (config):
+def SaveMap (config, iteration):
     grid_x = config.grid_x
     grid_y = config.grid_y
     grid_z = config.grid_z
@@ -300,13 +300,19 @@ def SaveMap (config):
                                                                                            safety_threshold,
                                                                                            privacy_threshold,
                                                                                            privacy_radius)
-    np.save(file="occ_grid.npy", arr=occ_grid)
-    b = np.load(file="occ_grid.npy")
+    occ_grid_name = "occ_grid" + str(iteration)+".npy"
+    np.save(file=occ_grid_name, arr=occ_grid)
+    b = np.load(file=occ_grid_name)
+    # np.save(file="occ_grid.npy", arr=occ_grid)
+    # b = np.load(file="occ_grid.npy")
     for m in range(grid_x):
         print("The value of x: ", m)
         print(b[m])
-    np.save(file="occ_grid_known.npy", arr=occ_grid_known)
-    c = np.load(file="occ_grid_known.npy")
+
+    occ_grid_known_name = "occ_grid_known" + str(iteration) + ".npy"
+    np.save(file=occ_grid_known_name, arr=occ_grid_known)
+    # np.save(file="occ_grid_known.npy", arr=occ_grid_known)
+    # c = np.load(file="occ_grid_known.npy")
     # for m in range(grid_x):
     #     print("The value of x: ", m)
     #     print(c[m])

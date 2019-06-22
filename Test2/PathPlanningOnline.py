@@ -13,10 +13,8 @@ import math
 import sys
 from heapq import heappush
 
-from log import Log
-
-
-log = Log(__name__).getlog()
+# from log import Log
+# log = Log(__name__).getlog()
 
 sys.setrecursionlimit(1000000)
 
@@ -347,7 +345,7 @@ class AStar:
                 return None
 
 
-def Astar_Path_Planning_online (config):
+def Astar_Path_Planning_online (config, iteration, log):
 
     grid_x = config.grid_x
     grid_y = config.grid_y
@@ -367,11 +365,13 @@ def Astar_Path_Planning_online (config):
     Kca = config.Kca
     threat_list = []
 
-
-
-    occ_grid = np.load(file="occ_grid.npy")
+    occ_grid_name = "occ_grid" + str(iteration) + ".npy"
+    occ_grid = np.load(file=occ_grid_name)
+    # occ_grid = np.load(file="occ_grid.npy")
     pri_grid, privacy_sum = privacy_init(grid_x, grid_y, grid_z, occ_grid, privacy_radius)
-    occ_grid_known = np.load(file="occ_grid_known.npy")
+    occ_grid_known_name = "occ_grid_known" + str(iteration) + ".npy"
+    occ_grid_known = np.load(file=occ_grid_known_name)
+    # occ_grid_known = np.load(file="occ_grid_known.npy")
     pri_grid_known, privacy_sum_known = privacy_init(grid_x, grid_y, grid_z, occ_grid_known, privacy_radius)
 
     # print("The occ_grid is: ")
@@ -383,7 +383,9 @@ def Astar_Path_Planning_online (config):
     # 开始寻路
     #trajectory_ref = aStar.start()
     #trajectory_ref_temp = np.load(file="plan_path.npy")
-    trajectory_ref_temp = np.load(file="reference_path.npy")
+    reference_path_name = "reference_path" + str(iteration) + ".npy"
+    trajectory_ref_temp = np.load(file=reference_path_name)
+    # trajectory_ref_temp = np.load(file="reference_path.npy")
 
     trajectory_ref = []
     for i in range (len(trajectory_ref_temp)):
@@ -554,16 +556,18 @@ def Astar_Path_Planning_online (config):
                         first_part = trajectory_plan[0:idx+1]
                         following_part = trajectory_plan[next_idx+1:]
                         now_trajectory = first_part + trajectory_optimal + following_part
-                        for m in range(idx+1, next_idx+1):
+
+                        replan_flag = 0
+                        for m in range(idx + 1, next_idx + 1):
                             # print("original， The No.", m, " step: ", trajectory_plan[m])
-                            if (next_idx-idx) != len(trajectory_optimal):
-                                # replantime -= 1
+                            if (len(trajectory_optimal) != (next_idx - idx)):
+                                replan_flag = 1
                                 break
-                            if (trajectory_plan[m]!=trajectory_optimal[m-idx-1]):
-                                break
-                            if m == next_idx:
-                                #print("replantime--")
-                                replantime -= 1 ## 排除重复规划的相同路径 0620
+                            if (trajectory_plan[m] != trajectory_optimal[m - idx - 1]):
+                                replan_flag = 1
+
+                        if replan_flag:
+                            replantime += 1  ## 排除重复规划的相同路径 0620
 
 
                         # print("The length of now plan is: ", len(trajectory_optimal))
@@ -648,9 +652,9 @@ def Astar_Path_Planning_online (config):
     log.info("Online_Path_Planning: Times of intrusion of preplanned trajectory: %d" % num_intruder_ref)
 
     #print(path_grid2, sum)
-    print("---------------------------------")
-    print("The last plan is finished!")
-    print("The length of last plan is: ", len(trajectory_plan))
+    # print("---------------------------------")
+    # print("The last plan is finished!")
+    # print("The length of last plan is: ", len(trajectory_plan))
     # for m in range(len(trajectory_plan)):
     #     print("The No.", m, " step: ", trajectory_plan[m])
     end = time.time()
@@ -660,8 +664,10 @@ def Astar_Path_Planning_online (config):
     log.info("Online_Path_Planning: Replanning times: %d" % replantime)
     #grid_visualization(occ_grid, starting_point, end_point, trajectory_plan, trajectory_ref)
 
-    np.save(file="occ_grid_known.npy", arr=occ_grid_known)
-    b = np.load(file="occ_grid_known.npy")
+    occ_grid_known_name = "occ_grid_known" + str(iteration) + ".npy"
+    np.save(file=occ_grid_known_name, arr=occ_grid_known)
+    # np.save(file="occ_grid_known.npy", arr=occ_grid_known)
+    # b = np.load(file="occ_grid_known.npy")
     # for m in range(grid_x):
     #     print("The value of x: ", m)
     #     print(b[m])
@@ -670,8 +676,10 @@ def Astar_Path_Planning_online (config):
     for i in range(len(trajectory_plan)):
         plan_path[i] = [trajectory_plan[i].x,trajectory_plan[i].y, trajectory_plan[i].z, trajectory_plan[i].ca]
 
-    np.save(file="plan_path_PP.npy", arr=plan_path)
-    c = np.load(file="plan_path_pp.npy")
+    plan_path_PP_name = "plan_path_PP" + str(iteration) + ".npy"
+    np.save(file=plan_path_PP_name, arr=plan_path)
+    # np.save(file="plan_path_PP.npy", arr=plan_path)
+    # c = np.load(file="plan_path_pp.npy")
     # print(c, len(c))
 
     exploration_rate = 0

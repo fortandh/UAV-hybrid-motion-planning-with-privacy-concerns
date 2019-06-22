@@ -4,7 +4,7 @@ from Point2 import Point
 #from Point import Point
 
 class configure:
-    def __init__(self, grid_x, grid_y, grid_z, safety_threshold, privacy_threshold, privacy_radius, starting_point, end_point, viewradius):
+    def __init__(self, grid_x, grid_y, grid_z, safety_threshold, privacy_threshold, privacy_radius, starting_point, end_point, viewradius, alpha, beta):
         self.grid_x = grid_x
         self.grid_y = grid_y
         self.grid_z = grid_z
@@ -20,7 +20,8 @@ class configure:
 
         self.starting_point = starting_point
         self.end_point = end_point
-        self.T_budget = (4/3)*(abs(self.end_point.x-self.starting_point.x) + abs(self.end_point.y-self.starting_point.y) + abs(self.end_point.z-self.starting_point.z))
-        self.T_optimal = self.T_budget * 0.9
+
+        self.T_budget = alpha*(abs(self.end_point.x-self.starting_point.x) + abs(self.end_point.y-self.starting_point.y) + abs(self.end_point.z-self.starting_point.z))
+        self.T_optimal = beta * (abs(self.end_point.x-self.starting_point.x) + abs(self.end_point.y-self.starting_point.y) + abs(self.end_point.z-self.starting_point.z))
         self.viewradius = viewradius
         self.Kca = 10
