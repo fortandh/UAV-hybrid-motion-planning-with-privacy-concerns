@@ -9,6 +9,10 @@ from Configure import configure
 import math
 import sys
 from heapq import heappush
+from log import Log
+
+
+log = Log(__name__).getlog()
 
 sys.setrecursionlimit(1000000)
 
@@ -344,6 +348,106 @@ class AStar:
 
 
 
+def PathInitial(config, reinitial_flag):
+    grid_x = config.grid_x
+    grid_y = config.grid_y
+    grid_z = config.grid_z
+    grid = config.grid
+    safety_threshold = config.safety_threshold
+    privacy_threshold = config.privacy_threshold
+    # privacy_radius = 1 ##
+    privacy_radius = config.privacy_radius
+
+    # drone parameter
+    starting_point = config.starting_point
+    end_point = config.end_point
+    T_budget = config.T_budget
+    T_optimal = config.T_optimal
+    viewradius = config.viewradius
+    Kca = config.Kca
+    threat_list = []
+    reinitial_flag = reinitial_flag
+
+    # 全局信息，用作baseline
+    occ_grid = np.load(file="occ_grid.npy")
+    pri_grid, privacy_sum = privacy_init(grid_x, grid_y, grid_z, occ_grid, privacy_radius)
+
+    if reinitial_flag:
+        occ_grid_known, pri_grid_known, privacy_sum_known = initialmapwithknowngrid(grid_x, grid_y, grid_z,
+                                                                                    privacy_threshold, privacy_radius,
+                                                                                    occ_grid)
+    else:
+        # 本局地图信息，更新后的
+        occ_grid_known = np.load(file="occ_grid_known.npy")
+        pri_grid_known, privacy_sum_known = privacy_init(grid_x, grid_y, grid_z, occ_grid_known, privacy_radius)
+
+    # print("The occ_grid is: ")
+    # for m in range(grid_x):
+    #     print("The value of x: ", m)
+    #     print(occ_grid[m])
+    starttime = time.time()
+    aStar1 = AStar(occ_grid_known, pri_grid_known, grid, privacy_sum_known, starting_point, end_point, [1], T_budget,
+                   threat_list, T_optimal)
+    trajectory_ref = aStar1.start()
+
+    endtime = time.time()
+    dtime = endtime - starttime
+    # print("程序运行时间：%.8s s" % dtime)
+    trajectory_ref = [starting_point] + trajectory_ref
+
+    refpath = np.zeros((len(trajectory_ref), 4))
+    planpath = np.zeros((len(trajectory_ref), 4))
+
+    for i in range(len(trajectory_ref)):
+        refpath[i] = [trajectory_ref[i].x, trajectory_ref[i].y, trajectory_ref[i].z, trajectory_ref[i].ca]
+
+    np.save(file="reference_path.npy", arr=refpath)
+    b = np.load(file="reference_path.npy")
+    # print(b, len(b))
+
+    sum_ref = 0
+    sum_plan = 0
+    num_ca = 0
+    num_intruder = 0
+    for point in trajectory_ref:
+        sum_ref += pri_grid[point.x][point.y][point.z] * math.exp(-(point.ca) + 1 / 2)
+        # if pri_grid[point.x][point.y][point.z] > 0:
+        # print(point, pri_grid_known[point.x][point.y][point.z])
+    print("\033[94m Fitness for reference path:\033[0m \n", len(trajectory_ref) - 1, sum_ref, num_ca)
+    log.info("Initial_planning: Length of reference trajectory: %d" %(len(trajectory_ref) - 1))
+    log.info("Initial_planning: Sum of privacy threat of reference trajectory: %f" %sum_ref)
+
+    if reinitial_flag:
+        aStar2 = AStar(occ_grid, pri_grid, grid, privacy_sum, starting_point, end_point, [1], T_budget, threat_list,
+                       T_optimal)
+        trajectory_plan = aStar2.start()
+        trajectory_plan = [starting_point] + trajectory_plan
+        planpath = np.zeros((len(trajectory_plan), 4))
+        for i in range(len(trajectory_plan)):
+            planpath[i] = [trajectory_plan[i].x, trajectory_plan[i].y, trajectory_plan[i].z, trajectory_plan[i].ca]
+        np.save(file="plan_path.npy", arr=planpath)
+        c = np.load(file="plan_path.npy")
+        print(c, len(c))
+        sum_plan = 0
+        num_ca = 0
+        num_intruder_plan = 0
+        for point in trajectory_plan:
+            sum_plan += pri_grid[point.x][point.y][point.z] * math.exp(-(point.ca) + 1 / 2)
+            # if pri_grid[point.x][point.y][point.z] > 0:
+        # print(point, pri_grid_known[point.x][point.y][point.z])
+        print("\033[94m Fitness for replanned path:\033[0m \n", len(trajectory_plan) - 1, sum_plan, num_ca)
+        log.info("Initial_planning: Length of best trajectory: %d" % (len(trajectory_plan) - 1))
+        log.info("Initial_planning: Sum of privacy threat of best trajectory: %f" % sum_plan)
+
+    if reinitial_flag:
+        np.save(file="occ_grid_known.npy", arr=occ_grid_known)
+        c = np.load(file="occ_grid_known.npy")
+        # for m in range(grid_x):
+        #    print("The value of x: ", m)
+        #    print(c[m])
+
+    return refpath, len(refpath)-1, sum_ref, planpath, len(planpath)-1, sum_plan
+
 if __name__ == '__main__':
 
     config = configure()
@@ -392,7 +496,7 @@ if __name__ == '__main__':
 
     endtime = time.time()
     dtime = endtime - starttime
-    print("程序运行时间：%.8s s" % dtime)
+    # print("程序运行时间：%.8s s" % dtime)
     trajectory_ref = [starting_point] + trajectory_ref
 
     refpath = np.zeros((len(trajectory_ref),4))
