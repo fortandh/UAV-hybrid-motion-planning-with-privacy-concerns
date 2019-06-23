@@ -2,11 +2,11 @@
 add camera into searching space
 """
 
-from Point2 import Point
+from point import Point
 import numpy as np
 from mapTools import hasprivacythreat, initialmap
 import copy
-from Configure import configure
+from configure import configure
 import math
 
 class AStar:

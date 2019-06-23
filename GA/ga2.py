@@ -3,7 +3,7 @@
 from GA.point import Point
 from GA.quickSort import quick_sort
 from GA.gridVisualization import grid_visualization
-from Dijistra.mapTools import privacy_init, map_generate
+from GA.mapTools import privacy_init, map_generate
 import copy
 
 path = []

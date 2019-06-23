@@ -2,10 +2,10 @@
 add camera into searching space
 """
 import time
-from Point2 import Point
+from point import Point
 from mapTools import initialmap, hasprivacythreat2
 import copy
-from Configure import configure
+from configure import configure
 import math
 from quickSort import quick_sort
 from gridVisualization import grid_visualization

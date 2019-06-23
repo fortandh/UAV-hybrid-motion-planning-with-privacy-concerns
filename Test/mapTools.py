@@ -6,14 +6,22 @@ import numpy as np
 from random import randint
 import math
 import copy
-from Point2 import Point
-from Configure import configure
+
+from configure import Configure
 
 
-
-# 隐私部分的初始化
 def privacy_init(grid_x, grid_y, grid_z, occ_grid, radius):
-    #print(radius[0])
+    """根据整个地图生成隐私点分布图
+
+    Args:
+        grid_x, grid_y, grid_z: 空间的长宽高
+        occ_grid: 三维空间
+        radius: 隐私点不同等级的半径列表
+
+    Returns:
+        pri_grid: 隐私影响范围分布图
+        sum_privacy: 隐私影响总和
+    """
     pri_grid = np.zeros((grid_x, grid_y, grid_z))
     for i in range(grid_x):
         for j in range(grid_y):
@@ -21,7 +29,7 @@ def privacy_init(grid_x, grid_y, grid_z, occ_grid, radius):
                 # 这里隐私等级分为三级，数字越大，级别越高
                 if (occ_grid[i][j][k] == 2) or (occ_grid[i][j][k] == 3) or (occ_grid[i][j][k] == 4):
                     # different level of privacy restricted area has different affecting radius:
-                    temp = int (occ_grid[i][j][k])
+                    temp = int(occ_grid[i][j][k])
                     r = radius[temp-2]
                     min_x = max(i - r, 0)
                     min_x = math.floor(min_x)
@@ -60,6 +68,19 @@ def privacy_init(grid_x, grid_y, grid_z, occ_grid, radius):
 
 
 def map_generate(grid_x, grid_y, grid_z, start, end, safety_threshold, privacy_threshold):
+    """生成整张地图
+
+    Args:
+        grid_x, grid_y, grid_z: 空间的长宽高
+        start: 起始点坐标
+        end: 终点坐标
+        safety_threshold: 障碍物比例
+        privacy_threshold: 隐私点比例
+
+    Returns:
+        occ_grid: 整个3维空间
+        obstacle_num: 障碍物的数量
+    """
     map_volume = grid_x * grid_y * grid_z
     obstacle_num = map_volume * safety_threshold
     restricted_area_num = map_volume * privacy_threshold
@@ -87,51 +108,32 @@ def map_generate(grid_x, grid_y, grid_z, start, end, safety_threshold, privacy_t
     return occ_grid, obstacle_num
 
 
-# import global map
-def initialmap (grid_x, grid_y, grid_z, starting_point, end_point, safety_threshold, privacy_threshold, privacy_radius):
-    #print("start")
-    occ_grid, obstacle_num = map_generate(grid_x, grid_y, grid_z, starting_point, end_point, safety_threshold, privacy_threshold)
-    """ for testing
-    occ_grid = np.array([[[7, 1, 1, 0, 0.],
- [3, 0, 0, 4, 0.],
- [4, 0, 1, 0, 1.],
- [1, 0, 0, 3, 1.],
- [0, 0, 1, 0, 1.]],
-[[1, 1, 0, 0, 0.],
- [4, 0, 1, 1, 0.],
- [0, 2, 0, 1, 0.],
- [1, 0, 0, 1, 1.],
- [0, 3, 0, 0, 0.]],
+def map_init(grid_x, grid_y, grid_z, starting_point, end_point, safety_threshold, privacy_threshold, privacy_radius):
+    """初始化地图
 
-[[0, 1, 1, 1, 0.],
- [0, 0, 1, 0, 0.],
- [0, 0, 0, 0, 1.],
- [1, 0, 0, 4, 1.],
- [0, 1, 0, 1, 0.]],
+    Args:
+        grid_x, grid_y, grid_z: 空间的长宽高
+        starting_point: 起始点坐标
+        end_point: 终点坐标
+        safety_threshold: 障碍物比例
+        privacy_threshold: 隐私点比例
+        privacy_radius: 隐私点影响半径
 
-[[1, 0, 4, 1, 0.],
- [0, 0, 0, 0, 1.],
- [0, 0, 0, 0, 0.],
- [0, 0, 4, 2, 1.],
- [1, 1, 1, 0, 0.]],
-
-[[0, 4, 0, 0, 0.],
- [1, 1, 0, 0, 0.],
- [0, 1, 0, 1, 1.],
- [1, 0, 0, 0, 3.],
- [0, 0, 0, 0, 8.]],
-],
-
-)
-    obstacle_num = 0
-    #"""
-    pri_grid, privacy_sum = privacy_init(grid_x, grid_y, grid_z, occ_grid, privacy_radius)
+    Returns:
+        occ_grid: 整个3维空间
+        obstacle_num: 障碍物的数量
+        occ_grid_known: 无人机所知的空间
+        pri_grid_known: 无人机所知的隐私影响图
+        privacy_sum_known: 隐私影响总和
+    """
+    occ_grid, obstacle_num = map_generate(grid_x, grid_y, grid_z, starting_point, end_point,
+                                          safety_threshold, privacy_threshold)
 
     occ_grid_known = copy.deepcopy(occ_grid)
 
-    for i in range (grid_x):
-        for j in range (grid_y):
-            for k in range (grid_z):
+    for i in range(grid_x):
+        for j in range(grid_y):
+            for k in range(grid_z):
                 if occ_grid[i][j][k] == 2 or occ_grid[i][j][k] == 3 or occ_grid[i][j][k] == 4:
                     occ_grid_known[i][j][k] = 0
                     # print (occ_grid_known[i][j][k], i,j,k)
@@ -139,9 +141,21 @@ def initialmap (grid_x, grid_y, grid_z, starting_point, end_point, safety_thresh
     # print(occ_grid, obstacle_num, occ_grid_known, pri_grid_known, privacy_sum_known,pri_grid,privacy_sum)
     return occ_grid, obstacle_num, occ_grid_known, pri_grid_known, privacy_sum_known
 
-def initialmapwithknowngrid (grid_x, grid_y, grid_z, privacy_threshold, privacy_radius, occ_grid):
 
-    pri_grid, privacy_sum = privacy_init(grid_x, grid_y, grid_z, occ_grid, privacy_radius)
+def environment_init(grid_x, grid_y, grid_z, privacy_radius, occ_grid):
+    """环境的初始化
+
+    Args:
+        grid_x, grid_y, grid_z: 空间的长宽高
+        safety_threshold: 障碍物比例
+        privacy_radius: 隐私点影响半径
+        occ_grid: 整个3维空间
+
+    Returns:
+        occ_grid_known: 无人机所知的空间
+        pri_grid_known: 无人机所知的隐私影响图
+        privacy_sum_known: 隐私影响总和
+    """
 
     occ_grid_known = copy.deepcopy(occ_grid)
 
@@ -156,13 +170,11 @@ def initialmapwithknowngrid (grid_x, grid_y, grid_z, privacy_threshold, privacy_
     return occ_grid_known, pri_grid_known, privacy_sum_known
 
 
-
-
-def hasprivacythreat (position, occ_grid_known, occ_grid, pri_grid_known, privacy_sum_known, viewradius = 2):
+def privacy_threat_detect(position, occ_grid_known, occ_grid, config):
     x = position.x
     y = position.y
     z = position.z
-    r = viewradius
+    r = config.view_radius
     flag = 0
     min_x = max(x - r, 0)
     max_x = min(x + r, grid_x - 1)
@@ -173,10 +185,8 @@ def hasprivacythreat (position, occ_grid_known, occ_grid, pri_grid_known, privac
     for m in range(min_x, max_x + 1):
         for n in range(min_y, max_y + 1):
             for l in range(min_z, max_z + 1):
-                if occ_grid[m][n][l] == 2 or occ_grid[m][n][l] == 3 or occ_grid[m][n][l] == 4 :
+                if occ_grid[m][n][l] == 2 or occ_grid[m][n][l] == 3 or occ_grid[m][n][l] == 4:
                     dis = np.sqrt(np.power((x - m), 2) + np.power((y - n), 2) + np.power((z - l), 2))
-                    ## different level of privacy threat has different radius to affect
-                    #if dis <= r[occ_grid[m][n][l]-2]:
                     if dis <= r:
                         flag = 1
                         # if occ_grid_known[m][n][l] != occ_grid[m][n][l]:
@@ -280,7 +290,7 @@ def map_of_city (grid_x, grid_y, grid_z, start, end, safety_threshold, privacy_t
 
 
 if __name__ == '__main__':
-    config = configure()
+    config = Configure()
 
     grid_x = config.grid_x
     grid_y = config.grid_y
@@ -295,15 +305,13 @@ if __name__ == '__main__':
     starting_point = config.starting_point
     end_point = config.end_point
     T_budget = config.T_budget
-    viewradius = config.viewradius
-    Kca = config.Kca
+    view_radius = config.view_radius
 
-
-    occ_grid, obstacle_num, occ_grid_known, pri_grid_known, privacy_sum_known = initialmap(grid_x, grid_y, grid_z,
-                                                                                           starting_point, end_point,
-                                                                                           safety_threshold,
-                                                                                           privacy_threshold,
-                                                                                           privacy_radius)
+    occ_grid, obstacle_num, occ_grid_known, pri_grid_known, privacy_sum_known = map_init(grid_x, grid_y, grid_z,
+                                                                                         starting_point, end_point,
+                                                                                         safety_threshold,
+                                                                                         privacy_threshold,
+                                                                                         privacy_radius)
     np.save(file="occ_grid.npy", arr=occ_grid)
     b = np.load(file="occ_grid.npy")
     for m in range(grid_x):
