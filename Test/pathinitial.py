@@ -1,3 +1,6 @@
+#!/usr/bin/python
+# -*- coding:utf-8 -*-
+
 import time
 from Point2 import Point
 import numpy as np
@@ -384,37 +387,24 @@ if __name__ == '__main__':
         print(occ_grid[m])
     starttime = time.time()
     aStar1 = AStar(occ_grid_known, pri_grid_known, grid, privacy_sum_known, starting_point, end_point, [1], T_budget, threat_list, T_optimal)
-    # 开始寻路
-
     trajectory_ref = aStar1.start()
 
-    aStar2 = AStar(occ_grid, pri_grid, grid, privacy_sum, starting_point, end_point, [1], T_budget, threat_list, T_optimal)
-    # 开始寻路
-
-    trajectory_plan = aStar2.start()
 
     endtime = time.time()
     dtime = endtime - starttime
     print("程序运行时间：%.8s s" % dtime)
     trajectory_ref = [starting_point] + trajectory_ref
-    trajectory_plan = [starting_point] + trajectory_plan
 
     refpath = np.zeros((len(trajectory_ref),4))
-    planpath = np.zeros((len(trajectory_plan),4))
 
     for i in range(len(trajectory_ref)):
         refpath[i]=[trajectory_ref[i].x, trajectory_ref[i].y, trajectory_ref[i].z, trajectory_ref[i].ca]
 
-    for i in range(len(trajectory_plan)):
-        planpath[i] = [trajectory_plan[i].x,trajectory_plan[i].y, trajectory_plan[i].z, trajectory_plan[i].ca]
 
     np.save(file="reference_path.npy", arr=refpath)
     b = np.load(file="reference_path.npy")
     print(b, len(b))
 
-    np.save(file="plan_path.npy",arr=planpath)
-    c = np.load(file="plan_path.npy")
-    print(c,len(c))
 
     sum = 0
     num_ca = 0
@@ -425,14 +415,26 @@ if __name__ == '__main__':
         # print(point, pri_grid_known[point.x][point.y][point.z])
     print("\033[94m Fitness for reference path:\033[0m \n", len(trajectory_ref) - 1, sum, num_ca)
 
-    sum = 0
-    num_ca = 0
-    num_intruder = 0
-    for point in trajectory_plan:
-        sum += pri_grid[point.x][point.y][point.z] * math.exp(-(point.ca) + 1/2)
-        #if pri_grid[point.x][point.y][point.z] > 0:
-    # print(point, pri_grid_known[point.x][point.y][point.z])
-    print("\033[94m Fitness for replanned path:\033[0m \n", len(trajectory_plan) - 1, sum, num_ca)
+
+    if reinitial_flag:
+        aStar2 = AStar(occ_grid, pri_grid, grid, privacy_sum, starting_point, end_point, [1], T_budget, threat_list, T_optimal)
+        trajectory_plan = aStar2.start()
+        trajectory_plan = [starting_point] + trajectory_plan
+        planpath = np.zeros((len(trajectory_plan),4))
+        for i in range(len(trajectory_plan)):
+            planpath[i] = [trajectory_plan[i].x,trajectory_plan[i].y, trajectory_plan[i].z, trajectory_plan[i].ca]
+        np.save(file="plan_path.npy",arr=planpath)
+        c = np.load(file="plan_path.npy")
+        print(c,len(c))
+        sum = 0
+        num_ca = 0
+        num_intruder = 0
+        for point in trajectory_plan:
+            sum += pri_grid[point.x][point.y][point.z] * math.exp(-(point.ca) + 1/2)
+            #if pri_grid[point.x][point.y][point.z] > 0:
+        # print(point, pri_grid_known[point.x][point.y][point.z])
+        print("\033[94m Fitness for replanned path:\033[0m \n", len(trajectory_plan) - 1, sum, num_ca)
+
 
     if reinitial_flag:
         np.save(file="occ_grid_known.npy", arr=occ_grid_known)

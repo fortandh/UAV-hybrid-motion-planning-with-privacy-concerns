@@ -1,3 +1,5 @@
+#!/usr/bin/python
+# -*- coding:utf-8 -*-
 # map generation tools
 
 import numpy as np
@@ -275,6 +277,45 @@ def map_of_city (grid_x, grid_y, grid_z, start, end, safety_threshold, privacy_t
 #occ_grid, num_obstacle = map_of_city (10, 10, 10, Point(0, 0, 0), Point(9, 0, 9), 0.1
 #                                      , 0.05)
 #print (occ_grid, num_obstacle)
+
+def SaveMap (config, iteration):
+    grid_x = config.grid_x
+    grid_y = config.grid_y
+    grid_z = config.grid_z
+    grid = config.grid
+    safety_threshold = config.safety_threshold
+    privacy_threshold = config.privacy_threshold
+    # privacy_radius = 1 ##
+    privacy_radius = config.privacy_radius
+
+    # drone parameter
+    starting_point = config.starting_point
+    end_point = config.end_point
+    T_budget = config.T_budget
+    viewradius = config.viewradius
+    Kca = config.Kca
+
+    occ_grid, obstacle_num, occ_grid_known, pri_grid_known, privacy_sum_known = initialmap(grid_x, grid_y, grid_z,
+                                                                                           starting_point, end_point,
+                                                                                           safety_threshold,
+                                                                                           privacy_threshold,
+                                                                                           privacy_radius)
+    occ_grid_name = "occ_grid" + str(iteration)+".npy"
+    np.save(file=occ_grid_name, arr=occ_grid)
+    b = np.load(file=occ_grid_name)
+    # np.save(file="occ_grid.npy", arr=occ_grid)
+    # b = np.load(file="occ_grid.npy")
+    for m in range(grid_x):
+        print("The value of x: ", m)
+        print(b[m])
+
+    occ_grid_known_name = "occ_grid_known" + str(iteration) + ".npy"
+    np.save(file=occ_grid_known_name, arr=occ_grid_known)
+    # np.save(file="occ_grid_known.npy", arr=occ_grid_known)
+    # c = np.load(file="occ_grid_known.npy")
+    # for m in range(grid_x):
+    #     print("The value of x: ", m)
+    #     print(c[m])
 
 
 if __name__ == '__main__':

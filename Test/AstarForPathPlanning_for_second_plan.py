@@ -1,3 +1,5 @@
+#!/usr/bin/python
+# -*- coding:utf-8 -*-
 """
 add camera into searching space
 """
@@ -474,17 +476,26 @@ if __name__ == '__main__':
             # p_threat, h_impact = privacy_modeling()
             # update occ_grid, pri_grid
 
+            # for j in range (idx+1, len(trajectory_plan)):
+            #     sigma_privacy = 0
+            #     for k in range (j,len(trajectory_plan)):
+            #         sigma_privacy += pri_grid_known[trajectory_plan[k].x][trajectory_plan[k].y][trajectory_plan[k].z]* math.exp(-(trajectory_plan[k].ca) + 1/2)
+            #     if sigma_privacy == 0:
+            #         next_p = trajectory_plan[j]
+            #         next_idx = j
+            #         break
+            #     elif k == len(trajectory_plan)-1 :
+            #         next_p = trajectory_plan[-1]
+            #         next_idx = len(trajectory_plan)-1
+
+            ## 0622
             for j in range (idx+1, len(trajectory_plan)):
-                sigma_privacy = 0
-                for k in range (j,len(trajectory_plan)):
-                    sigma_privacy += pri_grid_known[trajectory_plan[k].x][trajectory_plan[k].y][trajectory_plan[k].z]* math.exp(-(trajectory_plan[k].ca) + 1/2)
-                if sigma_privacy == 0:
+                if (pri_grid_known[trajectory_plan[j].x][trajectory_plan[j].y][trajectory_plan[j].z]* math.exp(-(trajectory_plan[j].ca) + 1/2)) > 0:
                     next_p = trajectory_plan[j]
                     next_idx = j
+                else:
                     break
-                elif k == len(trajectory_plan)-1 :
-                    next_p = trajectory_plan[-1]
-                    next_idx = len(trajectory_plan)-1
+
             # print(next_idx,next_p)
             print("---------------------------------")
             print("The UAV produce a temporory plan!")
