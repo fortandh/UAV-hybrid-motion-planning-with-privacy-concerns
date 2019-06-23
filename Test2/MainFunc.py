@@ -15,7 +15,7 @@ from HybridPlanningOnline import Astar_Hybrid_Planning_online
 from SensorConfigOnline import Astar_Sensor_Config_online
 
 from log import Log
-log = Log(__name__, log_cate="results_0623" ).getlog()
+log = Log(__name__, log_cate="results_0623-2" ).getlog()
 
 for i in range (1000):
     iteration = i
