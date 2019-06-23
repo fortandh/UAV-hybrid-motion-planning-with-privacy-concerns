@@ -525,7 +525,8 @@ def Astar_Hybrid_Planning_online(config, iteration, log):
             if next_idx != idx + 1:  # no need for motion planning
 
                 """删除冗余路径"""
-                if current_p == next_p:
+                if current_p.x == next_p.x and current_p.y == next_p.y and current_p.z == next_p.z: # 0623
+                # if current_p == next_p:
                     # print("delete redundant route", current_p, next_p)
                     first_part = trajectory_plan[:idx]
                     next_part = trajectory_plan[next_idx + 1:]
