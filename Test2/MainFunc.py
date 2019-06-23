@@ -17,12 +17,13 @@ from SensorConfigOnline import Astar_Sensor_Config_online
 from log import Log
 log = Log(__name__, log_cate="results_0623-2" ).getlog()
 
-for i in range (1000):
+for i in range (10):
     iteration = i
     grid_x = 10 + int(i/100)
     grid_y = 10 + int(i/100)
     grid_z = 10 + int(i/100)
 
+    # safety_threshold, privacy_threshold 固定 0.3 最佳
     safety_threshold_list = [0.2, 0.3, 0.4]
     safety_threshold = safety_threshold_list[i%3]
     privacy_threshold_list = [0.05, 0.1, 0.15]
@@ -48,6 +49,7 @@ for i in range (1000):
     starting_point = Point(x1, y1, z1, 0)
     end_point = Point(x2, y2, z2, 0)
 
+    # alpha ,beta 固定
     alpha_list = [4/2, 5/3, 6/4, 7/5, 8/6, 9/7, 10/8, 11/9, 12/10, 13/11]
     alpha = alpha_list[i % 10]
     beta_list = [3/2, 4/3, 5/4, 6/5, 7/6, 8/7, 9/8, 10/9, 11/10, 12/11]
@@ -118,50 +120,3 @@ for i in range (1000):
         if num > 30:
             log.info("Error to be trapped!")
             break
-
-# grid_x = 10
-# grid_y = 10
-# grid_z = 10
-# safety_threshold = 0.3
-# privacy_threshold = 0.1
-# privacy_radius = [0.5, 1, 2]
-# # drone parameter
-# starting_point = Point(0, 0, 0, 0)
-# end_point = Point(9, 9, 9, 0)
-# viewradius = 2
-# Kca = 10
-# iteration = 1
-# log = Log(__name__, log_cate="results"+str(iteration)).getlog()
-# config = configure(grid_x, grid_y, grid_z, safety_threshold, privacy_threshold, privacy_radius, starting_point, end_point, viewradius)
-#
-# SaveMap (config, iteration)
-#
-# reinitial_flag = 1
-# refpath, len_refpath, sum_ref_initial, planpath, len_planpath, sum_plan_last = PathInitial(config, reinitial_flag, iteration, log )
-#
-#
-# while sum_ref_initial != sum_plan_last :
-#     refpath, len_refpath, sum_ref, planpath, len_planpath, sum_plan = PathInitial(config, reinitial_flag, iteration, log)
-#     sum_online_plan, len_trajectory_plan, num_intruder_plan, sum_pre, len_trajectory_ref, num_intruder_ref = Astar_Hybrid_Planning_online (config, iteration, log )
-#     reinitial_flag = 0
-#     sum_ref_initial = sum_ref
-#
-#
-# reinitial_flag = 1
-# refpath, len_refpath, sum_ref_initial, planpath, len_planpath, sum_plan_last = PathInitial(config, reinitial_flag, iteration, log )
-#
-# while sum_ref_initial != sum_plan_last :
-#     reinitial_flag = 0
-#     refpath, len_refpath, sum_ref, planpath, len_planpath, sum_plan = PathInitial(config, reinitial_flag, iteration, log )
-#     sum_online_plan, len_trajectory_plan, num_intruder_plan, sum_pre, len_trajectory_ref, num_intruder_ref = Astar_Hybrid_Planning_online (config, iteration, log )
-#     sum_ref_initial = sum_ref
-#
-# reinitial_flag = 1
-# refpath, len_refpath, sum_ref_initial, planpath, len_planpath, sum_plan_last = PathInitial(config, reinitial_flag, iteration, log )
-#
-# while sum_ref_initial != sum_plan_last :
-#     reinitial_flag = 0
-#     refpath, len_refpath, sum_ref, planpath, len_planpath, sum_plan = PathInitial(config, reinitial_flag, iteration, log )
-#     sum_online_plan, len_trajectory_plan, num_intruder_plan, sum_pre, len_trajectory_ref, num_intruder_ref = Astar_Path_Planning_online (config, iteration, log )
-#     sum_ref_initial = sum_ref
-#

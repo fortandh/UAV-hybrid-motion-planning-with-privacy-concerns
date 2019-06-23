@@ -1,4 +1,4 @@
-from Point import Point
+from point import Point
 from mapTools import privacy_init, map_generate
 from Astar import AStar
 import copy

@@ -1,4 +1,4 @@
-from Point2 import Point
+from point import Point
 #from Point import Point
 
 class configure:

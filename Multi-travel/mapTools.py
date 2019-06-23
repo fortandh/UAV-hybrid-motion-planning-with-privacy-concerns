@@ -4,8 +4,8 @@ import numpy as np
 from random import randint
 import math
 import copy
-from Point2 import Point
-from Configure import configure
+from point import Point
+from configure import configure
 
 
 

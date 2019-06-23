@@ -2,10 +2,10 @@
 # -*- coding:utf-8 -*-
 
 import time
-from Point2 import Point
+from point import Point
 import numpy as np
 from mapTools import privacy_init, hasprivacythreat2, initialmapwithknowngrid
-from Configure import configure
+from configure import configure
 import math
 import sys
 from heapq import heappush

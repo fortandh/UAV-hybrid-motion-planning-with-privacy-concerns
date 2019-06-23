@@ -1,14 +1,17 @@
 #!/usr/bin/python
 # -*- coding:utf-8 -*-
 
-import time
-from Point2 import Point
-import numpy as np
-from mapTools import privacy_init, hasprivacythreat2, initialmapwithknowngrid
-from Configure import configure
 import math
 import sys
+import time
+import numpy as np
 from heapq import heappush
+
+from point import Point
+from mapTools import privacy_init, hasprivacythreat2, initialmapwithknowngrid
+from configure import Configure
+
+
 
 sys.setrecursionlimit(1000000)
 
@@ -343,7 +346,6 @@ class AStar:
                 return None
 
 
-
 if __name__ == '__main__':
 
     config = configure()
@@ -363,7 +365,6 @@ if __name__ == '__main__':
     T_budget = config.T_budget
     T_optimal = config.T_optimal
     viewradius = config.viewradius
-    Kca = config.Kca
     threat_list = []
     reinitial_flag = 0
     # 全局信息，用作baseline
@@ -386,6 +387,7 @@ if __name__ == '__main__':
         print("The value of x: ", m)
         print(occ_grid[m])
     starttime = time.time()
+    # 算法生成原始路径
     aStar1 = AStar(occ_grid_known, pri_grid_known, grid, privacy_sum_known, starting_point, end_point, [1], T_budget, threat_list, T_optimal)
     trajectory_ref = aStar1.start()
 
@@ -417,6 +419,7 @@ if __name__ == '__main__':
 
 
     if reinitial_flag:
+        # 算法生成原始路径
         aStar2 = AStar(occ_grid, pri_grid, grid, privacy_sum, starting_point, end_point, [1], T_budget, threat_list, T_optimal)
         trajectory_plan = aStar2.start()
         trajectory_plan = [starting_point] + trajectory_plan

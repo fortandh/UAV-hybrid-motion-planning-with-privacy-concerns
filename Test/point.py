@@ -1,8 +1,13 @@
 #!/usr/bin/python
 # -*- coding:utf-8 -*-
-class Point:
-    """
-    表示一个点
+
+
+class Point(object):
+    """表示一个点
+
+    Attributes:
+        x, y, z: 坐标
+        ca: camera的状态，0代表开，1代表关
     """
 
     def __init__(self, x, y, z, ca):
@@ -18,3 +23,6 @@ class Point:
 
     def __str__(self):
         return "x:" + str(self.x) + ",y:" + str(self.y) + ",z:" + str(self.z) + ",ca:" + str(self.ca)
+
+    def __hash__(self):
+        return hash(str(self))

@@ -5,11 +5,11 @@ privacy_threshold = 0.01
 10*10*10
 """
 
-from Point import Point
+from point import Point
 import numpy as np
 from mapTools import hasprivacythreat, initialmap
 import copy
-from Configure import configure
+from configure import configure
 
 class AStar:
     """
