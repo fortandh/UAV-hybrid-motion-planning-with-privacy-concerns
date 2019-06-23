@@ -15,6 +15,7 @@ from HybridPlanningOnline import Astar_Hybrid_Planning_online
 from SensorConfigOnline import Astar_Sensor_Config_online
 
 from log import Log
+log = Log(__name__, log_cate="results_0623" ).getlog()
 
 for i in range (1000):
     iteration = i
@@ -53,7 +54,7 @@ for i in range (1000):
     beta = beta_list[i % 10]
     viewradius = 2
     Kca = 10
-    log = Log(__name__, log_cate="results" + str(iteration)).getlog()
+
     config = configure(grid_x, grid_y, grid_z, safety_threshold, privacy_threshold, privacy_radius, starting_point,
                        end_point, viewradius, alpha, beta)
     T_budget = alpha * (abs(x1-x2) + abs(y1-y2) + abs(z1-z2))
@@ -70,6 +71,7 @@ for i in range (1000):
     refpath, len_refpath, sum_ref_initial, planpath, len_planpath, sum_plan_last, no_solution_flag = PathInitial(config, reinitial_flag,
                                                                                                iteration, log)
     if no_solution_flag != 1:
+        log.info("Error for no initial solution!")
         continue
     num = 0
     while sum_ref_initial > sum_plan_last:
