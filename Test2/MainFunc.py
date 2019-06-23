@@ -67,14 +67,14 @@ for i in range (1000):
     reinitial_flag = 1
     refpath = []
     planpath = []
-    refpath, len_refpath, sum_ref_initial, planpath, len_planpath, sum_plan_last = PathInitial(config, reinitial_flag,
+    refpath, len_refpath, sum_ref_initial, planpath, len_planpath, sum_plan_last, no_solution_flag = PathInitial(config, reinitial_flag,
                                                                                                iteration, log)
-    if len(refpath) == 0:
+    if no_solution_flag != 1:
         continue
     num = 0
     while sum_ref_initial > sum_plan_last:
         num += 1
-        refpath, len_refpath, sum_ref, planpath, len_planpath, sum_plan = PathInitial(config, reinitial_flag, iteration,
+        refpath, len_refpath, sum_ref, planpath, len_planpath, sum_plan,  no_solution_flag = PathInitial(config, reinitial_flag, iteration,
                                                                                       log)
         sum_online_plan, len_trajectory_plan, num_intruder_plan, sum_pre, len_trajectory_ref, num_intruder_ref = Astar_Hybrid_Planning_online(
             config, iteration, log)
@@ -85,13 +85,13 @@ for i in range (1000):
             break
 
     reinitial_flag = 1
-    refpath, len_refpath, sum_ref_initial, planpath, len_planpath, sum_plan_last = PathInitial(config, reinitial_flag,
+    refpath, len_refpath, sum_ref_initial, planpath, len_planpath, sum_plan_last,  no_solution_flag  = PathInitial(config, reinitial_flag,
                                                                                                iteration, log)
     num = 0
     while sum_ref_initial > sum_plan_last:
         num += 1
         reinitial_flag = 0
-        refpath, len_refpath, sum_ref, planpath, len_planpath, sum_plan = PathInitial(config, reinitial_flag, iteration,
+        refpath, len_refpath, sum_ref, planpath, len_planpath, sum_plan,  no_solution_flag  = PathInitial(config, reinitial_flag, iteration,
                                                                                       log)
         sum_online_plan, len_trajectory_plan, num_intruder_plan, sum_pre, len_trajectory_ref, num_intruder_ref = Astar_Sensor_Config_online(
             config, iteration, log)
@@ -101,14 +101,14 @@ for i in range (1000):
             break
 
     reinitial_flag = 1
-    refpath, len_refpath, sum_ref_initial, planpath, len_planpath, sum_plan_last = PathInitial(config, reinitial_flag,
+    refpath, len_refpath, sum_ref_initial, planpath, len_planpath, sum_plan_last,  no_solution_flag  = PathInitial(config, reinitial_flag,
                                                                                                iteration, log)
 
     num = 0
     while sum_ref_initial > sum_plan_last:
         num += 1
         reinitial_flag = 0
-        refpath, len_refpath, sum_ref, planpath, len_planpath, sum_plan = PathInitial(config, reinitial_flag, iteration,
+        refpath, len_refpath, sum_ref, planpath, len_planpath, sum_plan,  no_solution_flag  = PathInitial(config, reinitial_flag, iteration,
                                                                                       log)
         sum_online_plan, len_trajectory_plan, num_intruder_plan, sum_pre, len_trajectory_ref, num_intruder_ref = Astar_Path_Planning_online(
             config, iteration, log)

@@ -396,7 +396,13 @@ def PathInitial(config, reinitial_flag, iteration, log):
     endtime = time.time()
     dtime = endtime - starttime
     # print("程序运行时间：%.8s s" % dtime)
-    trajectory_ref = [starting_point] + trajectory_ref
+    no_solution_flag = 0
+    if trajectory_ref == None:
+        return 0, 0, 0, 0, 0, 0, no_solution_flag
+    else:
+        trajectory_ref = [starting_point] + trajectory_ref
+        no_solution_flag = 1
+
 
     refpath = np.zeros((len(trajectory_ref), 4))
     planpath = np.zeros((len(trajectory_ref), 4))
@@ -456,7 +462,7 @@ def PathInitial(config, reinitial_flag, iteration, log):
         #    print("The value of x: ", m)
         #    print(c[m])
 
-    return refpath, len(refpath)-1, sum_ref, planpath, len(planpath)-1, sum_plan
+    return refpath, len(refpath)-1, sum_ref, planpath, len(planpath)-1, sum_plan, no_solution_flag
 
 if __name__ == '__main__':
 
