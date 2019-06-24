@@ -2,7 +2,7 @@
 add camera into searching space
 """
 
-from point import Point
+from Support.point import Point
 import numpy as np
 from mapTools import hasprivacythreat, initialmap
 import copy

@@ -2,12 +2,12 @@
 add camera into searching space
 """
 import time
-from point import Point
+from Support.point import Point
 from mapTools import initialmap, hasprivacythreat2
 import copy
 from configure import configure
 import math
-from quickSort import quick_sort
+from Support.quickSort import quick_sort
 from gridVisualization import grid_visualization
 import sys
 sys.setrecursionlimit(1000000)

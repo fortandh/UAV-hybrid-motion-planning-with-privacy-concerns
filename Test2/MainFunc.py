@@ -24,11 +24,14 @@ for i in range (10):
     grid_z = 10 + int(i/100)
 
     # safety_threshold, privacy_threshold 固定 0.3 最佳
-    safety_threshold_list = [0.2, 0.3, 0.4]
-    safety_threshold = safety_threshold_list[i%3]
-    privacy_threshold_list = [0.05, 0.1, 0.15]
-    privacy_threshold = privacy_threshold_list[i % 3]
+    # safety_threshold_list = [0.2, 0.3, 0.4]
+    # safety_threshold = safety_threshold_list[i%3]
+    # privacy_threshold_list = [0.05, 0.1, 0.15]
+    # privacy_threshold = privacy_threshold_list[i % 3]
+    safety_threshold = 0.3
+    privacy_threshold = 0.1
     privacy_radius = [0.5, 1, 2]
+
     # drone parameter
     # x1 = randint(0, grid_x - 1)
     # y1 = randint(0, grid_y - 1)
@@ -50,10 +53,12 @@ for i in range (10):
     end_point = Point(x2, y2, z2, 0)
 
     # alpha ,beta 固定
-    alpha_list = [4/2, 5/3, 6/4, 7/5, 8/6, 9/7, 10/8, 11/9, 12/10, 13/11]
-    alpha = alpha_list[i % 10]
-    beta_list = [3/2, 4/3, 5/4, 6/5, 7/6, 8/7, 9/8, 10/9, 11/10, 12/11]
-    beta = beta_list[i % 10]
+    # alpha_list = [4/2, 5/3, 6/4, 7/5, 8/6, 9/7, 10/8, 11/9, 12/10, 13/11]
+    # alpha = alpha_list[i % 10]
+    # beta_list = [3/2, 4/3, 5/4, 6/5, 7/6, 8/7, 9/8, 10/9, 11/10, 12/11]
+    # beta = beta_list[i % 10]
+    alpha = 5/3
+    beta = 4/3
     viewradius = 2
     Kca = 10
 

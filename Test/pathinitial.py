@@ -7,11 +7,8 @@ import time
 import numpy as np
 from heapq import heappush
 
-from point import Point
-from mapTools import privacy_init, hasprivacythreat2, initialmapwithknowngrid
-from configure import Configure
-
-
+from Support.point import Point
+from mapTools import privacy_init, initialmapwithknowngrid
 
 sys.setrecursionlimit(1000000)
 

@@ -1,10 +1,13 @@
 #!/usr/bin/env python
 # main function
 
-from point import Point
-from GA import geneticAlgorithm as gA
-from GA.quickSort import quick_sort
-from GA.mapTools import privacy_init, map_generate
+import copy
+import sys
+
+from Support.point import Point
+from Algorithms import geneticAlgorithm as gA
+from Support.quickSort import quick_sort
+from mapTools import map_init
 import copy
 import sys
 sys.setrecursionlimit(1000000)
@@ -16,7 +19,7 @@ grid_z = 5
 
 occ_grid = None
 population = 500
-generation = 50
+generation = 5
 selection_size = 50
 
 objectives = []
@@ -35,10 +38,10 @@ Kca = 8
 Tbudget = 100
 
 
-class GA_class(object):
-    """算法类——遗传算法
+class GASolution(object):
+    """遗传算法方案
 
-    这个类实现了遗传算法，主要用来初始规划的生成。
+    该类使用遗传算法完成初始类的生成。
 
     Attributes:
         population: 种群中个体的数量
@@ -50,8 +53,8 @@ class GA_class(object):
         self.generation = generation
         self.selection_size = selection_size
 
-    # 初始化种群
-    def initialsolution(self, occ_grid, pri_grid, privacy_sum, obstacle_num, starting_point, end_point, Tbudget, Kca, grid_x, grid_y, grid_z):
+    def solution_generate(self, occ_grid, pri_grid, privacy_sum, obstacle_num, starting_point, end_point,
+                          Tbudget, Kca, grid_x, grid_y, grid_z):
         """生成初始规划
 
         使用遗传算法来完成初始解的生成。
@@ -65,9 +68,7 @@ class GA_class(object):
             end_point: 终点的坐标
             Tbudget: 路径规划的最长长度
             Kca: 隐私点等级
-            grid_x: 地图中X的最大数值
-            grid_y: 地图中Y的最大数值
-            grid_z: 地图中Z的最大数值
+            grid_x，grid_y，grid_z: 三维空间长宽高
 
         Returns:
             max_f: 最优路径的fitness
@@ -93,7 +94,7 @@ class GA_class(object):
         for i in range(len(paths)):
             # print("The value of i in ga_class: ", i)
             paths[i] = alg.smooth(paths[i])
-        print('\033[94m Smooth method finished.\033[0m')
+        # print('\033[94m Smooth method finished.\033[0m')
 
         for p in range(len(paths)):
             paths[p].fitness = alg.get_fitness(paths[p], occ_grid, pri_grid,
@@ -157,33 +158,33 @@ class GA_class(object):
             return max_f, max_path, max_flag
 
 
-# import global map
-def initialmap (grid_x, grid_y, grid_z, starting_point, end_point, safety_threshold, privacy_threshold, privacy_radius):
-    #print("start")
-    occ_grid, obstacle_num = map_generate(grid_x, grid_y, grid_z, starting_point, end_point, safety_threshold, privacy_threshold)
-    pri_grid, privacy_sum = privacy_init(grid_x, grid_y, grid_z, occ_grid, privacy_radius)
-
-    occ_grid_known = copy.deepcopy(occ_grid)
-
-    for i in range (grid_x):
-        for j in range (grid_y):
-            for k in range (grid_z):
-                if occ_grid[i][j][k] == 2 or occ_grid[i][j][k] == 3 or occ_grid[i][j][k] == 4:
-                    occ_grid_known[i][j][k] = 0
-                    # print (occ_grid_known[i][j][k], i,j,k)
-    pri_grid_known, privacy_sum_known = privacy_init(grid_x, grid_y, grid_z, occ_grid_known, privacy_radius)
-    # print (occ_grid, obstacle_num, occ_grid_known, pri_grid_known, privacy_sum_known)
-    return occ_grid, obstacle_num, occ_grid_known, pri_grid_known, privacy_sum_known
+# # import global map
+# def initialmap (grid_x, grid_y, grid_z, starting_point, end_point, safety_threshold, privacy_threshold, privacy_radius):
+#     #print("start")
+#     occ_grid, obstacle_num = map_generate(grid_x, grid_y, grid_z, starting_point, end_point, safety_threshold, privacy_threshold)
+#     pri_grid, privacy_sum = privacy_init(grid_x, grid_y, grid_z, occ_grid, privacy_radius)
+#
+#     occ_grid_known = copy.deepcopy(occ_grid)
+#
+#     for i in range (grid_x):
+#         for j in range (grid_y):
+#             for k in range (grid_z):
+#                 if occ_grid[i][j][k] == 2 or occ_grid[i][j][k] == 3 or occ_grid[i][j][k] == 4:
+#                     occ_grid_known[i][j][k] = 0
+#                     # print (occ_grid_known[i][j][k], i,j,k)
+#     pri_grid_known, privacy_sum_known = privacy_init(grid_x, grid_y, grid_z, occ_grid_known, privacy_radius)
+#     # print (occ_grid, obstacle_num, occ_grid_known, pri_grid_known, privacy_sum_known)
+#     return occ_grid, obstacle_num, occ_grid_known, pri_grid_known, privacy_sum_known
 
 
 if __name__ == "__main__":
-    occ_grid, obstacle_num, occ_grid_known, pri_grid_known, privacy_sum_known = initialmap(grid_x, grid_y, grid_z, starting_point, end_point, safety_threshold, privacy_threshold, privacy_radius)
+    occ_grid, obstacle_num, occ_grid_known, pri_grid_known, privacy_sum_known = map_init(grid_x, grid_y, grid_z, starting_point, end_point, safety_threshold, privacy_threshold, privacy_radius)
 
     print(occ_grid, obstacle_num, occ_grid_known, pri_grid_known, privacy_sum_known)
 
-    ga = GA_class(population, generation, selection_size)
+    ga = GASolution(population, generation, selection_size)
 
-    max_f, max_path, max_flag = ga.initialsolution(occ_grid, pri_grid_known, privacy_sum_known, obstacle_num, starting_point, end_point, Tbudget, Kca, grid_x, grid_y, grid_z)
+    max_f, max_path, max_flag = ga.solution_generate(occ_grid, pri_grid_known, privacy_sum_known, obstacle_num, starting_point, end_point, Tbudget, Kca, grid_x, grid_y, grid_z)
     print(max_f, max_flag)
 
     for j in range(len(max_path.points)):

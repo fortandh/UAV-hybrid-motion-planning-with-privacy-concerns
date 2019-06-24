@@ -3,7 +3,7 @@ pass restricted areas with the least cost
 
 """
 
-from point import Point
+from Support.point import Point
 import numpy as np
 from mapTools import hasprivacythreat, initialmap
 import copy

@@ -5,7 +5,7 @@ privacy_threshold = 0.01
 10*10*10
 """
 
-from point import Point
+from Support.point import Point
 import numpy as np
 from mapTools import hasprivacythreat, initialmap
 import copy

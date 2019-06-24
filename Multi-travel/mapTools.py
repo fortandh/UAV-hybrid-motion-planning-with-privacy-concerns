@@ -4,7 +4,6 @@ import numpy as np
 from random import randint
 import math
 import copy
-from point import Point
 from configure import configure
 
 

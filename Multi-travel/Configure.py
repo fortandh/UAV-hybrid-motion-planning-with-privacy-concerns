@@ -1,4 +1,4 @@
-from point import Point
+from Support.point import Point
 #from Point import Point
 
 class configure:

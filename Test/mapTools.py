@@ -171,37 +171,26 @@ def environment_init(grid_x, grid_y, grid_z, privacy_radius, occ_grid):
 
 
 def privacy_threat_detect(position, occ_grid_known, occ_grid, config):
+    """检测隐私威胁
+
+    描述了无人机检测到隐私后，更新整个地图以及隐私点影响分布图的过程。
+
+    Args:
+        position: 无人机的位置
+        occ_grid_known: 无人机已知的地图信息
+        occ_grid: 整个3维空间
+        config: 系统配置
+    Returns:
+        flag: 描述是否检测到威胁，1为检测到，0为未检测到
+        occ_grid_known: 无人机已知的地图信息
+        pri_grid_known: 无人机已知的隐私点影响分布的信息
+        privacy_sum_known: 无人机已知的隐私点影响的总和
+        threat_list: 发现的隐私点的集合
+    """
     x = position.x
     y = position.y
     z = position.z
     r = config.view_radius
-    flag = 0
-    min_x = max(x - r, 0)
-    max_x = min(x + r, grid_x - 1)
-    min_y = max(y - r, 0)
-    max_y = min(y + r, grid_y - 1)
-    min_z = max(z - r, 0)
-    max_z = min(z + r, grid_z - 1)
-    for m in range(min_x, max_x + 1):
-        for n in range(min_y, max_y + 1):
-            for l in range(min_z, max_z + 1):
-                if occ_grid[m][n][l] == 2 or occ_grid[m][n][l] == 3 or occ_grid[m][n][l] == 4:
-                    dis = np.sqrt(np.power((x - m), 2) + np.power((y - n), 2) + np.power((z - l), 2))
-                    if dis <= r:
-                        flag = 1
-                        # if occ_grid_known[m][n][l] != occ_grid[m][n][l]:
-                        #     flag = 1
-                        occ_grid_known[m][n][l] = occ_grid[m][n][l]
-                        threat_list.append([m, n, l])
-                        # update global risk model
-    pri_grid_known, privacy_sum_known = privacy_init(grid_x, grid_y, grid_z, occ_grid_known, privacy_radius)
-    return flag, occ_grid_known, pri_grid_known, privacy_sum_known
-
-def hasprivacythreat2 (position, occ_grid_known, occ_grid, pri_grid_known, privacy_sum_known, config):
-    x = position.x
-    y = position.y
-    z = position.z
-    r = config.viewradius
     grid_x = config.grid_x
     grid_y = config.grid_y
     grid_z = config.grid_z
@@ -217,10 +206,8 @@ def hasprivacythreat2 (position, occ_grid_known, occ_grid, pri_grid_known, priva
     for m in range(min_x, max_x + 1):
         for n in range(min_y, max_y + 1):
             for l in range(min_z, max_z + 1):
-                if occ_grid[m][n][l] == 2 or occ_grid[m][n][l] == 3 or occ_grid[m][n][l] == 4 :
+                if occ_grid[m][n][l] == 2 or occ_grid[m][n][l] == 3 or occ_grid[m][n][l] == 4:
                     dis = np.sqrt(np.power((x - m), 2) + np.power((y - n), 2) + np.power((z - l), 2))
-                    ## different level of privacy threat has different radius to affect
-                    #if dis <= r[occ_grid[m][n][l]-2]:
                     if dis <= r:
                         flag = 1
                         # if occ_grid_known[m][n][l] != occ_grid[m][n][l]:
@@ -231,11 +218,25 @@ def hasprivacythreat2 (position, occ_grid_known, occ_grid, pri_grid_known, priva
     pri_grid_known, privacy_sum_known = privacy_init(grid_x, grid_y, grid_z, occ_grid_known, privacy_radius)
     return flag, occ_grid_known, pri_grid_known, privacy_sum_known, threat_list
 
-def map_of_city (grid_x, grid_y, grid_z, start, end, safety_threshold, privacy_threshold):
+
+def map_of_city(grid_x, grid_y, grid_z, start, end, safety_threshold, privacy_threshold):
+    """城市地图生成
+
+    Args:
+        grid_x, grid_y, grid_z: 空间的长宽高
+        start: 起始点坐标
+        end: 终点坐标
+        safety_threshold: 障碍物比例
+        privacy_threshold: 隐私点比例
+
+    Returns:
+        occ_grid: 整个3维空间
+        obstacle_num: 障碍物的数量
+    """
     occ_grid = np.zeros((grid_x, grid_y, grid_z))
     map_volume = grid_x *  grid_z
     building_num = map_volume * safety_threshold
-    #building_num = 3
+    # building_num = 3
     restricted_area_num = map_volume * privacy_threshold
     occ_grid[start.x][start.y][start.z] = 7
     occ_grid[end.x][end.y][end.z] = 8
@@ -243,7 +244,7 @@ def map_of_city (grid_x, grid_y, grid_z, start, end, safety_threshold, privacy_t
     # buildings
     buildings_side = [1,2,3,4]
     buildings_level = [1,2,3,4]
-    num_obstacle = 0
+    obstacle_num = 0
     while i < building_num:
         flag = 0
         x = randint(0, grid_x - 1)
@@ -270,23 +271,18 @@ def map_of_city (grid_x, grid_y, grid_z, start, end, safety_threshold, privacy_t
                 for k in range(z, z + buildingside2):
                     for ll in range(0, buildinglevel):
                         occ_grid[j][ll][k] = 1
-                        num_obstacle +=1
+                        obstacle_num +=1
 
     i = 0
     while i < restricted_area_num:
         x = randint(0, grid_x - 1)
-        #y = randint(0, grid_y - 1)
+        # y = randint(0, grid_y - 1)
         z = randint(0, grid_z - 1)
         if occ_grid[x][0][z] == 0:
             i = i + 1
             occ_grid[x][0][z] = randint(2, 4)
 
-    return occ_grid, num_obstacle
-
-
-#occ_grid, num_obstacle = map_of_city (10, 10, 10, Point(0, 0, 0), Point(9, 0, 9), 0.1
-#                                      , 0.05)
-#print (occ_grid, num_obstacle)
+    return occ_grid, obstacle_num
 
 
 if __name__ == '__main__':
@@ -298,7 +294,7 @@ if __name__ == '__main__':
     grid = config.grid
     safety_threshold = config.safety_threshold
     privacy_threshold = config.privacy_threshold
-    # privacy_radius = 1 ##
+    # privacy_radius = 1
     privacy_radius = config.privacy_radius
 
     # drone parameter
@@ -312,13 +308,13 @@ if __name__ == '__main__':
                                                                                          safety_threshold,
                                                                                          privacy_threshold,
                                                                                          privacy_radius)
-    np.save(file="occ_grid.npy", arr=occ_grid)
-    b = np.load(file="occ_grid.npy")
+    np.save(file="temp\occ_grid.npy", arr=occ_grid)
+    b = np.load(file="temp\occ_grid.npy")
     for m in range(grid_x):
         print("The value of x: ", m)
         print(b[m])
-    np.save(file="occ_grid_known.npy", arr=occ_grid_known)
-    c = np.load(file="occ_grid_known.npy")
+    np.save(file="temp\occ_grid_known.npy", arr=occ_grid_known)
+    c = np.load(file="temp\occ_grid_known.npy")
     for m in range(grid_x):
         print("The value of x: ", m)
         print(c[m])

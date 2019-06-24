@@ -1,5 +1,5 @@
 import time
-from point import Point
+from Support.point import Point
 import numpy as np
 from mapTools import initialmapwithknowngrid
 from configure import configure

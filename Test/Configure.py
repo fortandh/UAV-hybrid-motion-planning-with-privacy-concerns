@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # -*- coding:utf-8 -*-
 
-from point import Point
+from Support.point import Point
 
 
 class Configure(object):
