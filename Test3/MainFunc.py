@@ -20,9 +20,9 @@ from log import Log
 
 
 
-for j in range(10):
+for j in range(1):
     exp_list = [0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1]
-    exploration_rate = exp_list[j]
+    exploration_rate = 1
     log = Log(__name__, log_cate="results_0624_" + str(exploration_rate)).getlog()
     for i in range(1, 11):
         iteration = i
