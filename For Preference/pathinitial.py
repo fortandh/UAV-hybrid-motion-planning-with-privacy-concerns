@@ -246,7 +246,7 @@ class AStar:
         time_punishment = 1
         if minF.step + 1 > self.Toptimal:
             time_punishment = math.exp((minF.step + 1 -self.Toptimal)/(self.Tbudget-self.Toptimal))
-        delta_g = time_punishment * step + privacy_threat * self.preference
+        delta_g = self.preference * time_punishment * step + privacy_threat
 
         # delta_g = step + privacy_threat
 

@@ -112,7 +112,7 @@ class AStar:
             pri1 = self.prigrid[node.point.x][node.point.y][node.point.z]
             dis1 = abs(node.point.x - self.endPoint.x) + abs(node.point.y - self.endPoint.y) + abs(
                             node.point.z - self.endPoint.z)
-            node.h = dis1 +  temp_sum * self.preference
+            node.h = dis1 +  temp_sum
 
             # node.h = dis1 / self.Toptimal  ## 0625
             # node.h = node.h +  temp_sum / self.sumpri * self.preference
@@ -281,7 +281,7 @@ class AStar:
         time_punishment = 1
         if minF.step + 1 > self.Toptimal:
             time_punishment = math.exp((minF.step + 1 - self.Toptimal) / (self.Tbudget - self.Toptimal))
-        delta_g = time_punishment * step + privacy_threat * self.preference
+        delta_g = self.preference * time_punishment * step + privacy_threat
         #delta_g = step + cam_off + privacy_threat
 
         # 如果不在openList中，就把它加入openlist

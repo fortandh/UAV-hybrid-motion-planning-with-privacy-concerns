@@ -248,9 +248,9 @@ class AStar:
         time_punishment = 1
         if minF.step + 1 > self.Toptimal:
             time_punishment = math.exp((minF.step + 1 -self.Toptimal)/(self.Tbudget-self.Toptimal))
-        delta_g = time_punishment * step + privacy_threat * self.preference
+        delta_g = self.preference * time_punishment * step + privacy_threat
 
-        # 如果不在openList中，就把它加入openlist
+            # 如果不在openList中，就把它加入openlist
         # currentNode = self.pointInOpenList(currentPoint)
         # 用一个列表来收集相同的点
         same_point_list = self.the_same_points_in_open_list(currentPoint)
