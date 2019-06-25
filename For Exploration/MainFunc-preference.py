@@ -14,13 +14,19 @@ from PathPlanningOnline import Astar_Path_Planning_online
 from HybridPlanningOnline import Astar_Hybrid_Planning_online
 from SensorConfigOnline import Astar_Sensor_Config_online
 
-from log import Log
-log = Log(__name__, log_cate="results_0625" ).getlog()
 
-for j in range(11):
-    exploration_rate_list = [0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1]
-    exploration_rate = exploration_rate_list[j]
-    for i in range(1, 11):
+from log import Log
+log = Log(__name__, log_cate="results_0625-preference-3" ).getlog()
+
+for j in range(5):
+    preference_list = [50, 100, 200,300,500]
+    preference = preference_list[j]
+    # preference = 100
+# for j in range(11):
+#     exploration_rate_list = [0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1]
+#     exploration_rate = exploration_rate_list[j]
+
+    for i in range(1,11):
         iteration = i
         grid_x = 10 + int(i / 100)
         grid_y = 10 + int(i / 100)
@@ -36,7 +42,8 @@ for j in range(11):
         safety_threshold = 0.3
         privacy_threshold = 0.1
         privacy_radius = [0.5, 1, 2]
-        preference = 1000
+        exploration_rate = 0.2
+        # preference = 1000
         # drone parameter
         # x1 = randint(0, grid_x - 1)
         # y1 = randint(0, grid_y - 1)
@@ -91,20 +98,32 @@ for j in range(11):
             i -= 1
             continue
 
+
+        # Hybrid
         sum_online_plan, len_trajectory_plan, num_intruder_plan, sum_pre, len_trajectory_ref, num_intruder_ref = Astar_Hybrid_Planning_online(
             config, iteration, log)
         refpath, len_refpath, sum_ref, planpath, len_planpath, sum_plan, no_solution_flag = PathInitial(config,
                                                                                                         reinitial_flag,
                                                                                                         iteration,
                                                                                                         log)
+
+        # SC
         sum_online_plan, len_trajectory_plan, num_intruder_plan, sum_pre, len_trajectory_ref, num_intruder_ref = Astar_Sensor_Config_online(
             config, iteration, log)
         refpath, len_refpath, sum_ref, planpath, len_planpath, sum_plan, no_solution_flag = PathInitial(config,
                                                                                                         reinitial_flag,
                                                                                                         iteration,
                                                                                                         log)
+
+        # PP
         sum_online_plan, len_trajectory_plan, num_intruder_plan, sum_pre, len_trajectory_ref, num_intruder_ref = Astar_Path_Planning_online(
             config, iteration, log)
+        # refpath, len_refpath, sum_ref, planpath, len_planpath, sum_plan, no_solution_flag = PathInitial(config,
+        #                                                                                                 reinitial_flag,
+        #                                                                                                 iteration,
+        #                                                                                                 log)
+
+
 
     # num = 0
     # # while sum_ref_initial > sum_plan_last:

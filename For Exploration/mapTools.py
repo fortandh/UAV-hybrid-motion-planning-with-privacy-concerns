@@ -8,6 +8,8 @@ import math
 import copy
 from Point2 import Point
 from Configure import configure
+import time
+import os
 
 
 
@@ -177,6 +179,18 @@ def initialmapwithknowngrid_ratio (grid_x, grid_y, grid_z, privacy_threshold, pr
                     # print (occ_grid_known[i][j][k], i,j,k)
     i = 0
     # 更新已探索的
+    ## 固定地图
+    # for x in range(grid_x):
+    #     for y in range(grid_y):
+    #         for z in range(grid_z):
+    #             if (occ_grid[x][y][z] == 2 or occ_grid[x][y][z] == 3 or occ_grid[x][y][z] == 4) and \
+    #                     occ_grid_known[x][y][z] == 0:
+    #                 if i < occ_grid_know_ratio:
+    #                     occ_grid_known[x][y][z] = occ_grid[x][y][z]
+    #                     i += 1
+
+
+
     while i < occ_grid_know_ratio:
         x = randint(0, grid_x - 1)
         y = randint(0, grid_y - 1)
@@ -271,7 +285,9 @@ def hasprivacythreat2 (position, occ_grid_known, occ_grid, pri_grid_known, priva
                         # if occ_grid_known[m][n][l] != occ_grid[m][n][l]:
                         #     flag = 1
                         occ_grid_known[m][n][l] = occ_grid[m][n][l]
-                        threat_list.append([m, n, l])
+                        if dis <= privacy_radius[int(occ_grid[m][n][l]) - 2]: ##0625
+                            threat_list.append([m, n, l])
+                        # threat_list.append([m, n, l])
                         # update global risk model
     pri_grid_known, privacy_sum_known = privacy_init(grid_x, grid_y, grid_z, occ_grid_known, privacy_radius)
     return flag, occ_grid_known, pri_grid_known, privacy_sum_known, threat_list
@@ -363,11 +379,11 @@ def SaveMap (config, iteration, exploration_rate):
                                                                                                   privacy_radius,
                                                                                                   occ_grid,
                                                                                                   exploration_rate)
-        occ_grid_name = "occ_grid" + ".npy"
+        occ_grid_name = os.getcwd() + "/data/occ_grid" + ".npy"
         np.save(file=occ_grid_name, arr=occ_grid)
 
     else:
-        occ_grid_name = "occ_grid" + ".npy"
+        occ_grid_name =  os.getcwd() + "/data/occ_grid" + ".npy"
         occ_grid = np.load(file=occ_grid_name)
 
         occ_grid_known_initial, pri_grid_known, privacy_sum_known = initialmapwithknowngrid_ratio(grid_x, grid_y,
@@ -380,47 +396,11 @@ def SaveMap (config, iteration, exploration_rate):
 
 
     print(iteration)
-    occ_grid_known_name = "occ_grid_known_initial" + str(iteration) + ".npy"
+    occ_grid_known_name = os.getcwd() +"/data/"+ "occ_grid_known_initial" + str(iteration) + ".npy"
     np.save(file=occ_grid_known_name, arr=occ_grid_known_initial)
     # np.save(file="occ_grid_known.npy", arr=occ_grid_known)
-    c = np.load(file="occ_grid_known_initial" + str(iteration) + ".npy")
+    c = np.load(file=os.getcwd() +"/data/"+"occ_grid_known_initial" + str(iteration) + ".npy")
     for m in range(grid_x):
         print("The value of x: ", m)
         print(c[m])
 
-
-if __name__ == '__main__':
-    config = configure()
-
-    grid_x = config.grid_x
-    grid_y = config.grid_y
-    grid_z = config.grid_z
-    grid = config.grid
-    safety_threshold = config.safety_threshold
-    privacy_threshold = config.privacy_threshold
-    # privacy_radius = 1 ##
-    privacy_radius = config.privacy_radius
-
-    # drone parameter
-    starting_point = config.starting_point
-    end_point = config.end_point
-    T_budget = config.T_budget
-    viewradius = config.viewradius
-    Kca = config.Kca
-
-
-    occ_grid, obstacle_num, occ_grid_known, pri_grid_known, privacy_sum_known = initialmap(grid_x, grid_y, grid_z,
-                                                                                           starting_point, end_point,
-                                                                                           safety_threshold,
-                                                                                           privacy_threshold,
-                                                                                           privacy_radius)
-    np.save(file="occ_grid.npy", arr=occ_grid)
-    b = np.load(file="occ_grid.npy")
-    for m in range(grid_x):
-        print("The value of x: ", m)
-        print(b[m])
-    np.save(file="occ_grid_known.npy", arr=occ_grid_known)
-    c = np.load(file="occ_grid_known.npy")
-    for m in range(grid_x):
-        print("The value of x: ", m)
-        print(c[m])

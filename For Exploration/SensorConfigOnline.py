@@ -12,6 +12,7 @@ from Configure import configure
 import math
 from heapq import heappush
 import sys
+import os
 
 # from log import Log
 # log = Log(__name__).getlog()
@@ -210,10 +211,11 @@ class AStar:
         """new setting for time limit"""
 
         # 设置单位花费
-        step = 1/self.Tbudget
-        # step = 1
-        privacy_threat = (self.prigrid[minF.point.x + offsetX][minF.point.y + offsetY][minF.point.z + offsetZ] * math.exp(-(cam)) )/self.sumpri
-
+        # step = 1/self.Toptimal
+        step = 1
+        # privacy_threat = (self.prigrid[minF.point.x + offsetX][minF.point.y + offsetY][minF.point.z + offsetZ] * math.exp(-(cam)) )/self.sumpri
+        privacy_threat = self.prigrid[minF.point.x + offsetX][minF.point.y + offsetY][
+                             minF.point.z + offsetZ] * math.exp(-(cam))
         time_punishment = 1
         if minF.step + 1 > self.Toptimal:
             time_punishment = math.exp((minF.step + 1 - self.Toptimal) / (self.Tbudget - self.Toptimal))
@@ -377,12 +379,12 @@ def Astar_Sensor_Config_online(config, iteration, log):
     #                                                                                       privacy_threshold,
     #                                                                                       privacy_radius)
     # occ_grid_name = "occ_grid" + str(iteration) + ".npy"
-    occ_grid_name = "occ_grid" + ".npy"
+    occ_grid_name = os.getcwd() +"/data/"+"occ_grid" + ".npy"
     occ_grid = np.load(file=occ_grid_name)
     # occ_grid = np.load(file="occ_grid.npy")
     pri_grid, privacy_sum = privacy_init(grid_x, grid_y, grid_z, occ_grid, privacy_radius)
     # occ_grid_known_name = "occ_grid_known" + str(iteration) + ".npy"
-    occ_grid_known_name = "occ_grid_known_initial" + str(iteration) + ".npy"
+    occ_grid_known_name = os.getcwd() +"/data/"+"occ_grid_known_initial" + str(iteration) + ".npy"
     occ_grid_known = np.load(file=occ_grid_known_name)
     # occ_grid_known = np.load(file="occ_grid_known.npy")
     pri_grid_known, privacy_sum_known = privacy_init(grid_x, grid_y, grid_z, occ_grid_known, privacy_radius)
@@ -400,7 +402,7 @@ def Astar_Sensor_Config_online(config, iteration, log):
     #trajectory_ref = aStar.start()
     #trajectory_ref_temp = np.load(file="plan_path.npy")
     # 导入初规划路径路径结果
-    reference_path_name = "reference_path" + str(iteration) + ".npy"
+    reference_path_name = os.getcwd() +"/data/"+"reference_path" + str(iteration) + ".npy"
     trajectory_ref_temp = np.load(file=reference_path_name)
     # trajectory_ref_temp = np.load(file="reference_path.npy")
     trajectory_ref = []
@@ -517,7 +519,7 @@ def Astar_Sensor_Config_online(config, iteration, log):
         else:
             path_grid2[point.x][point.y][point.z] = 10
             num_ca_plan += 1
-        sum_plan += pri_grid[point.x][point.y][point.z] * math.exp(-(point.ca) )/privacy_sum
+        sum_plan += pri_grid[point.x][point.y][point.z] * math.exp(-(point.ca))
         if pri_grid[point.x][point.y][point.z] > 0:
             num_intruder_plan += 1
         # print(point, pri_grid_known[point.x][point.y][point.z])
@@ -534,7 +536,7 @@ def Astar_Sensor_Config_online(config, iteration, log):
     num_ca_ref = 0
     num_intruder_ref = 0
     for point in trajectory_ref:
-        sum_ref += pri_grid[point.x][point.y][point.z] * math.exp(-(point.ca) )/privacy_sum
+        sum_ref += pri_grid[point.x][point.y][point.z] * math.exp(-(point.ca))
         num_ca_ref += point.ca
         # print(point, pri_grid_known[point.x][point.y][point.z])
         if pri_grid[point.x][point.y][point.z] > 0:
@@ -560,7 +562,7 @@ def Astar_Sensor_Config_online(config, iteration, log):
     log.info("Online_Sensor_Config: Replanning times: %d" % replantime)
     #grid_visualization(occ_grid, starting_point, end_point, trajectory_plan, trajectory_ref)
 
-    occ_grid_known_name = "occ_grid_known" + str(iteration) + ".npy"
+    occ_grid_known_name = os.getcwd() +"/data/"+"occ_grid_known" + str(iteration) + ".npy"
     np.save(file=occ_grid_known_name, arr=occ_grid_known)
     # np.save(file="occ_grid_known.npy", arr=occ_grid_known)
     # b = np.load(file="occ_grid_known.npy")
@@ -572,7 +574,7 @@ def Astar_Sensor_Config_online(config, iteration, log):
     for i in range(len(trajectory_plan)):
         plan_path[i] = [trajectory_plan[i].x, trajectory_plan[i].y, trajectory_plan[i].z, trajectory_plan[i].ca]
 
-    plan_path_SC_name = "plan_path_SC" + str(iteration) + ".npy"
+    plan_path_SC_name = os.getcwd() +"/data/"+"plan_path_SC" + str(iteration) + ".npy"
     np.save(file=plan_path_SC_name, arr=plan_path)
     # np.save(file="plan_path_SC.npy", arr=plan_path)
     # c = np.load(file="plan_path_SC.npy")

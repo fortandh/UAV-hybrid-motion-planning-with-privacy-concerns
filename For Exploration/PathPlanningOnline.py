@@ -12,6 +12,7 @@ from Configure import configure
 import math
 import sys
 from heapq import heappush
+import os
 
 # from log import Log
 # log = Log(__name__).getlog()
@@ -103,26 +104,49 @@ class AStar:
             fathernode = node.father
             # print("*******", node.point.x, fathernode.point.x)
             delta_h = 0
-            for j in range(len(self.threatlist)):
-                # far away, oppisite
-                threat = self.threatlist[j]
+
+            temp_sum = 0
+            for x in range(node.point.x - 1, node.point.x + 2):
+                for y in range(node.point.y - 1, node.point.y + 2):
+                    for z in range(node.point.z - 1, node.point.z + 2):
+                        if x >= 0 and x < self.grid[0] and y >= 0 and y < self.grid[1] and z >= 0 and z < self.grid[2]:
+                            if x != node.point.x or y != node.point.y or z != node.point.z:
+                                temp_sum += self.prigrid[x][y][z]
+            pri1 = self.prigrid[node.point.x][node.point.y][node.point.z]
+            dis1 = abs(node.point.x - self.endPoint.x) + abs(node.point.y - self.endPoint.y) + abs(
+                            node.point.z - self.endPoint.z)
+            node.h = dis1 + temp_sum
+            # node.h = dis1 / self.Toptimal  ## 0625
+            # adapt_list = [math.exp(0), math.exp(1)]
+            # if rou1 / rou2 < 1:
+            #     delta_h = adapt_list[1 - node.point.ca]
+            #     node.h = node.h + delta_h * (pri1 + temp_sum) / self.sumpri * self.preference
+            # else:
+            #     delta_h = adapt_list[node.point.ca]
+            #     node.h = node.h + delta_h * (pri1 + temp_sum) / self.sumpri * self.preference
+
+            # for j in range(len(self.threatlist)):
+            #     # far away, oppisite
+            #     threat = self.threatlist[j]
                 #print(threat)
-                """
-                f (abs(node.point.x - threat[0]) + abs(node.point.y - threat[1]) + abs(node.point.z - threat[2])) > (
-                        abs(self.endPoint.x - threat[0]) + abs(self.endPoint.y - threat[1]) +
-                        abs(self.endPoint.z - threat[2])):
-                    delta_h += adaptive1 * self.map3d[threat[0]][threat[1]][threat[2]]
-                else:
-                    delta_h += adaptive2 * self.map3d[threat[0]][threat[1]][threat[2]]
-                """
-                if (abs(node.point.x - threat[0]) + abs(node.point.y - threat[1]) + abs(node.point.z - threat[2])) > (
-                        abs(fathernode.point.x - threat[0]) + abs(fathernode.point.y - threat[1]) +
-                        abs(fathernode.point.z - threat[2])):
-                    delta_h += adaptive1 * self.map3d[threat[0]][threat[1]][threat[2]] ## 绕路
-                else:
-                    delta_h += adaptive2 * self.map3d[threat[0]][threat[1]][threat[2]]
-            node.h = (abs(self.endPoint.x - node.point.x) + abs(self.endPoint.y - node.point.y) + abs(self.endPoint.z - node.point.z))/self.Tbudget ## 0625
-            node.h = node.h * delta_h
+                # """
+                # f (abs(node.point.x - threat[0]) + abs(node.point.y - threat[1]) + abs(node.point.z - threat[2])) > (
+                #         abs(self.endPoint.x - threat[0]) + abs(self.endPoint.y - threat[1]) +
+                #         abs(self.endPoint.z - threat[2])):
+                #     delta_h += adaptive1 * self.map3d[threat[0]][threat[1]][threat[2]]
+                # else:
+                #     delta_h += adaptive2 * self.map3d[threat[0]][threat[1]][threat[2]]
+                # """
+
+
+            #     if (abs(node.point.x - threat[0]) + abs(node.point.y - threat[1]) + abs(node.point.z - threat[2])) > (
+            #             abs(fathernode.point.x - threat[0]) + abs(fathernode.point.y - threat[1]) +
+            #             abs(fathernode.point.z - threat[2])):
+            #         delta_h += adaptive1 * self.map3d[threat[0]][threat[1]][threat[2]] ## 绕路
+            #     else:
+            #         delta_h += adaptive2 * self.map3d[threat[0]][threat[1]][threat[2]]
+            # node.h = (abs(self.endPoint.x - node.point.x) + abs(self.endPoint.y - node.point.y) + abs(self.endPoint.z - node.point.z))/self.Tbudget ## 0625
+            # node.h = node.h * delta_h
             # print("node.h:", node.h)
 
     #"""
@@ -209,13 +233,15 @@ class AStar:
 
         # 设置单位花费
 
-        step = 1/self.Tbudget
-        # step = 1
+        # step = 1/self.Toptimal
+        step = 1
 
         if self.sumpri == 0:
             privacy_threat = 0
         else:
-            privacy_threat = self.prigrid[minF.point.x + offsetX][minF.point.y + offsetY][minF.point.z + offsetZ] * math.exp(-(cam) )/self.sumpri
+            # privacy_threat = self.prigrid[minF.point.x + offsetX][minF.point.y + offsetY][minF.point.z + offsetZ] * math.exp(-(cam) )/self.sumpri
+            privacy_threat = self.prigrid[minF.point.x + offsetX][minF.point.y + offsetY][
+                                 minF.point.z + offsetZ] * math.exp(-(cam))
         cam_off = cam
 
         #delta_g = step + privacy_threat
@@ -367,12 +393,12 @@ def Astar_Path_Planning_online (config, iteration, log):
     preference = config.preference
 
     # occ_grid_name = "occ_grid" + str(iteration) + ".npy"
-    occ_grid_name = "occ_grid" + ".npy"
+    occ_grid_name = os.getcwd() +"/data/"+"occ_grid" + ".npy"
     occ_grid = np.load(file=occ_grid_name)
     # occ_grid = np.load(file="occ_grid.npy")
     pri_grid, privacy_sum = privacy_init(grid_x, grid_y, grid_z, occ_grid, privacy_radius)
     # occ_grid_known_name = "occ_grid_known" + str(iteration) + ".npy"
-    occ_grid_known_name = "occ_grid_known_initial" + str(iteration) + ".npy"
+    occ_grid_known_name = os.getcwd() +"/data/"+"occ_grid_known_initial" + str(iteration) + ".npy"
     occ_grid_known = np.load(file=occ_grid_known_name)
     # occ_grid_known = np.load(file="occ_grid_known.npy")
     pri_grid_known, privacy_sum_known = privacy_init(grid_x, grid_y, grid_z, occ_grid_known, privacy_radius)
@@ -386,7 +412,7 @@ def Astar_Path_Planning_online (config, iteration, log):
     # 开始寻路
     #trajectory_ref = aStar.start()
     #trajectory_ref_temp = np.load(file="plan_path.npy")
-    reference_path_name = "reference_path" + str(iteration) + ".npy"
+    reference_path_name = os.getcwd() +"/data/"+"reference_path" + str(iteration) + ".npy"
     trajectory_ref_temp = np.load(file=reference_path_name)
     # trajectory_ref_temp = np.load(file="reference_path.npy")
 
@@ -630,7 +656,7 @@ def Astar_Path_Planning_online (config, iteration, log):
         else:
             path_grid2[point.x][point.y][point.z] = 10
             num_ca_plan += 1
-        sum_plan += pri_grid[point.x][point.y][point.z] * math.exp(-(point.ca) )/privacy_sum
+        sum_plan += pri_grid[point.x][point.y][point.z] * math.exp(-(point.ca) )
         if pri_grid[point.x][point.y][point.z] > 0:
             num_intruder_plan += 1
         # print(point, pri_grid_known[point.x][point.y][point.z])
@@ -646,7 +672,7 @@ def Astar_Path_Planning_online (config, iteration, log):
     num_ca_ref = 0
     num_intruder_ref = 0
     for point in trajectory_ref:
-        sum_ref += pri_grid[point.x][point.y][point.z] * math.exp(-(point.ca) ) /privacy_sum
+        sum_ref += pri_grid[point.x][point.y][point.z] * math.exp(-(point.ca) )
         num_ca_ref += point.ca
         # print(point, pri_grid_known[point.x][point.y][point.z])
         if pri_grid[point.x][point.y][point.z] > 0:
@@ -671,7 +697,7 @@ def Astar_Path_Planning_online (config, iteration, log):
     log.info("Online_Path_Planning: Replanning times: %d" % replantime)
     #grid_visualization(occ_grid, starting_point, end_point, trajectory_plan, trajectory_ref)
 
-    occ_grid_known_name = "occ_grid_known" + str(iteration) + ".npy"
+    occ_grid_known_name = os.getcwd() +"/data/"+"occ_grid_known" + str(iteration) + ".npy"
     np.save(file=occ_grid_known_name, arr=occ_grid_known)
     # np.save(file="occ_grid_known.npy", arr=occ_grid_known)
     # b = np.load(file="occ_grid_known.npy")
@@ -683,7 +709,7 @@ def Astar_Path_Planning_online (config, iteration, log):
     for i in range(len(trajectory_plan)):
         plan_path[i] = [trajectory_plan[i].x,trajectory_plan[i].y, trajectory_plan[i].z, trajectory_plan[i].ca]
 
-    plan_path_PP_name = "plan_path_PP" + str(iteration) + ".npy"
+    plan_path_PP_name = os.getcwd() +"/data/"+"plan_path_PP" + str(iteration) + ".npy"
     np.save(file=plan_path_PP_name, arr=plan_path)
     # np.save(file="plan_path_PP.npy", arr=plan_path)
     # c = np.load(file="plan_path_pp.npy")
