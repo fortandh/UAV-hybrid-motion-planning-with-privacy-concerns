@@ -7,8 +7,7 @@ import os
 
 
 class Log(object):
-    '''
-封装后的logging
+    '''封装后的logging
     '''
 
     def __init__(self, logger=None, log_cate='results'):
@@ -29,30 +28,36 @@ class Log(object):
         self.log_name = self.log_path + "/" + log_cate + "." + self.log_time + '.log'
         # print(self.log_name)
 
-        fh = logging.FileHandler(self.log_name, 'a')  # 追加模式  这个是python2的
+        self.fh = logging.FileHandler(self.log_name, 'a')  # 追加模式  这个是python2的
         # fh = logging.FileHandler(self.log_name, 'a', encoding='utf-8')  # 这个是python3的
-        fh.setLevel(logging.INFO)
+        self.fh.setLevel(logging.INFO)
 
         # 再创建一个handler，用于输出到控制台
-        ch = logging.StreamHandler()
-        ch.setLevel(logging.INFO)
+        self.ch = logging.StreamHandler()
+        self.ch.setLevel(logging.INFO)
 
         # 定义handler的输出格式
         formatter = logging.Formatter(
             '[%(asctime)s] %(filename)s->%(funcName)s line:%(lineno)d [%(levelname)s]%(message)s')
-        fh.setFormatter(formatter)
-        ch.setFormatter(formatter)
+        self.fh.setFormatter(formatter)
+        self.ch.setFormatter(formatter)
 
         # 给logger添加handler
-        self.logger.addHandler(fh)
-        self.logger.addHandler(ch)
+        self.logger.addHandler(self.fh)
+        self.logger.addHandler(self.ch)
 
         #  添加下面一句，在记录日志之后移除句柄
         # self.logger.removeHandler(ch)
         # self.logger.removeHandler(fh)
         # 关闭打开的文件
-        fh.close()
-        ch.close()
+        self.fh.close()
+        self.ch.close()
 
     def getlog(self):
         return self.logger
+
+    def clear(self):
+        self.logger.removeHandler(self.ch)
+        self.logger.removeHandler(self.fh)
+        self.ch = None
+        self.fh = None

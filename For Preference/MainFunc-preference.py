@@ -20,7 +20,8 @@ from log import Log
 num_of_occ_grid = 2
 for round in range(num_of_occ_grid):
     num = round + 1
-    log = Log(__name__, log_cate="results_0626-preference-type4-data" + str(num) + "_round2").getlog()
+    log_tmp = Log(__name__, log_cate="results_0626-preference-type4-data" + str(num) + "_round2")
+    log = log_tmp.getlog()
 
     # for j in range(5):
     #     preference_list = [500, 1000, 1500, 2000, 2500]
@@ -135,6 +136,7 @@ for round in range(num_of_occ_grid):
             #                                                                                                 reinitial_flag,
             #                                                                                                 iteration,
             #                                                                                                 log)
+
 
 
     # num = 0
