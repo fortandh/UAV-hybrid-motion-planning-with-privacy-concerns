@@ -112,55 +112,37 @@ class AStar:
             pri1 = self.prigrid[node.point.x][node.point.y][node.point.z]
             dis1 = abs(node.point.x - self.endPoint.x) + abs(node.point.y - self.endPoint.y) + abs(
                             node.point.z - self.endPoint.z)
-            node.h = dis1 +  temp_sum * self.preference
 
-            # node.h = dis1 / self.Toptimal  ## 0625
-            # node.h = node.h +  temp_sum / self.sumpri * self.preference
+            ## type 1
+            # node.h = dis1   ## 0625
+
+            ## type 2
+            # node.h = dis1
             # adapt_list = [math.exp(0), math.exp(1)]
             # if rou1 / rou2 < 1:
             #     delta_h = adapt_list[1 - node.point.ca]
-            #     node.h = node.h + delta_h * (pri1 + temp_sum) / self.sumpri * self.preference
+            #     node.h = node.h * self.preference + delta_h * (pri1 + temp_sum)
             # else:
             #     delta_h = adapt_list[node.point.ca]
-            #     node.h = node.h + delta_h * (pri1 + temp_sum) / self.sumpri * self.preference
+            #     node.h = node.h * self.preference + delta_h * (pri1 + temp_sum)
 
-            # for j in range(len(self.threatlist)):
-            #     # far away, oppisite
-            #     threat = self.threatlist[j]
-            #     #print(threat)
-            #     """
-            #     f (abs(node.point.x - threat[0]) + abs(node.point.y - threat[1]) + abs(node.point.z - threat[2])) > (
-            #             abs(self.endPoint.x - threat[0]) + abs(self.endPoint.y - threat[1]) +
-            #             abs(self.endPoint.z - threat[2])):
-            #         delta_h += adaptive1 * self.map3d[threat[0]][threat[1]][threat[2]]
-            #     else:
-            #         delta_h += adaptive2 * self.map3d[threat[0]][threat[1]][threat[2]]
-            #     """
-                # dis1 = np.sqrt(np.power((node.point.x - threat[0]), 2) + np.power((node.point.y - threat[1]), 2) + np.power((node.point.z - threat[2]), 2))
-                # dis2 = np.sqrt(np.power((fathernode.point.x - threat[0]), 2) + np.power((fathernode.point.y - threat[1]), 2) + np.power((fathernode.point.z- threat[2]), 2))
+            ## type 3
+            # node.h = dis1 * self.preference + pri1 + temp_sum
 
-                # if (abs(node.point.x - threat[0]) + abs(node.point.y - threat[1]) + abs(node.point.z - threat[2])) > (
-                #         abs(fathernode.point.x - threat[0]) + abs(fathernode.point.y - threat[1]) +
-                #         abs(fathernode.point.z - threat[2])):
+            ## type 4
+            for j in range(len(self.threatlist)):
+                # far away, oppisite
+                threat = self.threatlist[j]
 
-                # dis1 =  abs(node.point.x - self.endPoint.x) + abs(node.point.y - self.endPoint.y) + abs(node.point.z - self.endPoint.z)
-                # dis2 =  abs(fathernode.point.x - self.endPoint.x) + abs(fathernode.point.y - self.endPoint.y) + abs(fathernode.point.z - self.endPoint.z)
-                # pri1 = self.prigrid[node.point.x][node.point.y][node.point.z]
-                # pri2 = self.prigrid[fathernode.point.x][fathernode.point.y][fathernode.point.z]
+                if (abs(node.point.x - threat[0]) + abs(node.point.y - threat[1]) + abs(node.point.z - threat[2])) > (
+                        abs(fathernode.point.x - threat[0]) + abs(fathernode.point.y - threat[1]) +
+                        abs(fathernode.point.z - threat[2])):
+                    delta_h += adaptive1 * self.map3d[threat[0]][threat[1]][threat[2]] ## 绕路
+                else:
+                    delta_h += adaptive2 * self.map3d[threat[0]][threat[1]][threat[2]]
+            node.h = (abs(self.endPoint.x - node.point.x) + abs(self.endPoint.y - node.point.y) + abs(self.endPoint.z - node.point.z))
+            node.h = node.h * self.preference  +  delta_h
 
-
-                #
-                # if self.prigrid[node.point.x][node.point.y][node.point.z] < self.prigrid[fathernode.point.x][fathernode.point.y][fathernode.point.z]:
-                #     delta_h = adaptive1 * self.prigrid[node.point.x][node.point.y][node.point.z]
-                # else:
-                #     delta_h = adaptive2 * self.prigrid[node.point.x][node.point.y][node.point.z]
-                # if dis1 > dis2 :
-                #     delta_h += adaptive1 * self.map3d[threat[0]][threat[1]][threat[2]] ## 绕路
-                # else:
-                #     delta_h += adaptive2 * self.map3d[threat[0]][threat[1]][threat[2]]
-            # node.h = (abs(self.endPoint.x - node.point.x) + abs(self.endPoint.y - node.point.y) + abs(self.endPoint.z - node.point.z))/self.Toptimal ## 0625
-            # node.h = node.h * delta_h
-            # print("node.h:", node.h)
 
     # def getMinNode(self):
     #     """
@@ -281,7 +263,7 @@ class AStar:
         time_punishment = 1
         if minF.step + 1 > self.Toptimal:
             time_punishment = math.exp((minF.step + 1 - self.Toptimal) / (self.Tbudget - self.Toptimal))
-        delta_g = time_punishment * step + privacy_threat * self.preference
+        delta_g = self.preference * time_punishment * step + privacy_threat
         #delta_g = step + cam_off + privacy_threat
 
         # 如果不在openList中，就把它加入openlist
@@ -370,34 +352,35 @@ class AStar:
 
             # 判断这个节点的上下左右节点
             # turn on camera
-            actions = [[0, -1, 0, 0],[0, 1, 0, 0],[-1, 0, 0, 0],[1, 0, 0, 0],[0, 0, 1, 0],[0, 0, -1, 0],[0, -1, 0, 1],[0, 1, 0, 1],[-1, 0, 0, 1],[0, 0, 1, 1],[0, 0, -1, 1],[1, 0, 0, 1]]
-            actionlist = [0,1,2,3,4,5,6,7,8,9,10,11]
-            np.random.shuffle(actionlist)
-
-            for i in range (len(actionlist)):
-               self.searchNear(minF, actions[actionlist[i]][0], actions[actionlist[i]][1], actions[actionlist[i]][2], actions[actionlist[i]][3])
+            # actions = [[0, -1, 0, 0],[0, 1, 0, 0],[-1, 0, 0, 0],[1, 0, 0, 0],[0, 0, 1, 0],[0, 0, -1, 0],[0, -1, 0, 1],[0, 1, 0, 1],
+            # [-1, 0, 0, 1],[0, 0, 1, 1],[0, 0, -1, 1],[1, 0, 0, 1]]
+            # actionlist = [0,1,2,3,4,5,6,7,8,9,10,11]
+            # np.random.shuffle(actionlist)
+            #
+            # for i in range (len(actionlist)):
+            #    self.searchNear(minF, actions[actionlist[i]][0], actions[actionlist[i]][1], actions[actionlist[i]][2], actions[actionlist[i]][3])
             # """
             # turn on camera
-            # if self.flag == 0:
-            #     self.searchNear(minF, 0, -1, 0, 0)
-            #     self.searchNear(minF, 0, 1, 0, 0)
-            #     self.searchNear(minF, -1, 0, 0, 0)
-            #     self.searchNear(minF, 1, 0, 0, 0)
-            #     self.searchNear(minF, 0, 0, 1, 0)
-            #     self.searchNear(minF, 0, 0, -1, 0)
-            # else:
-            #     self.searchNear(minF, 0, -1, 0, 0)
-            #     self.searchNear(minF, 0, 1, 0, 0)
-            #     self.searchNear(minF, -1, 0, 0, 0)
-            #     self.searchNear(minF, 1, 0, 0, 0)
-            #     self.searchNear(minF, 0, 0, 1, 0)
-            #     self.searchNear(minF, 0, 0, -1, 0)
-            #     self.searchNear(minF, 0, -1, 0, 1)
-            #     self.searchNear(minF, 0, 1, 0, 1)
-            #     self.searchNear(minF, -1, 0, 0, 1)
-            #     self.searchNear(minF, 1, 0, 0, 1)
-            #     self.searchNear(minF, 0, 0, 1, 1)
-            #     self.searchNear(minF, 0, 0, -1, 1)
+            if self.flag == 0:
+                self.searchNear(minF, 0, -1, 0, 0)
+                self.searchNear(minF, 0, 1, 0, 0)
+                self.searchNear(minF, -1, 0, 0, 0)
+                self.searchNear(minF, 1, 0, 0, 0)
+                self.searchNear(minF, 0, 0, 1, 0)
+                self.searchNear(minF, 0, 0, -1, 0)
+            else:
+                self.searchNear(minF, 0, -1, 0, 0)
+                self.searchNear(minF, 0, 1, 0, 0)
+                self.searchNear(minF, -1, 0, 0, 0)
+                self.searchNear(minF, 1, 0, 0, 0)
+                self.searchNear(minF, 0, 0, 1, 0)
+                self.searchNear(minF, 0, 0, -1, 0)
+                self.searchNear(minF, 0, -1, 0, 1)
+                self.searchNear(minF, 0, 1, 0, 1)
+                self.searchNear(minF, -1, 0, 0, 1)
+                self.searchNear(minF, 1, 0, 0, 1)
+                self.searchNear(minF, 0, 0, 1, 1)
+                self.searchNear(minF, 0, 0, -1, 1)
 
             self.updateNodeHvalue()
 
@@ -762,8 +745,8 @@ def Astar_Hybrid_Planning_online(config, iteration, log):
     plan_path_Hybrid_name = os.getcwd() +"/data/"+"plan_path_Hybrid" + str(iteration) + ".npy"
     np.save(file=plan_path_Hybrid_name, arr=plan_path)
     np.save(file=os.getcwd() +"/data/"+"plan_path_Hybrid.npy", arr=plan_path)
-    c = np.load(file=os.getcwd() +"/data/"+"plan_path_Hybrid.npy")
-    print(c, len(c))
+    # c = np.load(file=os.getcwd() +"/data/"+"plan_path_Hybrid.npy")
+    # print(c, len(c))
 
     exploration_rate = 0
 

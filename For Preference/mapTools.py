@@ -395,12 +395,12 @@ def SaveMap (config, iteration, exploration_rate):
 
 
 
-    print(iteration)
+    # print(iteration)
     occ_grid_known_name = os.getcwd() +"/data/"+ "occ_grid_known_initial" + str(iteration) + ".npy"
     np.save(file=occ_grid_known_name, arr=occ_grid_known_initial)
     # np.save(file="occ_grid_known.npy", arr=occ_grid_known)
-    c = np.load(file=os.getcwd() +"/data/"+"occ_grid_known_initial" + str(iteration) + ".npy")
-    for m in range(grid_x):
-        print("The value of x: ", m)
-        print(c[m])
+    # c = np.load(file=os.getcwd() +"/data/"+"occ_grid_known_initial" + str(iteration) + ".npy")
+    # for m in range(grid_x):
+    #     print("The value of x: ", m)
+    #     print(c[m])
 

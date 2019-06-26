@@ -16,10 +16,10 @@ from SensorConfigOnline import Astar_Sensor_Config_online
 
 
 from log import Log
-log = Log(__name__, log_cate="results_0625-preference-3" ).getlog()
+log = Log(__name__, log_cate="results_0625-preference-5" ).getlog()
 
-for j in range(5):
-    preference_list = [50, 100, 200,300,500]
+for j in range(10):
+    preference_list = [10, 20,30,40,50,60,70,80,90,100]
     preference = preference_list[j]
     # preference = 100
 # for j in range(11):
@@ -42,7 +42,7 @@ for j in range(5):
         safety_threshold = 0.3
         privacy_threshold = 0.1
         privacy_radius = [0.5, 1, 2]
-        exploration_rate = 0.2
+        exploration_rate = 0
         # preference = 1000
         # drone parameter
         # x1 = randint(0, grid_x - 1)
