@@ -112,7 +112,16 @@ class AStar:
             pri1 = self.prigrid[node.point.x][node.point.y][node.point.z]
             dis1 = abs(node.point.x - self.endPoint.x) + abs(node.point.y - self.endPoint.y) + abs(
                             node.point.z - self.endPoint.z)
-            node.h = dis1 +  temp_sum
+            # node.h = dis1 +  temp_sum
+            node.h = dis1   ## 0625
+            # node.h = node.h +  temp_sum / self.sumpri * self.preference
+            adapt_list = [math.exp(0), math.exp(1)]
+            if rou1 / rou2 < 1:
+                delta_h = adapt_list[1 - node.point.ca]
+                node.h = node.h * self.preference + delta_h * (pri1 + temp_sum)
+            else:
+                delta_h = adapt_list[node.point.ca]
+                node.h = node.h * self.preference + delta_h * (pri1 + temp_sum)
 
             # node.h = dis1 / self.Toptimal  ## 0625
             # node.h = node.h +  temp_sum / self.sumpri * self.preference

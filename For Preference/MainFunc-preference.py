@@ -16,10 +16,10 @@ from SensorConfigOnline import Astar_Sensor_Config_online
 
 
 from log import Log
-log = Log(__name__, log_cate="results_0625-preference-3" ).getlog()
+log = Log(__name__, log_cate="results_0625-preference-4" ).getlog()
 
-for j in range(5):
-    preference_list = [10, 100, 1000, 5000, 10000]
+for j in range(10):
+    preference_list = [10, 20,30,40,50,60,70,80,90,100]
     preference = preference_list[j]
     # preference = 100
 # for j in range(11):
