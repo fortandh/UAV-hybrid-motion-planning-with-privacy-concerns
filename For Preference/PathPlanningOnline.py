@@ -623,6 +623,9 @@ def Astar_Path_Planning_online (config, iteration, log, num):
                 #        trajectory_plan[kk].ca = 1
                 sum = 0
                 cam_off = 0
+                # print("The length of trajectory_plan: ", len(trajectory_plan))
+                # for saber in range(len(trajectory_plan)):
+                #     print("The No.{} step: {}".format(saber, trajectory_plan[saber]))
                 for ll in range(len(trajectory_plan)):
                     sum += pri_grid_known[trajectory_plan[ll].x][trajectory_plan[ll].y][trajectory_plan[ll].z]
                     cam_off += trajectory_plan[ll].ca

@@ -20,9 +20,10 @@ from log import Log
 num_of_occ_grid = 2
 for round in range(num_of_occ_grid):
     num = round + 1
-    log = Log(__name__, log_cate="results_0626-exploration-type4-data" + str(num) + "_round2").getlog()
+    log_tmp = Log(__name__, log_cate="results_0626-exploration-type4-data" + str(num) + "_round2")
+    log = log_tmp.getlog()
 
-    for j in range(11):
+    for j in range(2):
         exploration_rate_list = [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1]
         exploration_rate = exploration_rate_list[j]
 
@@ -36,7 +37,7 @@ for round in range(num_of_occ_grid):
         if exploration_rate == 0 or exploration_rate == 1:
             rangek = 2
         else:
-            rangek = 11
+            rangek = 3
         # rangek = 11
         for i in range(1, rangek):
 
@@ -138,6 +139,7 @@ for round in range(num_of_occ_grid):
             #                                                                                                 reinitial_flag,
             #                                                                                                 iteration,
             #                                                                                                 log)
+            log_tmp.clear()
 
 
     # num = 0
