@@ -371,7 +371,7 @@ class AStar:
                 return None
 
 
-def Astar_Path_Planning_online (config, iteration, log):
+def Astar_Path_Planning_online (config, iteration, log, num):
 
     grid_x = config.grid_x
     grid_y = config.grid_y
@@ -393,7 +393,7 @@ def Astar_Path_Planning_online (config, iteration, log):
     preference = config.preference
 
     # occ_grid_name = "occ_grid" + str(iteration) + ".npy"
-    occ_grid_name = os.getcwd() +"/data/"+"occ_grid" + ".npy"
+    occ_grid_name = os.getcwd() + "/data/" + "occ_grid-" + str(num) + ".npy"
     occ_grid = np.load(file=occ_grid_name)
     # occ_grid = np.load(file="occ_grid.npy")
     pri_grid, privacy_sum = privacy_init(grid_x, grid_y, grid_z, occ_grid, privacy_radius)

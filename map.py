@@ -268,5 +268,5 @@ occ_grid = np.array([[[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
                           [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
                           [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]]])
 print(occ_grid)
-occ_grid_name = os.getcwd() + "/data/occ_grid" + ".npy"
-np.save(file=occ_grid_name, arr=occ_grid)
+occ_grid_name = os.getcwd() + "/data/occ_grid-2" + ".npy"
+np.save(file=occ_grid_name, arr=occ_grid_1)
