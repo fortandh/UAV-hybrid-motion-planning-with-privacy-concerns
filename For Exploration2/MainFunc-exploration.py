@@ -16,22 +16,21 @@ from SensorConfigOnline import Astar_Sensor_Config_online
 
 
 from log import Log
-log = Log(__name__, log_cate="results_0626-preference-type4-data2" ).getlog()
+log = Log(__name__, log_cate="results_0626-exploration-type3" ).getlog()
 
 # for j in range(5):
 #     preference_list = [500, 1000, 1500, 2000, 2500]
 #     preference = preference_list[j]
     # preference = 100
-for j in range(7):
-    preference_list = [10,50,100,200,300,500,1000]
-    preference = preference_list[j]
+for j in range(11):
+    exploration_rate_list = [0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1]
+    exploration_rate = exploration_rate_list[j]
 
-    # if exploration_rate == 0 or exploration_rate == 1:
-    #     rangek = 2
-    # else:
-    #     rangek = 11
-    rangek = 11
-    for i in range(1,rangek):
+    if exploration_rate == 0 or exploration_rate == 1:
+        rangek = 2
+    else:
+        rangek = 11
+    for i in range(0,rangek):
 
         iteration = i
         grid_x = 10 + int(i / 100)
@@ -48,7 +47,7 @@ for j in range(7):
         safety_threshold = 0.3
         privacy_threshold = 0.1
         privacy_radius = [0.5, 1, 2]
-        exploration_rate = 0.2
+        preference = 100
         # drone parameter
         # x1 = randint(0, grid_x - 1)
         # y1 = randint(0, grid_y - 1)

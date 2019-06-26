@@ -117,7 +117,7 @@ class AStar:
                             node.point.z - self.endPoint.z)
 
             ## type 1
-            # node.h = dis1   ## 0625
+            node.h = dis1   ## 0625
 
             ## type 2
             # node.h = dis1
@@ -133,19 +133,19 @@ class AStar:
             # node.h = dis1 * self.preference + pri1 + temp_sum
 
             ## type 4
-            for j in range(len(self.threatlist)):
-                # far away, oppisite
-                threat = self.threatlist[j]
-
-                if (abs(node.point.x - threat[0]) + abs(node.point.y - threat[1]) + abs(node.point.z - threat[2])) > (
-                        abs(fathernode.point.x - threat[0]) + abs(fathernode.point.y - threat[1]) +
-                        abs(fathernode.point.z - threat[2])):
-                    delta_h += adaptive1 * self.map3d[threat[0]][threat[1]][threat[2]]  ## 绕路
-                else:
-                    delta_h += adaptive2 * self.map3d[threat[0]][threat[1]][threat[2]]
-            node.h = (abs(self.endPoint.x - node.point.x) + abs(self.endPoint.y - node.point.y) + abs(
-                self.endPoint.z - node.point.z))
-            node.h = node.h * self.preference + delta_h
+            # for j in range(len(self.threatlist)):
+            #     # far away, oppisite
+            #     threat = self.threatlist[j]
+            #
+            #     if (abs(node.point.x - threat[0]) + abs(node.point.y - threat[1]) + abs(node.point.z - threat[2])) > (
+            #             abs(fathernode.point.x - threat[0]) + abs(fathernode.point.y - threat[1]) +
+            #             abs(fathernode.point.z - threat[2])):
+            #         delta_h += adaptive1 * self.map3d[threat[0]][threat[1]][threat[2]]  ## 绕路
+            #     else:
+            #         delta_h += adaptive2 * self.map3d[threat[0]][threat[1]][threat[2]]
+            # node.h = (abs(self.endPoint.x - node.point.x) + abs(self.endPoint.y - node.point.y) + abs(
+            #     self.endPoint.z - node.point.z))
+            # node.h = node.h * self.preference + delta_h
 
     #"""
     def getMinNode(self):
@@ -564,7 +564,7 @@ def Astar_Path_Planning_online (config, iteration, log):
                         # print("now", trajectory_plan[ll])
                     # print("\033[94mThe sum of privacy of pre_trajectory_plan: \033[0m", sum)
 
-                    # print('\033[94m finding solution for local planning... \033[0m')
+                    print('\033[94m finding solution for local planning... \033[0m')
                     trajectory_optimal = aStar.start()
                     end1 = time.time()
                     dtime = end1 - start1
