@@ -1,0 +1,228 @@
+[2019-06-22 21:56:29,463] pathinitial.py->PathInitial line:417 [INFO]Initial_planning: Length of reference trajectory: 27
+[2019-06-22 21:56:29,463] pathinitial.py->PathInitial line:418 [INFO]Initial_planning: Sum of privacy threat of reference trajectory: 1787.499393
+[2019-06-22 21:56:39,625] pathinitial.py->PathInitial line:439 [INFO]Initial_planning: Length of best trajectory: 27
+[2019-06-22 21:56:39,625] pathinitial.py->PathInitial line:440 [INFO]Initial_planning: Sum of privacy threat of best trajectory: 327.059177
+[2019-06-22 21:56:40,089] pathinitial.py->PathInitial line:417 [INFO]Initial_planning: Length of reference trajectory: 27
+[2019-06-22 21:56:40,089] pathinitial.py->PathInitial line:418 [INFO]Initial_planning: Sum of privacy threat of reference trajectory: 1787.499393
+[2019-06-22 21:56:40,548] HybridPlanningOnline.py->Astar_Hybrid_Planning_online line:661 [INFO]Online_Hybrid_Planning: Length of replanned trajectory: 35
+[2019-06-22 21:56:40,548] HybridPlanningOnline.py->Astar_Hybrid_Planning_online line:662 [INFO]Online_Hybrid_Planning: Sum of privacy threat of replanned trajectory: 939.817757
+[2019-06-22 21:56:40,548] HybridPlanningOnline.py->Astar_Hybrid_Planning_online line:663 [INFO]Online_Hybrid_Planning: Times of turning off camera of replanned trajectory: 18
+[2019-06-22 21:56:40,549] HybridPlanningOnline.py->Astar_Hybrid_Planning_online line:664 [INFO]Online_Hybrid_Planning: Times of intrusion of replanned trajectory: 25
+[2019-06-22 21:56:40,549] HybridPlanningOnline.py->Astar_Hybrid_Planning_online line:678 [INFO]Online_Hybrid_Planning: Length of preplanned trajectory: 27
+[2019-06-22 21:56:40,549] HybridPlanningOnline.py->Astar_Hybrid_Planning_online line:679 [INFO]Online_Hybrid_Planning: Sum of privacy threat of preplanned trajectory: 1787.499393
+[2019-06-22 21:56:40,549] HybridPlanningOnline.py->Astar_Hybrid_Planning_online line:680 [INFO]Online_Hybrid_Planning: Times of turning off camera of preplanned trajectory: 0
+[2019-06-22 21:56:40,549] HybridPlanningOnline.py->Astar_Hybrid_Planning_online line:681 [INFO]Online_Hybrid_Planning: Times of intrusion of preplanned trajectory: 22
+[2019-06-22 21:56:40,549] HybridPlanningOnline.py->Astar_Hybrid_Planning_online line:697 [INFO]Online_Path_Planning: Replanning times: 6
+[2019-06-22 21:56:40,557] HybridPlanningOnline.py->Astar_Hybrid_Planning_online line:723 [INFO]Online_Path_Planning: Exploration rate: 0.190000
+[2019-06-22 21:56:42,125] pathinitial.py->PathInitial line:417 [INFO]Initial_planning: Length of reference trajectory: 27
+[2019-06-22 21:56:42,125] pathinitial.py->PathInitial line:418 [INFO]Initial_planning: Sum of privacy threat of reference trajectory: 1254.460196
+[2019-06-22 21:56:42,947] HybridPlanningOnline.py->Astar_Hybrid_Planning_online line:661 [INFO]Online_Hybrid_Planning: Length of replanned trajectory: 35
+[2019-06-22 21:56:42,948] HybridPlanningOnline.py->Astar_Hybrid_Planning_online line:662 [INFO]Online_Hybrid_Planning: Sum of privacy threat of replanned trajectory: 905.064926
+[2019-06-22 21:56:42,948] HybridPlanningOnline.py->Astar_Hybrid_Planning_online line:663 [INFO]Online_Hybrid_Planning: Times of turning off camera of replanned trajectory: 15
+[2019-06-22 21:56:42,948] HybridPlanningOnline.py->Astar_Hybrid_Planning_online line:664 [INFO]Online_Hybrid_Planning: Times of intrusion of replanned trajectory: 23
+[2019-06-22 21:56:42,948] HybridPlanningOnline.py->Astar_Hybrid_Planning_online line:678 [INFO]Online_Hybrid_Planning: Length of preplanned trajectory: 27
+[2019-06-22 21:56:42,948] HybridPlanningOnline.py->Astar_Hybrid_Planning_online line:679 [INFO]Online_Hybrid_Planning: Sum of privacy threat of preplanned trajectory: 1254.460196
+[2019-06-22 21:56:42,948] HybridPlanningOnline.py->Astar_Hybrid_Planning_online line:680 [INFO]Online_Hybrid_Planning: Times of turning off camera of preplanned trajectory: 0
+[2019-06-22 21:56:42,948] HybridPlanningOnline.py->Astar_Hybrid_Planning_online line:681 [INFO]Online_Hybrid_Planning: Times of intrusion of preplanned trajectory: 17
+[2019-06-22 21:56:42,948] HybridPlanningOnline.py->Astar_Hybrid_Planning_online line:697 [INFO]Online_Path_Planning: Replanning times: 5
+[2019-06-22 21:56:42,975] HybridPlanningOnline.py->Astar_Hybrid_Planning_online line:723 [INFO]Online_Path_Planning: Exploration rate: 0.360000
+[2019-06-22 21:57:01,266] pathinitial.py->PathInitial line:417 [INFO]Initial_planning: Length of reference trajectory: 29
+[2019-06-22 21:57:01,267] pathinitial.py->PathInitial line:418 [INFO]Initial_planning: Sum of privacy threat of reference trajectory: 1236.374529
+[2019-06-22 21:57:03,995] HybridPlanningOnline.py->Astar_Hybrid_Planning_online line:661 [INFO]Online_Hybrid_Planning: Length of replanned trajectory: 29
+[2019-06-22 21:57:03,995] HybridPlanningOnline.py->Astar_Hybrid_Planning_online line:662 [INFO]Online_Hybrid_Planning: Sum of privacy threat of replanned trajectory: 699.578341
+[2019-06-22 21:57:03,995] HybridPlanningOnline.py->Astar_Hybrid_Planning_online line:663 [INFO]Online_Hybrid_Planning: Times of turning off camera of replanned trajectory: 12
+[2019-06-22 21:57:03,995] HybridPlanningOnline.py->Astar_Hybrid_Planning_online line:664 [INFO]Online_Hybrid_Planning: Times of intrusion of replanned trajectory: 17
+[2019-06-22 21:57:03,995] HybridPlanningOnline.py->Astar_Hybrid_Planning_online line:678 [INFO]Online_Hybrid_Planning: Length of preplanned trajectory: 29
+[2019-06-22 21:57:03,995] HybridPlanningOnline.py->Astar_Hybrid_Planning_online line:679 [INFO]Online_Hybrid_Planning: Sum of privacy threat of preplanned trajectory: 1236.374529
+[2019-06-22 21:57:03,995] HybridPlanningOnline.py->Astar_Hybrid_Planning_online line:680 [INFO]Online_Hybrid_Planning: Times of turning off camera of preplanned trajectory: 0
+[2019-06-22 21:57:03,995] HybridPlanningOnline.py->Astar_Hybrid_Planning_online line:681 [INFO]Online_Hybrid_Planning: Times of intrusion of preplanned trajectory: 17
+[2019-06-22 21:57:03,995] HybridPlanningOnline.py->Astar_Hybrid_Planning_online line:697 [INFO]Online_Path_Planning: Replanning times: 2
+[2019-06-22 21:57:04,003] HybridPlanningOnline.py->Astar_Hybrid_Planning_online line:723 [INFO]Online_Path_Planning: Exploration rate: 0.470000
+[2019-06-22 21:57:19,591] pathinitial.py->PathInitial line:417 [INFO]Initial_planning: Length of reference trajectory: 29
+[2019-06-22 21:57:19,591] pathinitial.py->PathInitial line:418 [INFO]Initial_planning: Sum of privacy threat of reference trajectory: 2016.771849
+[2019-06-22 21:57:20,997] HybridPlanningOnline.py->Astar_Hybrid_Planning_online line:661 [INFO]Online_Hybrid_Planning: Length of replanned trajectory: 35
+[2019-06-22 21:57:20,998] HybridPlanningOnline.py->Astar_Hybrid_Planning_online line:662 [INFO]Online_Hybrid_Planning: Sum of privacy threat of replanned trajectory: 944.908813
+[2019-06-22 21:57:20,998] HybridPlanningOnline.py->Astar_Hybrid_Planning_online line:663 [INFO]Online_Hybrid_Planning: Times of turning off camera of replanned trajectory: 15
+[2019-06-22 21:57:20,998] HybridPlanningOnline.py->Astar_Hybrid_Planning_online line:664 [INFO]Online_Hybrid_Planning: Times of intrusion of replanned trajectory: 19
+[2019-06-22 21:57:20,998] HybridPlanningOnline.py->Astar_Hybrid_Planning_online line:678 [INFO]Online_Hybrid_Planning: Length of preplanned trajectory: 29
+[2019-06-22 21:57:20,998] HybridPlanningOnline.py->Astar_Hybrid_Planning_online line:679 [INFO]Online_Hybrid_Planning: Sum of privacy threat of preplanned trajectory: 2016.771849
+[2019-06-22 21:57:20,998] HybridPlanningOnline.py->Astar_Hybrid_Planning_online line:680 [INFO]Online_Hybrid_Planning: Times of turning off camera of preplanned trajectory: 0
+[2019-06-22 21:57:20,998] HybridPlanningOnline.py->Astar_Hybrid_Planning_online line:681 [INFO]Online_Hybrid_Planning: Times of intrusion of preplanned trajectory: 17
+[2019-06-22 21:57:20,998] HybridPlanningOnline.py->Astar_Hybrid_Planning_online line:697 [INFO]Online_Path_Planning: Replanning times: 4
+[2019-06-22 21:57:21,039] HybridPlanningOnline.py->Astar_Hybrid_Planning_online line:723 [INFO]Online_Path_Planning: Exploration rate: 0.580000
+[2019-06-22 21:57:36,165] pathinitial.py->PathInitial line:417 [INFO]Initial_planning: Length of reference trajectory: 29
+[2019-06-22 21:57:36,165] pathinitial.py->PathInitial line:418 [INFO]Initial_planning: Sum of privacy threat of reference trajectory: 430.490862
+[2019-06-22 21:57:36,708] HybridPlanningOnline.py->Astar_Hybrid_Planning_online line:661 [INFO]Online_Hybrid_Planning: Length of replanned trajectory: 29
+[2019-06-22 21:57:36,708] HybridPlanningOnline.py->Astar_Hybrid_Planning_online line:662 [INFO]Online_Hybrid_Planning: Sum of privacy threat of replanned trajectory: 297.279776
+[2019-06-22 21:57:36,708] HybridPlanningOnline.py->Astar_Hybrid_Planning_online line:663 [INFO]Online_Hybrid_Planning: Times of turning off camera of replanned trajectory: 7
+[2019-06-22 21:57:36,708] HybridPlanningOnline.py->Astar_Hybrid_Planning_online line:664 [INFO]Online_Hybrid_Planning: Times of intrusion of replanned trajectory: 10
+[2019-06-22 21:57:36,708] HybridPlanningOnline.py->Astar_Hybrid_Planning_online line:678 [INFO]Online_Hybrid_Planning: Length of preplanned trajectory: 29
+[2019-06-22 21:57:36,708] HybridPlanningOnline.py->Astar_Hybrid_Planning_online line:679 [INFO]Online_Hybrid_Planning: Sum of privacy threat of preplanned trajectory: 430.490862
+[2019-06-22 21:57:36,709] HybridPlanningOnline.py->Astar_Hybrid_Planning_online line:680 [INFO]Online_Hybrid_Planning: Times of turning off camera of preplanned trajectory: 0
+[2019-06-22 21:57:36,709] HybridPlanningOnline.py->Astar_Hybrid_Planning_online line:681 [INFO]Online_Hybrid_Planning: Times of intrusion of preplanned trajectory: 10
+[2019-06-22 21:57:36,709] HybridPlanningOnline.py->Astar_Hybrid_Planning_online line:697 [INFO]Online_Path_Planning: Replanning times: 1
+[2019-06-22 21:57:36,717] HybridPlanningOnline.py->Astar_Hybrid_Planning_online line:723 [INFO]Online_Path_Planning: Exploration rate: 0.670000
+[2019-06-22 21:57:51,135] pathinitial.py->PathInitial line:417 [INFO]Initial_planning: Length of reference trajectory: 27
+[2019-06-22 21:57:51,135] pathinitial.py->PathInitial line:418 [INFO]Initial_planning: Sum of privacy threat of reference trajectory: 327.059177
+[2019-06-22 21:57:51,748] HybridPlanningOnline.py->Astar_Hybrid_Planning_online line:661 [INFO]Online_Hybrid_Planning: Length of replanned trajectory: 31
+[2019-06-22 21:57:51,748] HybridPlanningOnline.py->Astar_Hybrid_Planning_online line:662 [INFO]Online_Hybrid_Planning: Sum of privacy threat of replanned trajectory: 196.017329
+[2019-06-22 21:57:51,748] HybridPlanningOnline.py->Astar_Hybrid_Planning_online line:663 [INFO]Online_Hybrid_Planning: Times of turning off camera of replanned trajectory: 6
+[2019-06-22 21:57:51,748] HybridPlanningOnline.py->Astar_Hybrid_Planning_online line:664 [INFO]Online_Hybrid_Planning: Times of intrusion of replanned trajectory: 8
+[2019-06-22 21:57:51,748] HybridPlanningOnline.py->Astar_Hybrid_Planning_online line:678 [INFO]Online_Hybrid_Planning: Length of preplanned trajectory: 27
+[2019-06-22 21:57:51,748] HybridPlanningOnline.py->Astar_Hybrid_Planning_online line:679 [INFO]Online_Hybrid_Planning: Sum of privacy threat of preplanned trajectory: 327.059177
+[2019-06-22 21:57:51,748] HybridPlanningOnline.py->Astar_Hybrid_Planning_online line:680 [INFO]Online_Hybrid_Planning: Times of turning off camera of preplanned trajectory: 0
+[2019-06-22 21:57:51,748] HybridPlanningOnline.py->Astar_Hybrid_Planning_online line:681 [INFO]Online_Hybrid_Planning: Times of intrusion of preplanned trajectory: 8
+[2019-06-22 21:57:51,748] HybridPlanningOnline.py->Astar_Hybrid_Planning_online line:697 [INFO]Online_Path_Planning: Replanning times: 6
+[2019-06-22 21:57:51,754] HybridPlanningOnline.py->Astar_Hybrid_Planning_online line:723 [INFO]Online_Path_Planning: Exploration rate: 0.670000
+[2019-06-22 21:57:52,238] pathinitial.py->PathInitial line:417 [INFO]Initial_planning: Length of reference trajectory: 27
+[2019-06-22 21:57:52,238] pathinitial.py->PathInitial line:418 [INFO]Initial_planning: Sum of privacy threat of reference trajectory: 1787.499393
+[2019-06-22 21:58:02,268] pathinitial.py->PathInitial line:439 [INFO]Initial_planning: Length of best trajectory: 27
+[2019-06-22 21:58:02,268] pathinitial.py->PathInitial line:440 [INFO]Initial_planning: Sum of privacy threat of best trajectory: 327.059177
+[2019-06-22 21:58:02,739] pathinitial.py->PathInitial line:417 [INFO]Initial_planning: Length of reference trajectory: 27
+[2019-06-22 21:58:02,739] pathinitial.py->PathInitial line:418 [INFO]Initial_planning: Sum of privacy threat of reference trajectory: 1787.499393
+[2019-06-22 21:58:03,201] HybridPlanningOnline.py->Astar_Hybrid_Planning_online line:661 [INFO]Online_Hybrid_Planning: Length of replanned trajectory: 35
+[2019-06-22 21:58:03,201] HybridPlanningOnline.py->Astar_Hybrid_Planning_online line:662 [INFO]Online_Hybrid_Planning: Sum of privacy threat of replanned trajectory: 939.817757
+[2019-06-22 21:58:03,201] HybridPlanningOnline.py->Astar_Hybrid_Planning_online line:663 [INFO]Online_Hybrid_Planning: Times of turning off camera of replanned trajectory: 18
+[2019-06-22 21:58:03,201] HybridPlanningOnline.py->Astar_Hybrid_Planning_online line:664 [INFO]Online_Hybrid_Planning: Times of intrusion of replanned trajectory: 25
+[2019-06-22 21:58:03,201] HybridPlanningOnline.py->Astar_Hybrid_Planning_online line:678 [INFO]Online_Hybrid_Planning: Length of preplanned trajectory: 27
+[2019-06-22 21:58:03,201] HybridPlanningOnline.py->Astar_Hybrid_Planning_online line:679 [INFO]Online_Hybrid_Planning: Sum of privacy threat of preplanned trajectory: 1787.499393
+[2019-06-22 21:58:03,201] HybridPlanningOnline.py->Astar_Hybrid_Planning_online line:680 [INFO]Online_Hybrid_Planning: Times of turning off camera of preplanned trajectory: 0
+[2019-06-22 21:58:03,201] HybridPlanningOnline.py->Astar_Hybrid_Planning_online line:681 [INFO]Online_Hybrid_Planning: Times of intrusion of preplanned trajectory: 22
+[2019-06-22 21:58:03,201] HybridPlanningOnline.py->Astar_Hybrid_Planning_online line:697 [INFO]Online_Path_Planning: Replanning times: 6
+[2019-06-22 21:58:03,206] HybridPlanningOnline.py->Astar_Hybrid_Planning_online line:723 [INFO]Online_Path_Planning: Exploration rate: 0.190000
+[2019-06-22 21:58:04,774] pathinitial.py->PathInitial line:417 [INFO]Initial_planning: Length of reference trajectory: 27
+[2019-06-22 21:58:04,774] pathinitial.py->PathInitial line:418 [INFO]Initial_planning: Sum of privacy threat of reference trajectory: 1254.460196
+[2019-06-22 21:58:05,610] HybridPlanningOnline.py->Astar_Hybrid_Planning_online line:661 [INFO]Online_Hybrid_Planning: Length of replanned trajectory: 35
+[2019-06-22 21:58:05,610] HybridPlanningOnline.py->Astar_Hybrid_Planning_online line:662 [INFO]Online_Hybrid_Planning: Sum of privacy threat of replanned trajectory: 905.064926
+[2019-06-22 21:58:05,610] HybridPlanningOnline.py->Astar_Hybrid_Planning_online line:663 [INFO]Online_Hybrid_Planning: Times of turning off camera of replanned trajectory: 15
+[2019-06-22 21:58:05,610] HybridPlanningOnline.py->Astar_Hybrid_Planning_online line:664 [INFO]Online_Hybrid_Planning: Times of intrusion of replanned trajectory: 23
+[2019-06-22 21:58:05,610] HybridPlanningOnline.py->Astar_Hybrid_Planning_online line:678 [INFO]Online_Hybrid_Planning: Length of preplanned trajectory: 27
+[2019-06-22 21:58:05,610] HybridPlanningOnline.py->Astar_Hybrid_Planning_online line:679 [INFO]Online_Hybrid_Planning: Sum of privacy threat of preplanned trajectory: 1254.460196
+[2019-06-22 21:58:05,610] HybridPlanningOnline.py->Astar_Hybrid_Planning_online line:680 [INFO]Online_Hybrid_Planning: Times of turning off camera of preplanned trajectory: 0
+[2019-06-22 21:58:05,610] HybridPlanningOnline.py->Astar_Hybrid_Planning_online line:681 [INFO]Online_Hybrid_Planning: Times of intrusion of preplanned trajectory: 17
+[2019-06-22 21:58:05,610] HybridPlanningOnline.py->Astar_Hybrid_Planning_online line:697 [INFO]Online_Path_Planning: Replanning times: 5
+[2019-06-22 21:58:05,615] HybridPlanningOnline.py->Astar_Hybrid_Planning_online line:723 [INFO]Online_Path_Planning: Exploration rate: 0.360000
+[2019-06-22 21:58:23,824] pathinitial.py->PathInitial line:417 [INFO]Initial_planning: Length of reference trajectory: 29
+[2019-06-22 21:58:23,824] pathinitial.py->PathInitial line:418 [INFO]Initial_planning: Sum of privacy threat of reference trajectory: 1236.374529
+[2019-06-22 21:58:26,572] HybridPlanningOnline.py->Astar_Hybrid_Planning_online line:661 [INFO]Online_Hybrid_Planning: Length of replanned trajectory: 29
+[2019-06-22 21:58:26,572] HybridPlanningOnline.py->Astar_Hybrid_Planning_online line:662 [INFO]Online_Hybrid_Planning: Sum of privacy threat of replanned trajectory: 699.578341
+[2019-06-22 21:58:26,572] HybridPlanningOnline.py->Astar_Hybrid_Planning_online line:663 [INFO]Online_Hybrid_Planning: Times of turning off camera of replanned trajectory: 12
+[2019-06-22 21:58:26,573] HybridPlanningOnline.py->Astar_Hybrid_Planning_online line:664 [INFO]Online_Hybrid_Planning: Times of intrusion of replanned trajectory: 17
+[2019-06-22 21:58:26,573] HybridPlanningOnline.py->Astar_Hybrid_Planning_online line:678 [INFO]Online_Hybrid_Planning: Length of preplanned trajectory: 29
+[2019-06-22 21:58:26,573] HybridPlanningOnline.py->Astar_Hybrid_Planning_online line:679 [INFO]Online_Hybrid_Planning: Sum of privacy threat of preplanned trajectory: 1236.374529
+[2019-06-22 21:58:26,573] HybridPlanningOnline.py->Astar_Hybrid_Planning_online line:680 [INFO]Online_Hybrid_Planning: Times of turning off camera of preplanned trajectory: 0
+[2019-06-22 21:58:26,573] HybridPlanningOnline.py->Astar_Hybrid_Planning_online line:681 [INFO]Online_Hybrid_Planning: Times of intrusion of preplanned trajectory: 17
+[2019-06-22 21:58:26,573] HybridPlanningOnline.py->Astar_Hybrid_Planning_online line:697 [INFO]Online_Path_Planning: Replanning times: 2
+[2019-06-22 21:58:26,578] HybridPlanningOnline.py->Astar_Hybrid_Planning_online line:723 [INFO]Online_Path_Planning: Exploration rate: 0.470000
+[2019-06-22 21:58:42,257] pathinitial.py->PathInitial line:417 [INFO]Initial_planning: Length of reference trajectory: 29
+[2019-06-22 21:58:42,257] pathinitial.py->PathInitial line:418 [INFO]Initial_planning: Sum of privacy threat of reference trajectory: 2016.771849
+[2019-06-22 21:58:43,652] HybridPlanningOnline.py->Astar_Hybrid_Planning_online line:661 [INFO]Online_Hybrid_Planning: Length of replanned trajectory: 35
+[2019-06-22 21:58:43,652] HybridPlanningOnline.py->Astar_Hybrid_Planning_online line:662 [INFO]Online_Hybrid_Planning: Sum of privacy threat of replanned trajectory: 944.908813
+[2019-06-22 21:58:43,652] HybridPlanningOnline.py->Astar_Hybrid_Planning_online line:663 [INFO]Online_Hybrid_Planning: Times of turning off camera of replanned trajectory: 15
+[2019-06-22 21:58:43,652] HybridPlanningOnline.py->Astar_Hybrid_Planning_online line:664 [INFO]Online_Hybrid_Planning: Times of intrusion of replanned trajectory: 19
+[2019-06-22 21:58:43,652] HybridPlanningOnline.py->Astar_Hybrid_Planning_online line:678 [INFO]Online_Hybrid_Planning: Length of preplanned trajectory: 29
+[2019-06-22 21:58:43,652] HybridPlanningOnline.py->Astar_Hybrid_Planning_online line:679 [INFO]Online_Hybrid_Planning: Sum of privacy threat of preplanned trajectory: 2016.771849
+[2019-06-22 21:58:43,652] HybridPlanningOnline.py->Astar_Hybrid_Planning_online line:680 [INFO]Online_Hybrid_Planning: Times of turning off camera of preplanned trajectory: 0
+[2019-06-22 21:58:43,653] HybridPlanningOnline.py->Astar_Hybrid_Planning_online line:681 [INFO]Online_Hybrid_Planning: Times of intrusion of preplanned trajectory: 17
+[2019-06-22 21:58:43,653] HybridPlanningOnline.py->Astar_Hybrid_Planning_online line:697 [INFO]Online_Path_Planning: Replanning times: 4
+[2019-06-22 21:58:43,657] HybridPlanningOnline.py->Astar_Hybrid_Planning_online line:723 [INFO]Online_Path_Planning: Exploration rate: 0.580000
+[2019-06-22 21:58:58,779] pathinitial.py->PathInitial line:417 [INFO]Initial_planning: Length of reference trajectory: 29
+[2019-06-22 21:58:58,779] pathinitial.py->PathInitial line:418 [INFO]Initial_planning: Sum of privacy threat of reference trajectory: 430.490862
+[2019-06-22 21:58:59,323] HybridPlanningOnline.py->Astar_Hybrid_Planning_online line:661 [INFO]Online_Hybrid_Planning: Length of replanned trajectory: 29
+[2019-06-22 21:58:59,323] HybridPlanningOnline.py->Astar_Hybrid_Planning_online line:662 [INFO]Online_Hybrid_Planning: Sum of privacy threat of replanned trajectory: 297.279776
+[2019-06-22 21:58:59,323] HybridPlanningOnline.py->Astar_Hybrid_Planning_online line:663 [INFO]Online_Hybrid_Planning: Times of turning off camera of replanned trajectory: 7
+[2019-06-22 21:58:59,323] HybridPlanningOnline.py->Astar_Hybrid_Planning_online line:664 [INFO]Online_Hybrid_Planning: Times of intrusion of replanned trajectory: 10
+[2019-06-22 21:58:59,323] HybridPlanningOnline.py->Astar_Hybrid_Planning_online line:678 [INFO]Online_Hybrid_Planning: Length of preplanned trajectory: 29
+[2019-06-22 21:58:59,324] HybridPlanningOnline.py->Astar_Hybrid_Planning_online line:679 [INFO]Online_Hybrid_Planning: Sum of privacy threat of preplanned trajectory: 430.490862
+[2019-06-22 21:58:59,324] HybridPlanningOnline.py->Astar_Hybrid_Planning_online line:680 [INFO]Online_Hybrid_Planning: Times of turning off camera of preplanned trajectory: 0
+[2019-06-22 21:58:59,324] HybridPlanningOnline.py->Astar_Hybrid_Planning_online line:681 [INFO]Online_Hybrid_Planning: Times of intrusion of preplanned trajectory: 10
+[2019-06-22 21:58:59,324] HybridPlanningOnline.py->Astar_Hybrid_Planning_online line:697 [INFO]Online_Path_Planning: Replanning times: 1
+[2019-06-22 21:58:59,328] HybridPlanningOnline.py->Astar_Hybrid_Planning_online line:723 [INFO]Online_Path_Planning: Exploration rate: 0.670000
+[2019-06-22 21:59:13,637] pathinitial.py->PathInitial line:417 [INFO]Initial_planning: Length of reference trajectory: 27
+[2019-06-22 21:59:13,637] pathinitial.py->PathInitial line:418 [INFO]Initial_planning: Sum of privacy threat of reference trajectory: 327.059177
+[2019-06-22 21:59:14,251] HybridPlanningOnline.py->Astar_Hybrid_Planning_online line:661 [INFO]Online_Hybrid_Planning: Length of replanned trajectory: 31
+[2019-06-22 21:59:14,251] HybridPlanningOnline.py->Astar_Hybrid_Planning_online line:662 [INFO]Online_Hybrid_Planning: Sum of privacy threat of replanned trajectory: 196.017329
+[2019-06-22 21:59:14,252] HybridPlanningOnline.py->Astar_Hybrid_Planning_online line:663 [INFO]Online_Hybrid_Planning: Times of turning off camera of replanned trajectory: 6
+[2019-06-22 21:59:14,252] HybridPlanningOnline.py->Astar_Hybrid_Planning_online line:664 [INFO]Online_Hybrid_Planning: Times of intrusion of replanned trajectory: 8
+[2019-06-22 21:59:14,252] HybridPlanningOnline.py->Astar_Hybrid_Planning_online line:678 [INFO]Online_Hybrid_Planning: Length of preplanned trajectory: 27
+[2019-06-22 21:59:14,252] HybridPlanningOnline.py->Astar_Hybrid_Planning_online line:679 [INFO]Online_Hybrid_Planning: Sum of privacy threat of preplanned trajectory: 327.059177
+[2019-06-22 21:59:14,252] HybridPlanningOnline.py->Astar_Hybrid_Planning_online line:680 [INFO]Online_Hybrid_Planning: Times of turning off camera of preplanned trajectory: 0
+[2019-06-22 21:59:14,252] HybridPlanningOnline.py->Astar_Hybrid_Planning_online line:681 [INFO]Online_Hybrid_Planning: Times of intrusion of preplanned trajectory: 8
+[2019-06-22 21:59:14,252] HybridPlanningOnline.py->Astar_Hybrid_Planning_online line:697 [INFO]Online_Path_Planning: Replanning times: 6
+[2019-06-22 21:59:14,257] HybridPlanningOnline.py->Astar_Hybrid_Planning_online line:723 [INFO]Online_Path_Planning: Exploration rate: 0.670000
+[2019-06-22 21:59:14,751] pathinitial.py->PathInitial line:417 [INFO]Initial_planning: Length of reference trajectory: 27
+[2019-06-22 21:59:14,751] pathinitial.py->PathInitial line:418 [INFO]Initial_planning: Sum of privacy threat of reference trajectory: 1787.499393
+[2019-06-22 21:59:24,849] pathinitial.py->PathInitial line:439 [INFO]Initial_planning: Length of best trajectory: 27
+[2019-06-22 21:59:24,849] pathinitial.py->PathInitial line:440 [INFO]Initial_planning: Sum of privacy threat of best trajectory: 327.059177
+[2019-06-22 21:59:25,316] pathinitial.py->PathInitial line:417 [INFO]Initial_planning: Length of reference trajectory: 27
+[2019-06-22 21:59:25,316] pathinitial.py->PathInitial line:418 [INFO]Initial_planning: Sum of privacy threat of reference trajectory: 1787.499393
+[2019-06-22 21:59:25,749] PathPlanningOnline.py->Astar_Path_Planning_online line:631 [INFO]Online_Path_Planning: Length of replanned trajectory: 35
+[2019-06-22 21:59:25,749] PathPlanningOnline.py->Astar_Path_Planning_online line:632 [INFO]Online_Path_Planning: Sum of privacy threat of replanned trajectory: 1588.327224
+[2019-06-22 21:59:25,749] PathPlanningOnline.py->Astar_Path_Planning_online line:633 [INFO]Online_Path_Planning: Times of turning off camera of replanned trajectory: 0
+[2019-06-22 21:59:25,749] PathPlanningOnline.py->Astar_Path_Planning_online line:634 [INFO]Online_Path_Planning: Times of intrusion of replanned trajectory: 25
+[2019-06-22 21:59:25,749] PathPlanningOnline.py->Astar_Path_Planning_online line:647 [INFO]Online_Path_Planning: Length of preplanned trajectory: 27
+[2019-06-22 21:59:25,749] PathPlanningOnline.py->Astar_Path_Planning_online line:648 [INFO]Online_Path_Planning: Sum of privacy threat of preplanned trajectory: 1787.499393
+[2019-06-22 21:59:25,750] PathPlanningOnline.py->Astar_Path_Planning_online line:649 [INFO]Online_Path_Planning: Times of turning off camera of preplanned trajectory: 0
+[2019-06-22 21:59:25,750] PathPlanningOnline.py->Astar_Path_Planning_online line:650 [INFO]Online_Path_Planning: Times of intrusion of preplanned trajectory: 22
+[2019-06-22 21:59:25,750] PathPlanningOnline.py->Astar_Path_Planning_online line:662 [INFO]Online_Path_Planning: Replanning times: 15
+[2019-06-22 21:59:25,758] PathPlanningOnline.py->Astar_Path_Planning_online line:688 [INFO]Online_Path_Planning: Exploration rate: 0.230000
+[2019-06-22 21:59:49,259] pathinitial.py->PathInitial line:417 [INFO]Initial_planning: Length of reference trajectory: 29
+[2019-06-22 21:59:49,259] pathinitial.py->PathInitial line:418 [INFO]Initial_planning: Sum of privacy threat of reference trajectory: 1630.646798
+[2019-06-22 21:59:51,013] PathPlanningOnline.py->Astar_Path_Planning_online line:631 [INFO]Online_Path_Planning: Length of replanned trajectory: 35
+[2019-06-22 21:59:51,013] PathPlanningOnline.py->Astar_Path_Planning_online line:632 [INFO]Online_Path_Planning: Sum of privacy threat of replanned trajectory: 1365.837772
+[2019-06-22 21:59:51,013] PathPlanningOnline.py->Astar_Path_Planning_online line:633 [INFO]Online_Path_Planning: Times of turning off camera of replanned trajectory: 0
+[2019-06-22 21:59:51,013] PathPlanningOnline.py->Astar_Path_Planning_online line:634 [INFO]Online_Path_Planning: Times of intrusion of replanned trajectory: 23
+[2019-06-22 21:59:51,013] PathPlanningOnline.py->Astar_Path_Planning_online line:647 [INFO]Online_Path_Planning: Length of preplanned trajectory: 29
+[2019-06-22 21:59:51,013] PathPlanningOnline.py->Astar_Path_Planning_online line:648 [INFO]Online_Path_Planning: Sum of privacy threat of preplanned trajectory: 1630.646798
+[2019-06-22 21:59:51,013] PathPlanningOnline.py->Astar_Path_Planning_online line:649 [INFO]Online_Path_Planning: Times of turning off camera of preplanned trajectory: 0
+[2019-06-22 21:59:51,013] PathPlanningOnline.py->Astar_Path_Planning_online line:650 [INFO]Online_Path_Planning: Times of intrusion of preplanned trajectory: 21
+[2019-06-22 21:59:51,013] PathPlanningOnline.py->Astar_Path_Planning_online line:662 [INFO]Online_Path_Planning: Replanning times: 19
+[2019-06-22 21:59:51,020] PathPlanningOnline.py->Astar_Path_Planning_online line:688 [INFO]Online_Path_Planning: Exploration rate: 0.380000
+[2019-06-22 22:00:12,263] pathinitial.py->PathInitial line:417 [INFO]Initial_planning: Length of reference trajectory: 29
+[2019-06-22 22:00:12,263] pathinitial.py->PathInitial line:418 [INFO]Initial_planning: Sum of privacy threat of reference trajectory: 1605.388370
+[2019-06-22 22:00:12,655] PathPlanningOnline.py->Astar_Path_Planning_online line:631 [INFO]Online_Path_Planning: Length of replanned trajectory: 30
+[2019-06-22 22:00:12,655] PathPlanningOnline.py->Astar_Path_Planning_online line:632 [INFO]Online_Path_Planning: Sum of privacy threat of replanned trajectory: 973.781385
+[2019-06-22 22:00:12,655] PathPlanningOnline.py->Astar_Path_Planning_online line:633 [INFO]Online_Path_Planning: Times of turning off camera of replanned trajectory: 0
+[2019-06-22 22:00:12,655] PathPlanningOnline.py->Astar_Path_Planning_online line:634 [INFO]Online_Path_Planning: Times of intrusion of replanned trajectory: 17
+[2019-06-22 22:00:12,655] PathPlanningOnline.py->Astar_Path_Planning_online line:647 [INFO]Online_Path_Planning: Length of preplanned trajectory: 29
+[2019-06-22 22:00:12,655] PathPlanningOnline.py->Astar_Path_Planning_online line:648 [INFO]Online_Path_Planning: Sum of privacy threat of preplanned trajectory: 1605.388370
+[2019-06-22 22:00:12,655] PathPlanningOnline.py->Astar_Path_Planning_online line:649 [INFO]Online_Path_Planning: Times of turning off camera of preplanned trajectory: 0
+[2019-06-22 22:00:12,655] PathPlanningOnline.py->Astar_Path_Planning_online line:650 [INFO]Online_Path_Planning: Times of intrusion of preplanned trajectory: 19
+[2019-06-22 22:00:12,655] PathPlanningOnline.py->Astar_Path_Planning_online line:662 [INFO]Online_Path_Planning: Replanning times: 6
+[2019-06-22 22:00:12,664] PathPlanningOnline.py->Astar_Path_Planning_online line:688 [INFO]Online_Path_Planning: Exploration rate: 0.490000
+[2019-06-22 22:00:30,480] pathinitial.py->PathInitial line:417 [INFO]Initial_planning: Length of reference trajectory: 29
+[2019-06-22 22:00:30,480] pathinitial.py->PathInitial line:418 [INFO]Initial_planning: Sum of privacy threat of reference trajectory: 2016.771849
+[2019-06-22 22:00:32,728] PathPlanningOnline.py->Astar_Path_Planning_online line:631 [INFO]Online_Path_Planning: Length of replanned trajectory: 33
+[2019-06-22 22:00:32,728] PathPlanningOnline.py->Astar_Path_Planning_online line:632 [INFO]Online_Path_Planning: Sum of privacy threat of replanned trajectory: 1588.789438
+[2019-06-22 22:00:32,729] PathPlanningOnline.py->Astar_Path_Planning_online line:633 [INFO]Online_Path_Planning: Times of turning off camera of replanned trajectory: 0
+[2019-06-22 22:00:32,729] PathPlanningOnline.py->Astar_Path_Planning_online line:634 [INFO]Online_Path_Planning: Times of intrusion of replanned trajectory: 17
+[2019-06-22 22:00:32,729] PathPlanningOnline.py->Astar_Path_Planning_online line:647 [INFO]Online_Path_Planning: Length of preplanned trajectory: 29
+[2019-06-22 22:00:32,729] PathPlanningOnline.py->Astar_Path_Planning_online line:648 [INFO]Online_Path_Planning: Sum of privacy threat of preplanned trajectory: 2016.771849
+[2019-06-22 22:00:32,729] PathPlanningOnline.py->Astar_Path_Planning_online line:649 [INFO]Online_Path_Planning: Times of turning off camera of preplanned trajectory: 0
+[2019-06-22 22:00:32,729] PathPlanningOnline.py->Astar_Path_Planning_online line:650 [INFO]Online_Path_Planning: Times of intrusion of preplanned trajectory: 17
+[2019-06-22 22:00:32,729] PathPlanningOnline.py->Astar_Path_Planning_online line:662 [INFO]Online_Path_Planning: Replanning times: 15
+[2019-06-22 22:00:32,739] PathPlanningOnline.py->Astar_Path_Planning_online line:688 [INFO]Online_Path_Planning: Exploration rate: 0.650000
+[2019-06-22 22:00:49,916] pathinitial.py->PathInitial line:417 [INFO]Initial_planning: Length of reference trajectory: 27
+[2019-06-22 22:00:49,916] pathinitial.py->PathInitial line:418 [INFO]Initial_planning: Sum of privacy threat of reference trajectory: 424.500187
+[2019-06-22 22:00:50,617] PathPlanningOnline.py->Astar_Path_Planning_online line:631 [INFO]Online_Path_Planning: Length of replanned trajectory: 27
+[2019-06-22 22:00:50,617] PathPlanningOnline.py->Astar_Path_Planning_online line:632 [INFO]Online_Path_Planning: Sum of privacy threat of replanned trajectory: 424.500187
+[2019-06-22 22:00:50,617] PathPlanningOnline.py->Astar_Path_Planning_online line:633 [INFO]Online_Path_Planning: Times of turning off camera of replanned trajectory: 0
+[2019-06-22 22:00:50,617] PathPlanningOnline.py->Astar_Path_Planning_online line:634 [INFO]Online_Path_Planning: Times of intrusion of replanned trajectory: 10
+[2019-06-22 22:00:50,617] PathPlanningOnline.py->Astar_Path_Planning_online line:647 [INFO]Online_Path_Planning: Length of preplanned trajectory: 27
+[2019-06-22 22:00:50,618] PathPlanningOnline.py->Astar_Path_Planning_online line:648 [INFO]Online_Path_Planning: Sum of privacy threat of preplanned trajectory: 424.500187
+[2019-06-22 22:00:50,618] PathPlanningOnline.py->Astar_Path_Planning_online line:649 [INFO]Online_Path_Planning: Times of turning off camera of preplanned trajectory: 0
+[2019-06-22 22:00:50,618] PathPlanningOnline.py->Astar_Path_Planning_online line:650 [INFO]Online_Path_Planning: Times of intrusion of preplanned trajectory: 10
+[2019-06-22 22:00:50,618] PathPlanningOnline.py->Astar_Path_Planning_online line:662 [INFO]Online_Path_Planning: Replanning times: 4
+[2019-06-22 22:00:50,626] PathPlanningOnline.py->Astar_Path_Planning_online line:688 [INFO]Online_Path_Planning: Exploration rate: 0.680000
+[2019-06-22 22:01:07,070] pathinitial.py->PathInitial line:417 [INFO]Initial_planning: Length of reference trajectory: 27
+[2019-06-22 22:01:07,070] pathinitial.py->PathInitial line:418 [INFO]Initial_planning: Sum of privacy threat of reference trajectory: 327.059177
+[2019-06-22 22:01:07,779] PathPlanningOnline.py->Astar_Path_Planning_online line:631 [INFO]Online_Path_Planning: Length of replanned trajectory: 27
+[2019-06-22 22:01:07,779] PathPlanningOnline.py->Astar_Path_Planning_online line:632 [INFO]Online_Path_Planning: Sum of privacy threat of replanned trajectory: 327.059177
+[2019-06-22 22:01:07,779] PathPlanningOnline.py->Astar_Path_Planning_online line:633 [INFO]Online_Path_Planning: Times of turning off camera of replanned trajectory: 0
+[2019-06-22 22:01:07,779] PathPlanningOnline.py->Astar_Path_Planning_online line:634 [INFO]Online_Path_Planning: Times of intrusion of replanned trajectory: 8
+[2019-06-22 22:01:07,779] PathPlanningOnline.py->Astar_Path_Planning_online line:647 [INFO]Online_Path_Planning: Length of preplanned trajectory: 27
+[2019-06-22 22:01:07,779] PathPlanningOnline.py->Astar_Path_Planning_online line:648 [INFO]Online_Path_Planning: Sum of privacy threat of preplanned trajectory: 327.059177
+[2019-06-22 22:01:07,779] PathPlanningOnline.py->Astar_Path_Planning_online line:649 [INFO]Online_Path_Planning: Times of turning off camera of preplanned trajectory: 0
+[2019-06-22 22:01:07,779] PathPlanningOnline.py->Astar_Path_Planning_online line:650 [INFO]Online_Path_Planning: Times of intrusion of preplanned trajectory: 8
+[2019-06-22 22:01:07,779] PathPlanningOnline.py->Astar_Path_Planning_online line:662 [INFO]Online_Path_Planning: Replanning times: 4
+[2019-06-22 22:01:07,784] PathPlanningOnline.py->Astar_Path_Planning_online line:688 [INFO]Online_Path_Planning: Exploration rate: 0.680000
