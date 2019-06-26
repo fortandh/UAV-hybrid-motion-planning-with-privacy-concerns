@@ -4,8 +4,8 @@
 
 import re
 
-file_name_to_open = "results_0626-exploration-type4.2-data2.2019_06_26.log"
-# file_name_to_open = "results_0625-exploration-2.2019_06_25.log"
+# file_name_to_open = "results_0626-exploration-type4.2-1-data2.2019_06_26.log"
+file_name_to_open = "results_0626-preference-type4-data2.2019_06_26.log"
 file_name_to_write = "rslt.csv"
 
 if __name__ == '__main__':

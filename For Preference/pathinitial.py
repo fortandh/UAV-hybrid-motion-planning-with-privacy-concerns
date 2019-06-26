@@ -373,7 +373,7 @@ class AStar:
 
 
 
-def PathInitial(config, reinitial_flag, iteration, log):
+def PathInitial(config, reinitial_flag, iteration, log, num):
     grid_x = config.grid_x
     grid_y = config.grid_y
     grid_z = config.grid_z
@@ -397,7 +397,7 @@ def PathInitial(config, reinitial_flag, iteration, log):
 
     # 全局信息，用作baseline
     # occ_grid_name = "occ_grid" + str(iteration) + ".npy"
-    occ_grid_name = os.getcwd() +"/data/"+"occ_grid" + ".npy"
+    occ_grid_name = os.getcwd() +"/data/"+"occ_grid-" +str(num) + ".npy"
     occ_grid = np.load(file=occ_grid_name)
     # occ_grid = np.load(file="occ_grid.npy")
     pri_grid, privacy_sum = privacy_init(grid_x, grid_y, grid_z, occ_grid, privacy_radius)

@@ -349,7 +349,7 @@ def map_of_city (grid_x, grid_y, grid_z, start, end, safety_threshold, privacy_t
 #                                      , 0.05)
 #print (occ_grid, num_obstacle)
 
-def SaveMap (config, iteration, exploration_rate):
+def SaveMap (config, iteration, exploration_rate,num):
     grid_x = config.grid_x
     grid_y = config.grid_y
     grid_z = config.grid_z
@@ -383,7 +383,7 @@ def SaveMap (config, iteration, exploration_rate):
         np.save(file=occ_grid_name, arr=occ_grid)
 
     else:
-        occ_grid_name =  os.getcwd() + "/data/occ_grid" + ".npy"
+        occ_grid_name =  os.getcwd() + "/data/occ_grid-" + str(num) + ".npy"
         occ_grid = np.load(file=occ_grid_name)
 
         occ_grid_known_initial, pri_grid_known, privacy_sum_known = initialmapwithknowngrid_ratio(grid_x, grid_y,
