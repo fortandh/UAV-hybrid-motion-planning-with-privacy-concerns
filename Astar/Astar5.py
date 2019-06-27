@@ -401,7 +401,7 @@ if __name__ == '__main__':
     #                                                                                       safety_threshold,
     #                                                                                       privacy_threshold,
     #                                                                                       privacy_radius)
-    occ_grid = np.load(file="occ_grid.npy")
+    occ_grid = np.load(file="occ_grid-1.npy")
     occ_grid_known, pri_grid_known, privacy_sum_known = initialmapwithknowngrid(grid_x, grid_y, grid_z, privacy_threshold, privacy_radius, occ_grid)
     pri_grid, privacy_sum = privacy_init(grid_x, grid_y, grid_z, occ_grid, privacy_radius)
     print("The occ_grid is: ")

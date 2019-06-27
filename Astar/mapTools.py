@@ -308,8 +308,8 @@ if __name__ == '__main__':
                                                                                            safety_threshold,
                                                                                            privacy_threshold,
                                                                                            privacy_radius)
-    np.save(file="occ_grid.npy", arr=occ_grid)
-    b = np.load(file="occ_grid.npy")
+    np.save(file="occ_grid-1.npy", arr=occ_grid)
+    b = np.load(file="occ_grid-1.npy")
     for m in range(grid_x):
         print("The value of x: ", m)
         print(b[m])
