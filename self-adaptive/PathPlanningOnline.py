@@ -6,7 +6,7 @@ add camera into searching space
 import time
 from Point2 import Point
 import numpy as np
-from mapTools import privacy_init, hasprivacythreat2, initialmapwithknowngrid, initialmapwithknowngrid_ratio
+from mapTools import privacy_init, hasprivacythreat2, initialmapwithknowngrid, initialmapwithknowngrid_ratio, caculate_privacy_surround
 import copy
 from Configure import configure
 import math
@@ -40,7 +40,10 @@ class AStar:
 
         # 堆需要节点与节点之间的比较，因此必须实现这个魔术方法
         def __lt__(self, other):
-            return self.g + self.h < other.g + other.h
+            if self.g + self.h ==  other.g + other.h:
+                return self.step < other.step
+            else:
+                return self.g + self.h < other.g + other.h
 
     def __init__(self, occ_grid, pri_grid, grid, sum_privacy, startPoint, endPoint, passTag, Tbudget, threat_list, Toptimal, preference, privacy_radius):
         """
@@ -250,41 +253,42 @@ class AStar:
         # cam_off = cam
 
         ## 0628 h_i*exp((-1/2)*ws*dis^2)
-        privacy_threat = 0
-        grid_x = self.grid[0]
-        grid_y = self.grid[1]
-        grid_z = self.grid[2]
-        r = max(self.pri_radius)
-        current_x = minF.point.x + offsetX
-        current_y = minF.point.y + offsetY
-        current_z = minF.point.z + offsetZ
-
-        min_x = max(current_x - r, 0)
-        min_x = math.floor(min_x)
-        max_x = min(current_x + r, grid_x - 1)
-        max_x = math.ceil(max_x)
-        min_y = max(current_y - r, 0)
-        min_y = math.floor(min_y)
-        max_y = min(current_x + r, grid_y - 1)
-        max_y = math.ceil(max_y)
-        min_z = max(current_z - r, 0)
-        min_z = math.floor(min_z)
-        max_z = min(current_z + r, grid_z - 1)
-        max_z = math.ceil(max_z)
-        for m in range(min_x, max_x + 1):
-            for n in range(min_y, max_y + 1):
-                for l in range(min_z, max_z + 1):
-                    if self.map3d[m][n][l] == 2 or self.map3d[m][n][l] == 3 or self.map3d[m][n][l] == 4:
-                        dis = np.sqrt(np.power((current_x - m), 2) + np.power((current_y - n), 2) + np.power((current_z - l), 2))
-                        h = 0
-                        if dis <= self.pri_radius[int(self.map3d[m][n][l]) - 2]:
-                            if self.map3d[m][n][l] == 2:
-                                h = 1
-                            elif self.map3d[m][n][l] == 3:
-                                h = 10
-                            elif self.map3d[m][n][l] == 4:
-                                h = 100
-                            privacy_threat += h * math.exp((-1 / 2) * np.power(dis, 2) * cam)
+        privacy_threat = caculate_privacy_surround(self.grid, currentPoint, self.map3d, self.pri_radius)
+        # privacy_threat = 0
+        # grid_x = self.grid[0]
+        # grid_y = self.grid[1]
+        # grid_z = self.grid[2]
+        # r = max(self.pri_radius)
+        # current_x = minF.point.x + offsetX
+        # current_y = minF.point.y + offsetY
+        # current_z = minF.point.z + offsetZ
+        #
+        # min_x = max(current_x - r, 0)
+        # min_x = math.floor(min_x)
+        # max_x = min(current_x + r, grid_x - 1)
+        # max_x = math.ceil(max_x)
+        # min_y = max(current_y - r, 0)
+        # min_y = math.floor(min_y)
+        # max_y = min(current_x + r, grid_y - 1)
+        # max_y = math.ceil(max_y)
+        # min_z = max(current_z - r, 0)
+        # min_z = math.floor(min_z)
+        # max_z = min(current_z + r, grid_z - 1)
+        # max_z = math.ceil(max_z)
+        # for m in range(min_x, max_x + 1):
+        #     for n in range(min_y, max_y + 1):
+        #         for l in range(min_z, max_z + 1):
+        #             if self.map3d[m][n][l] == 2 or self.map3d[m][n][l] == 3 or self.map3d[m][n][l] == 4:
+        #                 dis = np.sqrt(np.power((current_x - m), 2) + np.power((current_y - n), 2) + np.power((current_z - l), 2))
+        #                 h = 0
+        #                 if dis <= self.pri_radius[int(self.map3d[m][n][l]) - 2]:
+        #                     if self.map3d[m][n][l] == 2:
+        #                         h = 1
+        #                     elif self.map3d[m][n][l] == 3:
+        #                         h = 10
+        #                     elif self.map3d[m][n][l] == 4:
+        #                         h = 100
+        #                     privacy_threat += h * math.exp((-1 / 2) * np.power(dis, 2) * cam)
 
         #delta_g = step + privacy_threat
         time_punishment = 1
@@ -389,12 +393,12 @@ class AStar:
             #     self.searchNear(minF, actions[actionlist[i]][0], actions[actionlist[i]][1], actions[actionlist[i]][2], actions[actionlist[i]][3])
             # """
             # turn on camera
-            self.searchNear(minF, 0, -1, 0, 0)
-            self.searchNear(minF, 0, 1, 0, 0)
-            self.searchNear(minF, -1, 0, 0, 0)
-            self.searchNear(minF, 1, 0, 0, 0)
-            self.searchNear(minF, 0, 0, 1, 0)
-            self.searchNear(minF, 0, 0, -1, 0)
+            self.searchNear(minF, 0, -1, 0, 1)
+            self.searchNear(minF, 0, 1, 0, 1)
+            self.searchNear(minF, -1, 0, 0, 1)
+            self.searchNear(minF, 1, 0, 0, 1)
+            self.searchNear(minF, 0, 0, 1, 1)
+            self.searchNear(minF, 0, 0, -1, 1)
 
 
             #self.updateNodeHvalue()
@@ -708,9 +712,9 @@ def Astar_Path_Planning_online (config, iteration, log, num):
 
     ## log info
     # sum of privacy risk with pri_grid
-    sum_unknown_plan = 0
+    PR_sum_unknown_plan = 0
     # sum of privacy risk with pri_grid_knwon
-    sum_known_plan = 0
+    PR_sum_known_plan = 0
     # times of camera reconfigured
     num_ca_plan = 0
     # times of with intrusion of restricted area with pri_grid
@@ -726,43 +730,42 @@ def Astar_Path_Planning_online (config, iteration, log, num):
         else:
             path_grid2[point.x][point.y][point.z] = 10
             num_ca_plan += 1
-        sum_unknown_plan += pri_grid[point.x][point.y][point.z] * math.exp(-(point.ca))
-        sum_known_plan += pri_grid_known[point.x][point.y][point.z] * math.exp(-(point.ca))
+        # sum_unknown_plan += pri_grid[point.x][point.y][point.z] * math.exp(-(point.ca))
+        # sum_known_plan += pri_grid_known[point.x][point.y][point.z] * math.exp(-(point.ca))
+        PR_sum_unknown_plan += caculate_privacy_surround(grid, point, occ_grid, privacy_radius)
+        PR_sum_known_plan += caculate_privacy_surround(grid, point, occ_grid_known, privacy_radius)
         if pri_grid[point.x][point.y][point.z] > 0 and occ_grid[point.x][point.y][point.z] == 0:
             num_intruder_notknown_plan += 1
 
         if pri_grid_known[point.x][point.y][point.z] > 0 and occ_grid_known[point.x][point.y][point.z] == 0:
             num_intruder_known_plan += 1
 
-        if occ_grid[point.x][point.y][point.z] == 2 or occ_grid[point.x][point.y][point.z] == 3 or occ_grid[point.x][point.y][point.z] == 4 :
-            # print(point.x,point.y, point.z)
-            # print(occ_grid[point.x][point.y][point.z])
-            # print(occ_grid_known[point.x][point.y][point.z])
-            num_should_avoid_intruder_plan += 1
-
-        if occ_grid_known[point.x][point.y][point.z] == 2 or occ_grid_known[point.x][point.y][point.z] == 3 or occ_grid_known[point.x][point.y][point.z] == 4:
-            num_cannot_avoid_intruder_plan += 1
+        # if occ_grid[point.x][point.y][point.z] == 2 or occ_grid[point.x][point.y][point.z] == 3 or occ_grid[point.x][point.y][point.z] == 4 :
+        #     num_should_avoid_intruder_plan += 1
+        #
+        # if occ_grid_known[point.x][point.y][point.z] == 2 or occ_grid_known[point.x][point.y][point.z] == 3 or occ_grid_known[point.x][point.y][point.z] == 4:
+        #     num_cannot_avoid_intruder_plan += 1
         # print(point, pri_grid_known[point.x][point.y][point.z])
-    print("\033[94mFitness for replanned path:\033[0m \n ", len(trajectory_plan) - 1, sum_unknown_plan, sum_known_plan,
+    print("\033[94mFitness for replanned path:\033[0m \n ", len(trajectory_plan) - 1, PR_sum_unknown_plan, PR_sum_known_plan,
           num_ca_plan,
           num_intruder_notknown_plan, num_intruder_known_plan)
     log.info("Online_Path_Planning: Length of replanned trajectory: %d" % (len(trajectory_plan) - 1))
-    log.info("Online_Path_Planning: Sum of privacy threat of replanned trajectory(unknown): %f" % sum_unknown_plan)
-    log.info("Online_Path_Planning: Sum of privacy threat of replanned trajectory(known): %f" % sum_known_plan)
+    log.info("Online_Path_Planning: Sum of privacy threat of replanned trajectory(occ_grid): %f" % PR_sum_unknown_plan)
+    log.info("Online_Path_Planning: Sum of privacy threat of replanned trajectory(occ_grid_known): %f" % PR_sum_known_plan)
     log.info("Online_Path_Planning: Times of turning off camera of replanned trajectory: %d" % num_ca_plan)
     # log.info("Online_Path_Planning: Times of intrusion of replanned trajectory: %d" % num_intruder_plan)
     log.info(
-        "Online_Path_Planning: Times of intrusion of replanned trajectory(notknown): %d" % num_intruder_notknown_plan)
-    log.info("Online_Path_Planning: Times of intrusion of replanned trajectory(known): %d" % num_intruder_known_plan)
+        "Online_Path_Planning: Times of intrusion of replanned trajectory(occ_grid): %d" % num_intruder_notknown_plan)
+    log.info("Online_Path_Planning: Times of intrusion of replanned trajectory(occ_grid_known): %d" % num_intruder_known_plan)
     # log.info(
     #     "Online_Path_Planning: Times of intrusion of replanned trajectory(should avoid): %d" % num_should_avoid_intruder_plan)
     # log.info(
     #     "Online_Path_Planning: Times of intrusion of replanned trajectory(cannot avoid): %d" % num_cannot_avoid_intruder_plan)
 
     # 再次显示地图
-    sum_ref = 0
-    sum_known_ref = 0
-    sum_unknown_ref = 0
+
+    PR_sum_unknown_ref = 0
+    PR_sum_known_ref = 0
     num_ca_ref = 0
     num_intruder_notknown_ref = 0
     num_intruder_known_ref = 0
@@ -770,8 +773,11 @@ def Astar_Path_Planning_online (config, iteration, log, num):
     # num_cannot_avoid_intruder_ref = 0
 
     for point in trajectory_ref:
-        sum_unknown_ref += pri_grid[point.x][point.y][point.z] * math.exp(-(point.ca))
-        sum_known_ref += pri_grid_known[point.x][point.y][point.z] * math.exp(-(point.ca))
+
+        # sum_unknown_ref += pri_grid[point.x][point.y][point.z] * math.exp(-(point.ca))
+        # sum_known_ref += pri_grid_known[point.x][point.y][point.z] * math.exp(-(point.ca))
+        PR_sum_unknown_ref += caculate_privacy_surround(grid, point, occ_grid, privacy_radius)
+        PR_sum_known_ref += caculate_privacy_surround(grid, point, occ_grid_known, privacy_radius)
         num_ca_ref += point.ca
         # print(point, pri_grid_known[point.x][point.y][point.z])
         if pri_grid[point.x][point.y][point.z] > 0 and occ_grid[point.x][point.y][point.z] == 0:
@@ -787,17 +793,17 @@ def Astar_Path_Planning_online (config, iteration, log, num):
         #     num_cannot_avoid_intruder_ref += 1
     # print("\033[94m Fitness for reference path:\033[0m \n", len(trajectory_ref) - 1, sum_ref, num_ca_ref,
     #       num_intruder_ref)
-    print("\033[94mFitness for replanned path:\033[0m \n ", len(trajectory_plan) - 1, sum_unknown_ref, sum_known_ref,
+    print("\033[94mFitness for replanned path:\033[0m \n ", len(trajectory_plan) - 1, PR_sum_unknown_ref, PR_sum_known_ref,
           num_ca_ref,
           num_intruder_notknown_ref, num_intruder_known_ref)
     log.info("Online_Path_Planning: Length of preplanned trajectory: %d" % (len(trajectory_ref) - 1))
-    log.info("Online_Path_Planning: Sum of privacy threat of replanned trajectory(unknown): %f" % sum_unknown_ref)
-    log.info("Online_Path_Planning: Sum of privacy threat of replanned trajectory(known): %f" % sum_known_ref)
+    log.info("Online_Path_Planning: Sum of privacy threat of replanned trajectory(occ_grid): %f" % PR_sum_unknown_ref)
+    log.info("Online_Path_Planning: Sum of privacy threat of replanned trajectory(occ_gridknown): %f" % PR_sum_known_ref)
     log.info("Online_Path_Planning: Times of turning off camera of preplanned trajectory: %d" % num_ca_ref)
     # log.info("Online_Path_Planning: Times of intrusion of preplanned trajectory: %d" % num_intruder_ref)
     log.info(
-        "Online_Path_Planning: Times of intrusion of preplanned trajectory(notknown): %d" % num_intruder_notknown_ref)
-    log.info("Online_Path_Planning: Times of intrusion of preplanned trajectory(known): %d" % num_intruder_known_ref)
+        "Online_Path_Planning: Times of intrusion of preplanned trajectory(occ_grid): %d" % num_intruder_notknown_ref)
+    log.info("Online_Path_Planning: Times of intrusion of preplanned trajectory(occ_gridknown): %d" % num_intruder_known_ref)
     # log.info(
     #     "Online_Path_Planning: Times of intrusion of preplanned trajectory(should avoid): %d" % num_should_avoid_intruder_ref)
     # log.info(

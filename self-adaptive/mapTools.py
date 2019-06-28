@@ -387,6 +387,52 @@ def SaveMap (config, iteration, exploration_rate,num):
     #     print("The value of x: ", m)
     #     print(c[m])
 
+def caculate_privacy_surround(grid, point, occ_grid, privacy_radius ):
+    privacy_threat = 0
+    grid_x = grid[0]
+    grid_y = grid[1]
+    grid_z = grid[2]
+    r = max(privacy_radius)
+
+    current_x = point.x
+    current_y = point.y
+    current_z = point.z
+    cam = point.ca
+
+    min_x = max(current_x - r, 0)
+    min_x = math.floor(min_x)
+    max_x = min(current_x + r, grid_x - 1)
+    max_x = math.ceil(max_x)
+    min_y = max(current_y - r, 0)
+    min_y = math.floor(min_y)
+    max_y = min(current_y + r, grid_y - 1)
+    max_y = math.ceil(max_y)
+    min_z = max(current_z - r, 0)
+    min_z = math.floor(min_z)
+    max_z = min(current_z + r, grid_z - 1)
+    max_z = math.ceil(max_z)
+    # if current_x == 0 and current_y == 3 and current_z == 1:
+    #     print("current_point",point)
+    #     print(min_x,max_x,min_y,max_y,min_z,max_z)
+    for m in range(min_x, max_x + 1):
+        for n in range(min_y, max_y + 1):
+            for l in range(min_z, max_z + 1):
+                if occ_grid[m][n][l] == 2 or occ_grid[m][n][l] == 3 or occ_grid[m][n][l] == 4:
+                    dis = np.sqrt(np.power((current_x - m), 2) + np.power((current_y - n), 2) + np.power((current_z - l), 2))
+                    h = 0
+                    if dis <= privacy_radius[int(occ_grid[m][n][l]) - 2]:
+                        # print("privacy",m,n,l, point)
+                        # if self.pri_radius[int(self.map3d[m][n][l]) - 2]
+                        # print(self.pri_radius[int(self.map3d[m][n][l]) - 2])
+                        if occ_grid[m][n][l] == 2:
+                            h = 1
+                        elif occ_grid[m][n][l] == 3:
+                            h = 10
+                        elif occ_grid[m][n][l] == 4:
+                            h = 100
+                        privacy_threat += h * math.exp((-1 / 2) * np.power(dis, 2) * cam)
+    return privacy_threat
+
 if __name__ == '__main__':
     exploration_rate = 0
     grid_x = 10

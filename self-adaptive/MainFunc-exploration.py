@@ -30,7 +30,7 @@ for round in range(num_of_occ_grid):
     log_tmp = Log(__name__, log_cate="results_0628-exploration-viewradius2.5-type5-data" + str(num))
     log = log_tmp.getlog()
 
-    for j in range(6):
+    for j in range(0,11):
         exploration_rate_list = [0, 0.2, 0.4, 0.6, 0.8, 1]
         exploration_rate = exploration_rate_list[j]
         # exploration_rate = 0
@@ -45,7 +45,7 @@ for round in range(num_of_occ_grid):
         # else:
         #     rangek = 3
         rangek = 11
-        for i in range(0, rangek):
+        for i in range(1, 11):
 
             iteration = i
             grid_x = 10 + int(i / 100)
@@ -80,16 +80,16 @@ for round in range(num_of_occ_grid):
             y2 = grid_y - 1
             z1 = 0
             z2 = grid_z - 1
-            starting_point = Point(x1, y1, z1, 0)
-            end_point = Point(x2, y2, z2, 0)
+            starting_point = Point(x1, y1, z1, 1)
+            end_point = Point(x2, y2, z2, 1)
 
             # alpha ,beta 固定
             # alpha_list = [4/2, 5/3, 6/4, 7/5, 8/6, 9/7, 10/8, 11/9, 12/10, 13/11]
             # alpha = alpha_list[i % 10]
             # beta_list = [3/2, 4/3, 5/4, 6/5, 7/6, 8/7, 9/8, 10/9, 11/10, 12/11]
             # beta = beta_list[i % 10]
-            alpha = 5/3
-            beta = 4/3
+            alpha = 8/6
+            beta = 7/6
 
             Kca = 10
 
@@ -118,9 +118,9 @@ for round in range(num_of_occ_grid):
                 continue
 
             # Hybrid
-            Astar_Hybrid_Planning_online(config, iteration, log, num)
-            reinitial_flag = 2
-            PathInitial(config, reinitial_flag, iteration, log, num)
+            # Astar_Hybrid_Planning_online(config, iteration, log, num)
+            # reinitial_flag = 2
+            # PathInitial(config, reinitial_flag, iteration, log, num)
 
             # SC
             #
@@ -134,9 +134,9 @@ for round in range(num_of_occ_grid):
             #                                                                                                 num)
 
             # PP
-            Astar_Path_Planning_online(config, iteration, log, num)
-            reinitial_flag = 2
-            PathInitial(config, reinitial_flag, iteration, log, num)
+            # Astar_Path_Planning_online(config, iteration, log, num)
+            # reinitial_flag = 2
+            # PathInitial(config, reinitial_flag, iteration, log, num)
 
 
 

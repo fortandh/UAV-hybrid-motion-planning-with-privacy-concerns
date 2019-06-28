@@ -4,7 +4,7 @@
 import time
 from Point2 import Point
 import numpy as np
-from mapTools import privacy_init, hasprivacythreat2, initialmapwithknowngrid, initialmapwithknowngrid_ratio
+from mapTools import privacy_init, hasprivacythreat2, initialmapwithknowngrid, initialmapwithknowngrid_ratio, caculate_privacy_surround
 from Configure import configure
 import math
 import sys
@@ -36,8 +36,12 @@ class AStar:
                 self.point.z) + ",ca:" + str(self.point.ca)
 
         # 堆需要节点与节点之间的比较，因此必须实现这个魔术方法
+        # 设置第二个长度的优先级
         def __lt__(self, other):
-            return self.g + self.h < other.g + other.h
+            if self.g + self.h ==  other.g + other.h:
+                return self.step < other.step
+            else:
+                return self.g + self.h < other.g + other.h
 
     def __init__(self, occ_grid, pri_grid, grid, sum_privacy, startPoint, endPoint, passTag, Tbudget, threat_list, Toptimal, preference, privacy_radius):
         """
@@ -248,44 +252,45 @@ class AStar:
         # cam_off = cam
 
         ## 0628 h_i*exp((-1/2)*ws*dis^2)
-        privacy_threat = 0
-        grid_x = self.grid[0]
-        grid_y = self.grid[1]
-        grid_z = self.grid[2]
-        r = max(self.pri_radius)
-
-        current_x = minF.point.x + offsetX
-        current_y = minF.point.y + offsetY
-        current_z = minF.point.z + offsetZ
-
-        min_x = max(current_x - r, 0)
-        min_x = math.floor(min_x)
-        max_x = min(current_x + r, grid_x - 1)
-        max_x = math.ceil(max_x)
-        min_y = max(current_y - r, 0)
-        min_y = math.floor(min_y)
-        max_y = min(current_x + r, grid_y - 1)
-        max_y = math.ceil(max_y)
-        min_z = max(current_z - r, 0)
-        min_z = math.floor(min_z)
-        max_z = min(current_z + r, grid_z - 1)
-        max_z = math.ceil(max_z)
-        for m in range(min_x, max_x + 1):
-            for n in range(min_y, max_y + 1):
-                for l in range(min_z, max_z + 1):
-                    if self.map3d[m][n][l] == 2 or self.map3d[m][n][l] == 3 or self.map3d[m][n][l] == 4:
-                        dis = np.sqrt(np.power((current_x - m), 2) + np.power((current_y - n), 2) + np.power((current_z - l), 2))
-                        h = 0
-                        if dis <= self.pri_radius[int(self.map3d[m][n][l]) - 2]:
-                            # if self.pri_radius[int(self.map3d[m][n][l]) - 2]
-                            # print(self.pri_radius[int(self.map3d[m][n][l]) - 2])
-                            if self.map3d[m][n][l] == 2:
-                                h = 1
-                            elif self.map3d[m][n][l] == 3:
-                                h = 10
-                            elif self.map3d[m][n][l] == 4:
-                                h = 100
-                            privacy_threat += h * math.exp((-1 / 2) * np.power(dis, 2) * cam)
+        privacy_threat = caculate_privacy_surround(self.grid, currentPoint, self.map3d, self.pri_radius)
+        # privacy_threat = 0
+        # grid_x = self.grid[0]
+        # grid_y = self.grid[1]
+        # grid_z = self.grid[2]
+        # r = max(self.pri_radius)
+        #
+        # current_x = minF.point.x + offsetX
+        # current_y = minF.point.y + offsetY
+        # current_z = minF.point.z + offsetZ
+        #
+        # min_x = max(current_x - r, 0)
+        # min_x = math.floor(min_x)
+        # max_x = min(current_x + r, grid_x - 1)
+        # max_x = math.ceil(max_x)
+        # min_y = max(current_y - r, 0)
+        # min_y = math.floor(min_y)
+        # max_y = min(current_x + r, grid_y - 1)
+        # max_y = math.ceil(max_y)
+        # min_z = max(current_z - r, 0)
+        # min_z = math.floor(min_z)
+        # max_z = min(current_z + r, grid_z - 1)
+        # max_z = math.ceil(max_z)
+        # for m in range(min_x, max_x + 1):
+        #     for n in range(min_y, max_y + 1):
+        #         for l in range(min_z, max_z + 1):
+        #             if self.map3d[m][n][l] == 2 or self.map3d[m][n][l] == 3 or self.map3d[m][n][l] == 4:
+        #                 dis = np.sqrt(np.power((current_x - m), 2) + np.power((current_y - n), 2) + np.power((current_z - l), 2))
+        #                 h = 0
+        #                 if dis <= self.pri_radius[int(self.map3d[m][n][l]) - 2]:
+        #                     # if self.pri_radius[int(self.map3d[m][n][l]) - 2]
+        #                     # print(self.pri_radius[int(self.map3d[m][n][l]) - 2])
+        #                     if self.map3d[m][n][l] == 2:
+        #                         h = 1
+        #                     elif self.map3d[m][n][l] == 3:
+        #                         h = 10
+        #                     elif self.map3d[m][n][l] == 4:
+        #                         h = 100
+        #                     privacy_threat += h * math.exp((-1 / 2) * np.power(dis, 2) * cam)
 
         ## 加入时间的约束惩罚
         time_punishment = 1
@@ -391,12 +396,12 @@ class AStar:
             #     self.searchNear(minF, actions[actionlist[i]][0], actions[actionlist[i]][1], actions[actionlist[i]][2], actions[actionlist[i]][3])
             # """
             # turn on camera
-            self.searchNear(minF, 0, -1, 0, 0)
-            self.searchNear(minF, 0, 1, 0, 0)
-            self.searchNear(minF, -1, 0, 0, 0)
-            self.searchNear(minF, 1, 0, 0, 0)
-            self.searchNear(minF, 0, 0, 1, 0)
-            self.searchNear(minF, 0, 0, -1, 0)
+            self.searchNear(minF, 0, -1, 0, 1)
+            self.searchNear(minF, 0, 1, 0, 1)
+            self.searchNear(minF, -1, 0, 0, 1)
+            self.searchNear(minF, 1, 0, 0, 1)
+            self.searchNear(minF, 0, 0, 1, 1)
+            self.searchNear(minF, 0, 0, -1, 1)
 
 
             #self.updateNodeHvalue()
@@ -510,18 +515,38 @@ def PathInitial(config, reinitial_flag, iteration, log, num):
             trajectory_ref.append(point)
 
     planpath = np.zeros((len(trajectory_ref), 4))
-    sum_ref = 0
-    sum_plan = 0
+    # sum of privacy risk with occ_grid for reference path
+    PR_sum_unknown_ref = 0
+    # sum of privacy risk with occ_grid_known for reference path
+    PR_sum_known_ref = 0
+
+    print("The occ_grid is: ")
+    for m in range(grid_x):
+        print("The value of x: ", m)
+        print(occ_grid[m])
+    # print("The occ_grid_known is: ")
+    # for m in range(grid_x):
+    #     print("The value of x: ", m)
+    #     print(occ_grid_known[m])
+
     num_ca = 0
     num_intruder = 0
     for point in trajectory_ref:
-        sum_ref += pri_grid[point.x][point.y][point.z] * math.exp(-(point.ca))
+        # sum_ref += pri_grid[point.x][point.y][point.z] * math.exp(-(point.ca))
         # if pri_grid[point.x][point.y][point.z] > 0:
         # print(point, pri_grid_known[point.x][point.y][point.z])
-    print("\033[94m Fitness for reference path:\033[0m \n", len(trajectory_ref) - 1, sum_ref, num_ca)
+        print(point, caculate_privacy_surround(grid, point, occ_grid, privacy_radius), caculate_privacy_surround(grid, point, occ_grid_known, privacy_radius))
+        # print(caculate_privacy_surround(grid, point, occ_grid, privacy_radius))
+        # print(caculate_privacy_surround(grid, point, occ_grid_known, privacy_radius))
+        PR_sum_unknown_ref += caculate_privacy_surround(grid, point, occ_grid, privacy_radius)
+        PR_sum_known_ref += caculate_privacy_surround(grid, point, occ_grid_known, privacy_radius)
+
+    print("\033[94m Fitness for reference path:\033[0m \n", len(trajectory_ref) - 1, PR_sum_unknown_ref,  PR_sum_known_ref)
     # print(privacy_sum)
     log.info("Initial_planning: Length of reference trajectory: %d" %(len(trajectory_ref) - 1))
-    log.info("Initial_planning: Sum of privacy threat of reference trajectory: %f" %sum_ref)
+    log.info("Initial_planning: Sum of privacy threat of reference trajectory(occ_grid): %f" %PR_sum_unknown_ref)
+    log.info("Initial_planning: Sum of privacy threat of reference trajectory(occ_grid_known): %f" % PR_sum_known_ref)
+
 
     no_solution_flag = 0 ## 0628
 
@@ -546,17 +571,25 @@ def PathInitial(config, reinitial_flag, iteration, log, num):
         np.save(file=plan_path_name, arr=planpath)
         # c = np.load(file="plan_path.npy")
         # print(c, len(c))
-        sum_plan = 0
-        num_ca = 0
+
+        # sum of privacy risk with occ_grid for best path
+        PR_sum_unknown_plan = 0
+        # sum of privacy risk with occ_grid_known for best path
+        PR_sum_known_plan = 0
+
         num_intruder_plan = 0
         for point in trajectory_plan:
-            sum_plan += pri_grid[point.x][point.y][point.z] * math.exp(-(point.ca))
+            # sum_plan += pri_grid[point.x][point.y][point.z] * math.exp(-(point.ca))
             # if pri_grid[point.x][point.y][point.z] > 0:
+            print(point, caculate_privacy_surround(grid, point, occ_grid, privacy_radius), caculate_privacy_surround(grid, point, occ_grid_known, privacy_radius))
         # print(point, pri_grid_known[point.x][point.y][point.z])
-        print("\033[94m Fitness for replanned path:\033[0m \n", len(trajectory_plan) - 1, sum_plan, num_ca)
+            PR_sum_unknown_plan += caculate_privacy_surround(grid, point, occ_grid, privacy_radius)
+            PR_sum_known_plan += caculate_privacy_surround(grid, point, occ_grid_known, privacy_radius)
+        print("\033[94m Fitness for replanned path:\033[0m \n", len(trajectory_plan) - 1, PR_sum_unknown_plan, PR_sum_known_plan)
         # print(privacy_sum)
         log.info("Initial_planning: Length of best trajectory: %d" % (len(trajectory_plan) - 1))
-        log.info("Initial_planning: Sum of privacy threat of best trajectory: %f" % sum_plan)
+        log.info("Initial_planning: Sum of privacy threat of best trajectory(occ_grid): %f" % PR_sum_unknown_plan)
+        log.info("Initial_planning: Sum of privacy threat of best trajectory(occ_grid_knwon): %f" % PR_sum_known_plan)
 
     # if reinitial_flag:
     #     occ_grid_known_name = "occ_grid_known" + str(iteration) + ".npy"
