@@ -201,7 +201,7 @@ class AStar:
         # 如果是障碍，就忽略
         # if self.map3d[minF.point.x + offsetX][minF.point.y + offsetY][minF.point.z + offsetZ] != self.passTag:
         # if self.map3d[minF.point.x + offsetX][minF.point.y + offsetY][minF.point.z + offsetZ] in self.passTag:
-        if self.map3d[minF.point.x + offsetX][minF.point.y + offsetY][minF.point.z + offsetZ] == self.passTag:
+        if self.map3d[minF.point.x + offsetX][minF.point.y + offsetY][minF.point.z + offsetZ] in self.passTag:
             return
         # 如果在关闭表中，就忽略
         currentPoint = Point(minF.point.x + offsetX, minF.point.y + offsetY, minF.point.z + offsetZ, cam)
@@ -290,7 +290,7 @@ class AStar:
         # 判断寻路终点是否是障碍
         #if self.map3d[self.endPoint.x][self.endPoint.y][self.endPoint.z] != self.passTag:
         #if self.map3d[self.endPoint.x][self.endPoint.y][self.endPoint.z] in self.passTag:
-        if self.map3d[self.endPoint.x][self.endPoint.y][self.endPoint.z] == self.passTag:
+        if self.map3d[self.endPoint.x][self.endPoint.y][self.endPoint.z] in self.passTag:
             return None
         # 1.将起点放入开启列表
         startNode = AStar.Node(self.startPoint, self.endPoint, self.ideallength)

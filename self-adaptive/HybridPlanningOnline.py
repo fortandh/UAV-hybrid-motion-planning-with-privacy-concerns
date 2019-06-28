@@ -328,7 +328,7 @@ class AStar:
         # 判断寻路终点是否是障碍
         #if self.map3d[self.endPoint.x][self.endPoint.y][self.endPoint.z] != self.passTag:
         #if self.map3d[self.endPoint.x][self.endPoint.y][self.endPoint.z] in self.passTag:
-        if self.map3d[self.endPoint.x][self.endPoint.y][self.endPoint.z] == self.passTag:
+        if self.map3d[self.endPoint.x][self.endPoint.y][self.endPoint.z] in self.passTag:
             return None
         # 1.将起点放入开启列表
         startNode = AStar.Node(self.startPoint, self.endPoint, self.ideallength)

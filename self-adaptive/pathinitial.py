@@ -132,21 +132,24 @@ class AStar:
             # node.h = dis1 * self.preference + pri1 + temp_sum
 
             ## type 4
-            for j in range(len(self.threatlist)):
-                # far away, oppisite
-                threat = self.threatlist[j]
-
-                if (abs(node.point.x - threat[0]) + abs(node.point.y - threat[1]) + abs(node.point.z - threat[2])) > (
-                        abs(fathernode.point.x - threat[0]) + abs(fathernode.point.y - threat[1]) +
-                        abs(fathernode.point.z - threat[2])):
-                    delta_h += adaptive1 * self.map3d[threat[0]][threat[1]][threat[2]]  ## 绕路
-                else:
-                    delta_h += adaptive2 * self.map3d[threat[0]][threat[1]][threat[2]]
-            node.h = (abs(self.endPoint.x - node.point.x) + abs(self.endPoint.y - node.point.y) + abs(
-                self.endPoint.z - node.point.z))
-            node.h = node.h * self.preference  +  delta_h
+            # for j in range(len(self.threatlist)):
+            #     # far away, oppisite
+            #     threat = self.threatlist[j]
+            #
+            #     if (abs(node.point.x - threat[0]) + abs(node.point.y - threat[1]) + abs(node.point.z - threat[2])) > (
+            #             abs(fathernode.point.x - threat[0]) + abs(fathernode.point.y - threat[1]) +
+            #             abs(fathernode.point.z - threat[2])):
+            #         delta_h += adaptive1 * self.map3d[threat[0]][threat[1]][threat[2]]  ## 绕路
+            #     else:
+            #         delta_h += adaptive2 * self.map3d[threat[0]][threat[1]][threat[2]]
+            # node.h = (abs(self.endPoint.x - node.point.x) + abs(self.endPoint.y - node.point.y) + abs(
+            #     self.endPoint.z - node.point.z))
+            # node.h = node.h * self.preference  +  delta_h
             ## type 4.2
             # node.h = node.h = node.h * delta_h
+
+            ## type 5 0628
+            node.h = 0
 
     # """
     def getMinNode(self):
@@ -246,8 +249,8 @@ class AStar:
         time_punishment = 1
         if minF.step + 1 > self.Toptimal:
             time_punishment = math.exp((minF.step + 1 -self.Toptimal)/(self.Tbudget-self.Toptimal))
-        delta_g = self.preference * time_punishment * step + privacy_threat
-
+        # delta_g = self.preference * time_punishment * step + privacy_threat
+        delta_g = privacy_threat * time_punishment
         # delta_g = step + privacy_threat
 
         # 如果不在openList中，就把它加入openlist
@@ -308,7 +311,7 @@ class AStar:
         # 判断寻路终点是否是障碍
         #if self.map3d[self.endPoint.x][self.endPoint.y][self.endPoint.z] != self.passTag:
         #if self.map3d[self.endPoint.x][self.endPoint.y][self.endPoint.z] in self.passTag:
-        if self.map3d[self.endPoint.x][self.endPoint.y][self.endPoint.z] == self.passTag:
+        if self.map3d[self.endPoint.x][self.endPoint.y][self.endPoint.z] in self.passTag:
             return None
         # 1.将起点放入开启列表
         startNode = AStar.Node(self.startPoint, self.endPoint, self.ideallength)
@@ -474,12 +477,22 @@ def PathInitial(config, reinitial_flag, iteration, log, num):
     log.info("Initial_planning: Length of reference trajectory: %d" %(len(trajectory_ref) - 1))
     log.info("Initial_planning: Sum of privacy threat of reference trajectory: %f" %sum_ref)
 
+    no_solution_flag = 0 ## 0628
+
     if reinitial_flag == 1:
         aStar2 = AStar(occ_grid, pri_grid, grid, privacy_sum, starting_point, end_point, [1], T_budget, threat_list,
                        T_optimal, preference)
         trajectory_plan = aStar2.start()
-        trajectory_plan = [starting_point] + trajectory_plan
+
+        if trajectory_plan == None: ## 0628
+            return 0, 0, 0, 0, 0, 0, no_solution_flag
+        else:
+            trajectory_plan = [starting_point] + trajectory_plan
+            no_solution_flag = 1
+
+        # trajectory_plan = [starting_point] + trajectory_plan
         planpath = np.zeros((len(trajectory_plan), 4))
+
         for i in range(len(trajectory_plan)):
             planpath[i] = [trajectory_plan[i].x, trajectory_plan[i].y, trajectory_plan[i].z, trajectory_plan[i].ca]
 

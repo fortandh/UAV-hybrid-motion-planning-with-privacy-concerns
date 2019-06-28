@@ -52,8 +52,8 @@ def privacy_init(grid_x, grid_y, grid_z, occ_grid, radius):
                                         h = 100
                                     # print (dis, np.power(dis, 2),math.exp((-1/2)*np.power(dis, 2)),i,j,k,m,n,l)
                                     # print (pri_grid[m][n][l])
-                                    # pri_grid[m][n][l] += h * math.exp((-1 / 2) * np.power(dis, 2))
-                                    pri_grid[m][n][l] += h / np.power(dis, 2))
+                                    pri_grid[m][n][l] += h * math.exp((-1 / 2) * np.power(dis, 2))
+                                    # pri_grid[m][n][l] += h /( np.power(dis, 2))
                                     # print(pri_grid[m][n][l])
     sum_privacy = 0
     for i in range(grid_x):
@@ -180,8 +180,10 @@ def initialmapwithknowngrid_ratio (grid_x, grid_y, grid_z, privacy_threshold, pr
             for k in range(grid_z):
                 if occ_grid_known[i][j][k] != occ_grid[i][j][k]:
                     a += 1
-    a = 1 - a / (grid_x * grid_y * grid_z * privacy_threshold)
-    print("\033[94m exploration rate: \033[0m", a)
+    # print(restricted_area_num, a, (grid_x * grid_y * grid_z * privacy_threshold))
+    exp_rate = 1 - a / (grid_x * grid_y * grid_z * privacy_threshold)
+    # print(occ_grid, occ_grid_known)
+    # print("\033[94m exploration rate: \033[0m", exp_rate)
 
 
     pri_grid_known, privacy_sum_known = privacy_init(grid_x, grid_y, grid_z, occ_grid_known, privacy_radius)
