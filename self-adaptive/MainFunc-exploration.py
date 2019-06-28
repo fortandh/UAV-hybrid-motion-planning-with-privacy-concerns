@@ -61,7 +61,7 @@ for round in range(num_of_occ_grid):
 
             safety_threshold = 0.2
             privacy_threshold = 0.05
-            privacy_radius = [0.5, 1, 2]
+            privacy_radius = [1, 1.5, 2]
 
             # drone parameter
             # x1 = randint(0, grid_x - 1)

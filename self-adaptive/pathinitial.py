@@ -274,11 +274,11 @@ class AStar:
             for n in range(min_y, max_y + 1):
                 for l in range(min_z, max_z + 1):
                     if self.map3d[m][n][l] == 2 or self.map3d[m][n][l] == 3 or self.map3d[m][n][l] == 4:
-                        dis = np.sqrt(
-                            np.power((current_x - m), 2) + np.power((current_y - n), 2) + np.power((current_z - l), 2))
+                        dis = np.sqrt(np.power((current_x - m), 2) + np.power((current_y - n), 2) + np.power((current_z - l), 2))
                         h = 0
                         if dis <= self.pri_radius[int(self.map3d[m][n][l]) - 2]:
-                            print(self.pri_radius[int(self.map3d[m][n][l]) - 2])
+                            # if self.pri_radius[int(self.map3d[m][n][l]) - 2]
+                            # print(self.pri_radius[int(self.map3d[m][n][l]) - 2])
                             if self.map3d[m][n][l] == 2:
                                 h = 1
                             elif self.map3d[m][n][l] == 3:
