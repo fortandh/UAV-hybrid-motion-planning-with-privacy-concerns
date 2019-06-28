@@ -33,7 +33,8 @@ class AStar:
             self.g = g  # g值，g值在用到的时候会重新算
             self.step = 0
             self.cam = 0
-            self.h = (abs(endPoint.x - point.x) + abs(endPoint.y - point.y) + abs(endPoint.z - point.z))/ideallength # 计算h值 曼哈顿距离
+            # self.h = abs(endPoint.x - point.x) + abs(endPoint.y - point.y) + abs(endPoint.z - point.z) # 计算h值 曼哈顿距离
+            self.h = 0
 
         def __str__(self):
             return "point as the node: x:" + str(self.point.x) + ",y:" + str(self.point.y) + ",z:" + str(self.point.z) + ",ca:" + str(self.point.ca)
@@ -130,18 +131,18 @@ class AStar:
             # node.h = dis1 * self.preference + pri1 + temp_sum
 
             ## type 4
-            for j in range(len(self.threatlist)):
-                # far away, oppisite
-                threat = self.threatlist[j]
-
-                if (abs(node.point.x - threat[0]) + abs(node.point.y - threat[1]) + abs(node.point.z - threat[2])) > (
-                        abs(fathernode.point.x - threat[0]) + abs(fathernode.point.y - threat[1]) +
-                        abs(fathernode.point.z - threat[2])):
-                    delta_h += adaptive1 * self.map3d[threat[0]][threat[1]][threat[2]] ## 绕路
-                else:
-                    delta_h += adaptive2 * self.map3d[threat[0]][threat[1]][threat[2]]
-            node.h = (abs(self.endPoint.x - node.point.x) + abs(self.endPoint.y - node.point.y) + abs(self.endPoint.z - node.point.z))
-            node.h = node.h * self.preference  +  delta_h
+            # for j in range(len(self.threatlist)):
+            #     # far away, oppisite
+            #     threat = self.threatlist[j]
+            #
+            #     if (abs(node.point.x - threat[0]) + abs(node.point.y - threat[1]) + abs(node.point.z - threat[2])) > (
+            #             abs(fathernode.point.x - threat[0]) + abs(fathernode.point.y - threat[1]) +
+            #             abs(fathernode.point.z - threat[2])):
+            #         delta_h += adaptive1 * self.map3d[threat[0]][threat[1]][threat[2]] ## 绕路
+            #     else:
+            #         delta_h += adaptive2 * self.map3d[threat[0]][threat[1]][threat[2]]
+            # node.h = (abs(self.endPoint.x - node.point.x) + abs(self.endPoint.y - node.point.y) + abs(self.endPoint.z - node.point.z))
+            # node.h = node.h * self.preference  +  delta_h
 
             ## type 4.2
             # node.h = node.h = node.h * delta_h
@@ -387,7 +388,7 @@ class AStar:
                self.searchNear(minF, 0, 0, 1, 1)
                self.searchNear(minF, 0, 0, -1, 1)
               #"""
-            self.updateNodeHvalue()
+            # self.updateNodeHvalue()
 
             # 判断是否终止
             point = self.endPointInCloseList()
@@ -429,6 +430,7 @@ def Astar_Hybrid_Planning_online(config, iteration, log, num):
     threat_list = []
     replantime = 0
     preference = config.preference
+
 
     # occ_grid_name = "occ_grid" + str(iteration) + ".npy"
     occ_grid_name = os.getcwd() + "/data/" + "occ_grid-" + str(num) + ".npy"
@@ -581,8 +583,27 @@ def Astar_Hybrid_Planning_online(config, iteration, log, num):
                     # aStar = AStar(occ_grid, pri_grid_known, grid, privacy_sum_known, current_p, next_p, [1], T_plan,
                     #               threat_list, 1, T_plan_optimal)
 
-                    ## 0625
-                    aStar = AStar(occ_grid, pri_grid_known, grid, privacy_sum, current_p, next_p, [1], T_plan,
+                    ## 0628
+                    no_solution_pp_flag = 0
+                    gema = 0.9 ## 影响半径衰减系数
+                    temp_radius = privacy_radius
+                    trajectory_optimal_pp = []
+                    while no_solution_pp_flag == 0:
+                        aStar_pp = AStar(occ_grid, pri_grid_known, grid, privacy_sum, current_p, next_p, [1, 2, 3, 4],
+                                      T_plan, threat_list, 0, T_plan_optimal, preference)
+                        trajectory_optimal_pp = aStar_pp.start()
+                        if trajectory_optimal_pp == None:
+                            temp_radius = gema * temp_radius
+                            pri_grid_known, privacy_sum_known = privacy_init(grid_x, grid_y, grid_z, occ_grid_known,
+                                                                             temp_radius)
+                        else:
+                            no_solution_pp_flag = 1
+                    trajectory_optimal = copy.deepcopy(trajectory_optimal_pp)
+
+                    for kk in range(len(trajectory_optimal)):
+                        if
+
+                    aStar = AStar(occ_grid, pri_grid_known, grid, privacy_sum, current_p, next_p, [1,2,3,4], T_plan,
                                   threat_list, 1, T_plan_optimal, preference)
 
                     # print('\033[94m finding solution for local planning... \033[0m')
@@ -629,21 +650,6 @@ def Astar_Hybrid_Planning_online(config, iteration, log, num):
                         # for m in range(len(now_trajectory)):
                         #     print("The No.", m, " step: ", now_trajectory[m])
                         # print()
-                        """
-                        for ll in range(idx+1):
-                            temp = Point(trajectory_plan[ll].x, trajectory_plan[ll].y,
-                                 trajectory_plan[ll].z, trajectory_plan[ll].ca)
-                            now_trajectory.append(temp)
-
-                        for ll in range(0, len(trajectory_optimal)):
-                            temp = Point(trajectory_optimal[ll].x,trajectory_optimal[ll].y,trajectory_optimal[ll].z,trajectory_optimal[ll].ca)
-                            now_trajectory.append(temp)
-
-
-                        for ll in range(next_idx+1,len(trajectory_plan)):
-                            temp = Point(trajectory_plan[ll].x,trajectory_plan[ll].y,trajectory_plan[ll].z,trajectory_plan[ll].ca)
-                            now_trajectory.append(temp)
-                        """
 
                         trajectory_plan = copy.deepcopy(now_trajectory)
                         # print("The UAV would move a step: ")
@@ -663,12 +669,8 @@ def Astar_Hybrid_Planning_online(config, iteration, log, num):
                     # print("now", trajectory_plan[ll])
                 # print("The length of now_trajectory_plan: ", len(trajectory_plan), sum, cam_off)
 
-                current_f = sum + len(trajectory_plan) + cam_off
 
-                # print("fitness", current_f)
-
-            elif pri_grid_known[trajectory_plan[next_idx].x][trajectory_plan[next_idx].y][
-                trajectory_plan[next_idx].z] > 0:
+            elif pri_grid_known[trajectory_plan[next_idx].x][trajectory_plan[next_idx].y][trajectory_plan[next_idx].z] > 0:
                 trajectory_plan[next_idx].ca = 1
                 # print("change sensor configuration for next point")
 
@@ -692,6 +694,7 @@ def Astar_Hybrid_Planning_online(config, iteration, log, num):
     num_should_avoid_intruder_plan = 0
     num_cannot_avoid_intruder_plan = 0
 
+
     for point in trajectory_plan:
         if point.ca == 0:
             path_grid2[point.x][point.y][point.z] = 7
@@ -713,7 +716,8 @@ def Astar_Hybrid_Planning_online(config, iteration, log, num):
             num_cannot_avoid_intruder_plan += 1
         # print(point, pri_grid_known[point.x][point.y][point.z])
     print("\033[94mFitness for replanned path:\033[0m \n ", len(trajectory_plan) - 1, sum_unknown_plan, sum_known_plan, num_ca_plan,
-          num_intruder_plan)
+          num_intruder_notknown_plan, num_intruder_known_plan,
+          num_should_avoid_intruder_plan, num_cannot_avoid_intruder_plan)
     log.info("Online_Hybrid_Planning: Length of replanned trajectory: %d" %(len(trajectory_plan) - 1))
     log.info("Online_Hybrid_Planning: Sum of privacy threat of replanned trajectory(unknown): %f" % sum_unknown_plan)
     log.info("Online_Hybrid_Planning: Sum of privacy threat of replanned trajectory(known): %f" % sum_known_plan)
@@ -728,6 +732,7 @@ def Astar_Hybrid_Planning_online(config, iteration, log, num):
     sum_ref = 0
     sum_known_ref = 0
     sum_unknown_ref = 0
+    num_ca_ref = 0
     num_intruder_notknown_ref = 0
     num_intruder_known_ref = 0
     num_should_avoid_intruder_ref = 0

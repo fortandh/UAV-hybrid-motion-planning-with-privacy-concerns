@@ -11,7 +11,8 @@ import sys
 from heapq import heappush
 from pathinitial import PathInitial
 from PathPlanningOnline import Astar_Path_Planning_online
-from HybridPlanningOnline import Astar_Hybrid_Planning_online
+# from HybridPlanningOnline import Astar_Hybrid_Planning_online
+from HybridPlanning_SA import Astar_Hybrid_Planning_online
 from SensorConfigOnline import Astar_Sensor_Config_online
 
 
@@ -118,14 +119,14 @@ for round in range(num_of_occ_grid):
                 continue
 
             # Hybrid
-            # sum_online_plan, len_trajectory_plan, num_intruder_plan, sum_pre, len_trajectory_ref, num_intruder_ref = Astar_Hybrid_Planning_online(
-            #     config, iteration, log, num)
-            # reinitial_flag = 2
-            # refpath, len_refpath, sum_ref, planpath, len_planpath, sum_plan, no_solution_flag = PathInitial(config,
-            #                                                                                                 reinitial_flag,
-            #                                                                                                 iteration,
-            #                                                                                                 log,
-            #                                                                                                 num)
+            sum_online_plan, len_trajectory_plan, num_intruder_plan, sum_pre, len_trajectory_ref, num_intruder_ref = Astar_Hybrid_Planning_online(
+                config, iteration, log, num)
+            reinitial_flag = 2
+            refpath, len_refpath, sum_ref, planpath, len_planpath, sum_plan, no_solution_flag = PathInitial(config,
+                                                                                                            reinitial_flag,
+                                                                                                            iteration,
+                                                                                                            log,
+                                                                                                            num)
 
             # SC
             #
@@ -146,6 +147,8 @@ for round in range(num_of_occ_grid):
                                                                                                             reinitial_flag,
                                                                                                             iteration,
                                                                                                             log, num)
+
+
 
     log_tmp.clear()
 

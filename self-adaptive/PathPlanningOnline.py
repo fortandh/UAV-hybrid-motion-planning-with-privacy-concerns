@@ -32,7 +32,8 @@ class AStar:
             self.g = g  # g值，g值在用到的时候会重新算
             self.step = 0
             self.cam = 0
-            self.h = (abs(endPoint.x - point.x) + abs(endPoint.y - point.y) + abs(endPoint.z - point.z)) # 计算h值 曼哈顿距离
+            # self.h = (abs(endPoint.x - point.x) + abs(endPoint.y - point.y) + abs(endPoint.z - point.z)) # 计算h值 曼哈顿距离
+            self.h = 0
 
         def __str__(self):
             return "point as the node: x:" + str(self.point.x) + ",y:" + str(self.point.y) + ",z:" + str(self.point.z) + ",ca:" + str(self.point.ca)
@@ -562,21 +563,41 @@ def Astar_Path_Planning_online (config, iteration, log, num):
                     start1 = time.time()
                     replantime += 1
                     # aStar = AStar(occ_grid, pri_grid_known, grid, privacy_sum_known, current_p, next_p, [1], T_plan, threat_list, T_optimal)
-                    aStar = AStar(occ_grid, pri_grid_known, grid, privacy_sum, current_p, next_p, [1], T_plan,
+                    aStar = AStar(occ_grid, pri_grid_known, grid, privacy_sum, current_p, next_p, [1,2,3,4], T_plan,
                                   threat_list, T_optimal, preference)
                     # print("current_p, next_p", current_p,next_p)
-                    sum = 0
-                    for ll in range(len(trajectory_plan)):
-                        sum += pri_grid_known[trajectory_plan[ll].x][trajectory_plan[ll].y][trajectory_plan[ll].z]
+                    # sum = 0
+                    # for ll in range(len(trajectory_plan)):
+                    #     sum += pri_grid_known[trajectory_plan[ll].x][trajectory_plan[ll].y][trajectory_plan[ll].z]
                         # print("now", trajectory_plan[ll])
                     # print("\033[94mThe sum of privacy of pre_trajectory_plan: \033[0m", sum)
 
                     # print('\033[94m finding solution for local planning... \033[0m')
-                    trajectory_optimal = aStar.start()
+
+                    no_solution_pp_flag = 0
+                    gema = 0.9  ## 影响半径衰减系数
+                    temp_radius = privacy_radius
+                    trajectory_optimal_pp = []
+                    while no_solution_pp_flag == 0:
+                        aStar_pp = AStar(occ_grid, pri_grid_known, grid, privacy_sum, current_p, next_p, [1, 2, 3, 4],
+                                         T_plan, threat_list, 0, T_plan_optimal, preference)
+                        trajectory_optimal_pp = aStar_pp.start()
+                        if trajectory_optimal_pp == None:
+                            temp_radius = gema * temp_radius
+                            pri_grid_known, privacy_sum_known = privacy_init(grid_x, grid_y, grid_z, occ_grid_known,
+                                                                             temp_radius)
+                        else:
+                            no_solution_pp_flag = 1
+                    trajectory_optimal = copy.deepcopy(trajectory_optimal_pp)
+                    aStar = AStar(occ_grid, pri_grid_known, grid, privacy_sum, current_p, next_p, [1, 2, 3, 4], T_plan,
+                                  threat_list, 1, T_plan_optimal, preference)
+
+
+                    # trajectory_optimal = aStar.start()
                     end1 = time.time()
                     dtime = end1 - start1
                     # print("程序运行时间：%.8s s" % dtime)
-                    if trajectory_optimal == None:
+                    if trajectory_optimal == None: ## 会撞上2,3,4
                         print('\033[94m No solution for local planning... \033[0m')
                         log.info("Online_Path_Planning: No solution for local planning: from [%d, %d, %d] to [%d, %d, %d]"
                                  % (current_p.x,current_p.y,current_p.z, next_p.x, next_p.y, next_p.z ))
@@ -658,20 +679,25 @@ def Astar_Path_Planning_online (config, iteration, log, num):
         # print("next point", idx,time_step, len(trajectory_plan))
     # print(occ_grid)
     path_grid2 = copy.deepcopy(occ_grid)
-    sum_plan = 0
+
+    ## log info
+    sum_unknown_plan = 0
+    sum_known_plan = 0
     num_ca_plan = 0
+
     num_intruder_notknown_plan = 0
     num_intruder_known_plan = 0
     num_should_avoid_intruder_plan = 0
     num_cannot_avoid_intruder_plan = 0
+
     for point in trajectory_plan:
         if point.ca == 0:
             path_grid2[point.x][point.y][point.z] = 7
         else:
             path_grid2[point.x][point.y][point.z] = 10
             num_ca_plan += 1
-        sum_plan += pri_grid[point.x][point.y][point.z] * math.exp(-(point.ca) )
-
+        sum_unknown_plan += pri_grid[point.x][point.y][point.z] * math.exp(-(point.ca))
+        sum_known_plan += pri_grid_known[point.x][point.y][point.z] * math.exp(-(point.ca))
         if pri_grid[point.x][point.y][point.z] > 0 and occ_grid[point.x][point.y][point.z] == 0:
             num_intruder_notknown_plan += 1
 
@@ -684,27 +710,35 @@ def Astar_Path_Planning_online (config, iteration, log, num):
         if occ_grid_known[point.x][point.y][point.z] > 1:
             num_cannot_avoid_intruder_plan += 1
         # print(point, pri_grid_known[point.x][point.y][point.z])
-    print("\033[94mFitness for replanned path:\033[0m \n ", len(trajectory_plan)-1, sum_plan, num_ca_plan, num_intruder_notknown_plan,num_intruder_known_plan ,
-    num_should_avoid_intruder_plan, num_cannot_avoid_intruder_plan )
-    # print(privacy_sum)
-    log.info("Online_Path_Planning: Length of replanned trajectory: %d" %(len(trajectory_plan) - 1))
-    log.info("Online_Path_Planning: Sum of privacy threat of replanned trajectory: %f" % sum_plan)
+    print("\033[94mFitness for replanned path:\033[0m \n ", len(trajectory_plan) - 1, sum_unknown_plan, sum_known_plan,
+          num_ca_plan,
+          num_intruder_notknown_plan, num_intruder_known_plan,
+          num_should_avoid_intruder_plan, num_cannot_avoid_intruder_plan)
+    log.info("Online_Path_Planning: Length of replanned trajectory: %d" % (len(trajectory_plan) - 1))
+    log.info("Online_Path_Planning: Sum of privacy threat of replanned trajectory(unknown): %f" % sum_unknown_plan)
+    log.info("Online_Path_Planning: Sum of privacy threat of replanned trajectory(known): %f" % sum_known_plan)
     log.info("Online_Path_Planning: Times of turning off camera of replanned trajectory: %d" % num_ca_plan)
-    log.info("Online_Path_Planning: Times of intrusion of replanned trajectory(notknown): %d" % num_intruder_notknown_plan)
+    # log.info("Online_Path_Planning: Times of intrusion of replanned trajectory: %d" % num_intruder_plan)
+    log.info(
+        "Online_Path_Planning: Times of intrusion of replanned trajectory(notknown): %d" % num_intruder_notknown_plan)
     log.info("Online_Path_Planning: Times of intrusion of replanned trajectory(known): %d" % num_intruder_known_plan)
-    log.info("Online_Path_Planning: Times of intrusion of replanned trajectory(should avoid): %d" % num_should_avoid_intruder_plan)
-    log.info("Online_Path_Planning: Times of intrusion of replanned trajectory(cannot avoid): %d" % num_cannot_avoid_intruder_plan)
+    log.info(
+        "Online_Path_Planning: Times of intrusion of replanned trajectory(should avoid): %d" % num_should_avoid_intruder_plan)
+    log.info(
+        "Online_Path_Planning: Times of intrusion of replanned trajectory(cannot avoid): %d" % num_cannot_avoid_intruder_plan)
 
     # 再次显示地图
     sum_ref = 0
+    sum_known_ref = 0
+    sum_unknown_ref = 0
     num_ca_ref = 0
-    num_intruder_ref = 0
     num_intruder_notknown_ref = 0
     num_intruder_known_ref = 0
     num_should_avoid_intruder_ref = 0
     num_cannot_avoid_intruder_ref = 0
     for point in trajectory_ref:
-        sum_ref += pri_grid[point.x][point.y][point.z] * math.exp(-(point.ca) )
+        sum_unknown_ref += pri_grid[point.x][point.y][point.z] * math.exp(-(point.ca))
+        sum_known_ref += pri_grid_known[point.x][point.y][point.z] * math.exp(-(point.ca))
         num_ca_ref += point.ca
         # print(point, pri_grid_known[point.x][point.y][point.z])
         if pri_grid[point.x][point.y][point.z] > 0 and occ_grid[point.x][point.y][point.z] == 0:
@@ -718,16 +752,24 @@ def Astar_Path_Planning_online (config, iteration, log, num):
 
         if occ_grid_known[point.x][point.y][point.z] > 1:
             num_cannot_avoid_intruder_ref += 1
-    print("\033[94m Fitness for reference path:\033[0m \n", len(trajectory_ref)-1, sum_ref, num_ca_ref, num_intruder_ref)
-    print(privacy_sum)
-    log.info("Online_Path_Planning: Length of preplanned trajectory: %d" %(len(trajectory_ref) - 1))
-    log.info("Online_Path_Planning: Sum of privacy threat of preplanned trajectory: %f" % sum_ref)
+    # print("\033[94m Fitness for reference path:\033[0m \n", len(trajectory_ref) - 1, sum_ref, num_ca_ref,
+    #       num_intruder_ref)
+    print("\033[94mFitness for replanned path:\033[0m \n ", len(trajectory_plan) - 1, sum_unknown_ref, sum_known_ref,
+          num_ca_ref,
+          num_intruder_notknown_ref, num_intruder_known_ref,
+          num_should_avoid_intruder_ref, num_cannot_avoid_intruder_ref)
+    log.info("Online_Path_Planning: Length of preplanned trajectory: %d" % (len(trajectory_ref) - 1))
+    log.info("Online_Path_Planning: Sum of privacy threat of replanned trajectory(unknown): %f" % sum_unknown_ref)
+    log.info("Online_Path_Planning: Sum of privacy threat of replanned trajectory(known): %f" % sum_known_ref)
     log.info("Online_Path_Planning: Times of turning off camera of preplanned trajectory: %d" % num_ca_ref)
     # log.info("Online_Path_Planning: Times of intrusion of preplanned trajectory: %d" % num_intruder_ref)
-    log.info("Online_Path_Planning: Times of intrusion of preplanned trajectory(notknown): %d" % num_intruder_notknown_ref)
+    log.info(
+        "Online_Path_Planning: Times of intrusion of preplanned trajectory(notknown): %d" % num_intruder_notknown_ref)
     log.info("Online_Path_Planning: Times of intrusion of preplanned trajectory(known): %d" % num_intruder_known_ref)
-    log.info("Online_Path_Planning: Times of intrusion of preplanned trajectory(should avoid): %d" % num_should_avoid_intruder_ref)
-    log.info("Online_Path_Planning: Times of intrusion of preplanned trajectory(cannot avoid): %d" % num_cannot_avoid_intruder_ref)
+    log.info(
+        "Online_Path_Planning: Times of intrusion of preplanned trajectory(should avoid): %d" % num_should_avoid_intruder_ref)
+    log.info(
+        "Online_Path_Planning: Times of intrusion of preplanned trajectory(cannot avoid): %d" % num_cannot_avoid_intruder_ref)
 
     #print(path_grid2, sum)
     # print("---------------------------------")

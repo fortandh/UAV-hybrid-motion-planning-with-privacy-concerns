@@ -510,44 +510,91 @@ def Astar_Sensor_Config_online(config, iteration, log, num):
 
     # print(occ_grid)
     path_grid2 = copy.deepcopy(occ_grid)
-    sum_plan = 0
+
+    ## log info
+    sum_unknown_plan = 0
+    sum_known_plan = 0
     num_ca_plan = 0
-    num_intruder_plan = 0
+
+    num_intruder_notknown_plan = 0
+    num_intruder_known_plan = 0
+    num_should_avoid_intruder_plan = 0
+    num_cannot_avoid_intruder_plan = 0
+
     for point in trajectory_plan:
         if point.ca == 0:
             path_grid2[point.x][point.y][point.z] = 7
         else:
             path_grid2[point.x][point.y][point.z] = 10
             num_ca_plan += 1
-        sum_plan += pri_grid[point.x][point.y][point.z] * math.exp(-(point.ca))
-        if pri_grid[point.x][point.y][point.z] > 0:
-            num_intruder_plan += 1
+        sum_unknown_plan += pri_grid[point.x][point.y][point.z] * math.exp(-(point.ca))
+        sum_known_plan += pri_grid_known[point.x][point.y][point.z] * math.exp(-(point.ca))
+        if pri_grid[point.x][point.y][point.z] > 0 and occ_grid[point.x][point.y][point.z] == 0:
+            num_intruder_notknown_plan += 1
+
+        if pri_grid_known[point.x][point.y][point.z] > 0 and occ_grid_known[point.x][point.y][point.z] == 0:
+            num_intruder_known_plan += 1
+
+        if occ_grid[point.x][point.y][point.z] > 1:
+            num_should_avoid_intruder_plan += 1
+
+        if occ_grid_known[point.x][point.y][point.z] > 1:
+            num_cannot_avoid_intruder_plan += 1
         # print(point, pri_grid_known[point.x][point.y][point.z])
-    print("\033[94mFitness for replanned path:\033[0m \n ", len(trajectory_plan) - 1, sum_plan, num_ca_plan,
-          num_intruder_plan)
-    print(privacy_sum)
+    print("\033[94mFitness for replanned path:\033[0m \n ", len(trajectory_plan) - 1, sum_unknown_plan, sum_known_plan,
+          num_ca_plan,
+          num_intruder_notknown_plan, num_intruder_known_plan,
+          num_should_avoid_intruder_plan, num_cannot_avoid_intruder_plan)
     log.info("Online_Sensor_Config: Length of replanned trajectory: %d" % (len(trajectory_plan) - 1))
-    log.info("Online_Sensor_Config: Sum of privacy threat of replanned trajectory: %f" % sum_plan)
+    log.info("Online_Sensor_Config: Sum of privacy threat of replanned trajectory(unknown): %f" % sum_unknown_plan)
+    log.info("Online_Sensor_Config: Sum of privacy threat of replanned trajectory(known): %f" % sum_known_plan)
     log.info("Online_Sensor_Config: Times of turning off camera of replanned trajectory: %d" % num_ca_plan)
-    log.info("Online_Sensor_Config: Times of intrusion of replanned trajectory: %d" % num_intruder_plan)
+    # log.info("Online_Sensor_Config: Times of intrusion of replanned trajectory: %d" % num_intruder_plan)
+    log.info("Online_Sensor_Config: Times of intrusion of replanned trajectory(notknown): %d" % num_intruder_notknown_plan)
+    log.info("Online_Sensor_Config: Times of intrusion of replanned trajectory(known): %d" % num_intruder_known_plan)
+    log.info("Online_Sensor_Config: Times of intrusion of replanned trajectory(should avoid): %d" % num_should_avoid_intruder_plan)
+    log.info("Online_Sensor_Config: Times of intrusion of replanned trajectory(cannot avoid): %d" % num_cannot_avoid_intruder_plan)
 
     # 再次显示地图
     sum_ref = 0
+    sum_known_ref = 0
+    sum_unknown_ref = 0
     num_ca_ref = 0
-    num_intruder_ref = 0
+    num_intruder_notknown_ref = 0
+    num_intruder_known_ref = 0
+    num_should_avoid_intruder_ref = 0
+    num_cannot_avoid_intruder_ref = 0
     for point in trajectory_ref:
-        sum_ref += pri_grid[point.x][point.y][point.z] * math.exp(-(point.ca))
+        sum_unknown_ref += pri_grid[point.x][point.y][point.z] * math.exp(-(point.ca))
+        sum_known_ref += pri_grid_known[point.x][point.y][point.z] * math.exp(-(point.ca))
         num_ca_ref += point.ca
         # print(point, pri_grid_known[point.x][point.y][point.z])
-        if pri_grid[point.x][point.y][point.z] > 0:
-            num_intruder_ref += 1
-    print("\033[94m Fitness for reference path:\033[0m \n", len(trajectory_ref) - 1, sum_ref, num_ca_ref,
-          num_intruder_ref)
-    print(privacy_sum)
+        if pri_grid[point.x][point.y][point.z] > 0 and occ_grid[point.x][point.y][point.z] == 0:
+            num_intruder_notknown_ref += 1
+
+        if pri_grid_known[point.x][point.y][point.z] > 0 and occ_grid_known[point.x][point.y][point.z] == 0:
+            num_intruder_known_ref += 1
+
+        if occ_grid[point.x][point.y][point.z] > 1:
+            num_should_avoid_intruder_ref += 1
+
+        if occ_grid_known[point.x][point.y][point.z] > 1:
+            num_cannot_avoid_intruder_ref += 1
+    # print("\033[94m Fitness for reference path:\033[0m \n", len(trajectory_ref) - 1, sum_ref, num_ca_ref,
+    #       num_intruder_ref)
+    print("\033[94mFitness for replanned path:\033[0m \n ", len(trajectory_plan) - 1, sum_unknown_ref, sum_known_ref,
+          num_ca_ref,
+          num_intruder_notknown_ref, num_intruder_known_ref,
+          num_should_avoid_intruder_ref, num_cannot_avoid_intruder_ref)
     log.info("Online_Sensor_Config: Length of preplanned trajectory: %d" % (len(trajectory_ref) - 1))
-    log.info("Online_Sensor_Config: Sum of privacy threat of preplanned trajectory: %f" % sum_ref)
+    log.info("Online_Sensor_Config: Sum of privacy threat of replanned trajectory(unknown): %f" % sum_unknown_ref)
+    log.info("Online_Sensor_Config: Sum of privacy threat of replanned trajectory(known): %f" % sum_known_ref)
     log.info("Online_Sensor_Config: Times of turning off camera of preplanned trajectory: %d" % num_ca_ref)
-    log.info("Online_Sensor_Config: Times of intrusion of preplanned trajectory: %d" % num_intruder_ref)
+    # log.info("Online_Sensor_Config: Times of intrusion of preplanned trajectory: %d" % num_intruder_ref)
+    log.info("Online_Sensor_Config: Times of intrusion of preplanned trajectory(notknown): %d" % num_intruder_notknown_ref)
+    log.info("Online_Sensor_Config: Times of intrusion of preplanned trajectory(known): %d" % num_intruder_known_ref)
+    log.info("Online_Sensor_Config: Times of intrusion of preplanned trajectory(should avoid): %d" % num_should_avoid_intruder_ref)
+    log.info("Online_Sensor_Config: Times of intrusion of preplanned trajectory(cannot avoid): %d" % num_cannot_avoid_intruder_ref)
 
     #print(path_grid2, sum)
     # print("---------------------------------")
