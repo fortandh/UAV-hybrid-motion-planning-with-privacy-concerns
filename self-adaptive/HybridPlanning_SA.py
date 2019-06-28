@@ -43,7 +43,7 @@ class AStar:
         def __lt__(self, other):
             return self.g+self.h < other.g+other.h
 
-    def __init__(self, occ_grid, pri_grid, grid, sum_privacy, startPoint, endPoint, passTag, Tbudget, threat_list, flag, Toptimal, preference):
+    def __init__(self, occ_grid, pri_grid, grid, sum_privacy, startPoint, endPoint, passTag, Tbudget, threat_list, flag, Toptimal, preference, pri_radius):
         """
         构造AStar算法的启动条件
         :param map3d: Array2D类型的寻路数组
@@ -70,6 +70,7 @@ class AStar:
         #self.startPoint = startPoint
         self.flag = flag
         self.preference = preference
+        self.pri_radius = pri_radius
 
 
         # 起点终点
@@ -256,20 +257,62 @@ class AStar:
 
         # step = 1/ self.Toptimal  ## 0625
 
-        step = 1
+        # step = 1
+        #
+        # if self.sumpri == 0:
+        #     privacy_threat = 0
+        # else:
+        #     # privacy_threat = (self.prigrid[minF.point.x + offsetX][minF.point.y + offsetY][minF.point.z + offsetZ] * math.exp(-(cam))) / self.sumpri ## 0625
+        #     privacy_threat = self.prigrid[minF.point.x + offsetX][minF.point.y + offsetY][
+        #                          minF.point.z + offsetZ] * math.exp(-(cam))
 
-        if self.sumpri == 0:
-            privacy_threat = 0
-        else:
-            # privacy_threat = (self.prigrid[minF.point.x + offsetX][minF.point.y + offsetY][minF.point.z + offsetZ] * math.exp(-(cam))) / self.sumpri ## 0625
-            privacy_threat = self.prigrid[minF.point.x + offsetX][minF.point.y + offsetY][
-                                 minF.point.z + offsetZ] * math.exp(-(cam))
-        cam_off = cam
 
+        ## 0628 h_i*exp((-1/2)*ws*dis^2)
+        privacy_threat = 0
+        grid_x = self.grid[0]
+        grid_y = self.grid[1]
+        grid_z = self.grid[2]
+        r = max(self.pri_radius)
+        current_x = minF.point.x + offsetX
+        current_y = minF.point.y + offsetY
+        current_z = minF.point.z + offsetZ
+
+        min_x = max(current_x - r, 0)
+        min_x = math.floor(min_x)
+        max_x = min(current_x + r, grid_x - 1)
+        max_x = math.ceil(max_x)
+        min_y = max(current_y - r, 0)
+        min_y = math.floor(min_y)
+        max_y = min(current_x + r, grid_y - 1)
+        max_y = math.ceil(max_y)
+        min_z = max(current_z - r, 0)
+        min_z = math.floor(min_z)
+        max_z = min(current_z + r, grid_z - 1)
+        max_z = math.ceil(max_z)
+        for m in range(min_x, max_x + 1):
+            for n in range(min_y, max_y + 1):
+                for l in range(min_z, max_z + 1):
+                    if self.map3d[m][n][l] == 2 or self.map3d[m][n][l] == 3 or self.map3d[m][n][l] == 4:
+                        dis = np.sqrt(np.power((current_x - m), 2) + np.power((current_y - n), 2) + np.power((current_z - l), 2))
+                        h = 0
+                        if dis <= self.pri_radius[int(self.map3d[m][n][l]) - 2]:
+                            if self.map3d[m][n][l] == 2:
+                                h = 1
+                            elif self.map3d[m][n][l] == 3:
+                                h = 10
+                            elif self.map3d[m][n][l] == 4:
+                                h = 100
+                            privacy_threat += h * math.exp((-1 / 2) * np.power(dis, 2) * cam)
+
+        ## 加入时间的约束惩罚
         time_punishment = 1
         if minF.step + 1 > self.Toptimal:
             time_punishment = math.exp((minF.step + 1 - self.Toptimal) / (self.Tbudget - self.Toptimal))
-        delta_g = self.preference * time_punishment * step + privacy_threat
+
+        # type1
+        # delta_g =  time_punishment * privacy_threat
+        # type2
+        delta_g = privacy_threat
         #delta_g = step + cam_off + privacy_threat
 
         # 如果不在openList中，就把它加入openlist
@@ -433,6 +476,7 @@ def Astar_Hybrid_Planning_online(config, iteration, log, num):
 
 
     # occ_grid_name = "occ_grid" + str(iteration) + ".npy"
+    # num is the number of the grid
     occ_grid_name = os.getcwd() + "/data/" + "occ_grid-" + str(num) + ".npy"
     occ_grid = np.load(file=occ_grid_name)
     # occ_grid = np.load(file="occ_grid-1.npy")
@@ -442,6 +486,15 @@ def Astar_Hybrid_Planning_online(config, iteration, log, num):
     occ_grid_known = np.load(file=occ_grid_known_name)
     # occ_grid_known = np.load(file="occ_grid_known.npy")
     pri_grid_known, privacy_sum_known = privacy_init(grid_x, grid_y, grid_z, occ_grid_known, privacy_radius)
+    a = 0
+    for i in range(grid_x):
+        for j in range(grid_y):
+            for k in range(grid_z):
+                if occ_grid_known[i][j][k] != occ_grid[i][j][k]:
+                    a += 1
+    # print(restricted_area_num, a, (grid_x * grid_y * grid_z * privacy_threshold))
+    exp_rate = 1 - a / (grid_x * grid_y * grid_z * privacy_threshold)
+    # print("exp_rate ",exp_rate , a)
 
     # print("The occ_grid is: ")
     # for m in range(grid_x):
@@ -497,6 +550,7 @@ def Astar_Hybrid_Planning_online(config, iteration, log, num):
     # print()
 
     idx = 0
+    num_of_no_solution = 0
     current_f = sum + len(trajectory_plan)
 
     while not (idx >= len(trajectory_plan)):
@@ -528,6 +582,16 @@ def Astar_Hybrid_Planning_online(config, iteration, log, num):
                                                                                                  pri_grid_known,
                                                                                                  privacy_sum_known,
                                                                                                  config)
+        # num = 0
+        # for i in range(grid_x):
+        #     for j in range(grid_y):
+        #         for k in range(grid_z):
+        #             if pri_grid[i][j][k] != pri_grid_known[i][j][k]:
+        #                 num +=1
+        # print("$$$$$_current", num)
+        # print("occ_grid_known",occ_grid_known)
+        # print("pri_grid_known",pri_grid_known)
+        # print("prigrid", pri_grid)
         # print("The length of privacy_list: ", len(threat_list))
         # for m in range(len(threat_list)):
         #     print(threat_list[m])
@@ -576,6 +640,7 @@ def Astar_Hybrid_Planning_online(config, iteration, log, num):
                 distance = abs(trajectory_plan[next_idx].x - trajectory_plan[idx].x) + abs(
                     trajectory_plan[next_idx].y - trajectory_plan[idx].y) + abs(
                     trajectory_plan[next_idx].z - trajectory_plan[idx].z)
+
                 ## have enough time for planning
                 if T_plan >= distance:
                     # 开始寻路
@@ -584,78 +649,91 @@ def Astar_Hybrid_Planning_online(config, iteration, log, num):
                     #               threat_list, 1, T_plan_optimal)
 
                     ## 0628
-                    no_solution_pp_flag = 0
-                    gema = 0.9 ## 影响半径衰减系数
-                    temp_radius = privacy_radius
-                    trajectory_optimal_pp = []
-                    while no_solution_pp_flag == 0:
-                        aStar_pp = AStar(occ_grid, pri_grid_known, grid, privacy_sum, current_p, next_p, [1, 2, 3, 4],
-                                      T_plan, threat_list, 0, T_plan_optimal, preference)
-                        trajectory_optimal_pp = aStar_pp.start()
-                        if trajectory_optimal_pp == None:
-                            temp_radius = gema * temp_radius
-                            pri_grid_known, privacy_sum_known = privacy_init(grid_x, grid_y, grid_z, occ_grid_known,
-                                                                             temp_radius)
-                        else:
-                            no_solution_pp_flag = 1
-                    trajectory_optimal = copy.deepcopy(trajectory_optimal_pp)
+                    aStar_pp = AStar(occ_grid, pri_grid_known, grid, privacy_sum, current_p, next_p, [1, 2, 3, 4],
+                                     T_plan, threat_list, 0, T_plan_optimal, preference, privacy_radius)
+                    trajectory_optimal_pp = aStar_pp.start()
 
-                    for kk in range(len(trajectory_optimal)):
-                        if
+                    temp_sum = 0
+                    for jj in range(len(trajectory_optimal_pp)):
+                        point = trajectory_optimal_pp[jj]
+                        # print(point)
+                        temp_sum += pri_grid_known[point.x][point.y][point.z]
 
-                    aStar = AStar(occ_grid, pri_grid_known, grid, privacy_sum, current_p, next_p, [1,2,3,4], T_plan,
-                                  threat_list, 1, T_plan_optimal, preference)
+                    ## 如果找不到没有侵犯隐私的可行解，或者规划出的可行解超出了时间的约束，说明只进行路径规划不可行
+                    if temp_sum > 0 or len(trajectoru_optimal_pp)> T_plan_optimal:
+                        num_of_no_solution += 1
+                        print('\033[94m No solution for local planning... \033[0m')
+                        log.info("Online_Hybrid_Planning: No solution for local planning: from [%d, %d, %d] to [%d, %d, %d]"
+                            % (current_p.x, current_p.y, current_p.z, next_p.x, next_p.y, next_p.z))
+                        aStar = AStar(occ_grid, pri_grid_known, grid, privacy_sum, current_p, next_p, [1, 2, 3, 4],
+                                      T_plan, threat_list, 1, T_plan_optimal, preference, privacy_radius)
+                        trajectory_optimal = aStar.start()
+                    else:
+                        trajectory_optimal = copy.deepcopy(trajectory_optimal_pp)
+
+                    # trajectory_optimal = copy.deepcopy(trajectory_optimal_pp)
+                    #
+                    #
+                    # aStar = AStar(occ_grid, pri_grid_known, grid, privacy_sum, current_p, next_p, [1,2,3,4], T_plan,
+                    #               threat_list, 1, T_plan_optimal, preference)
 
                     # print('\033[94m finding solution for local planning... \033[0m')
-                    trajectory_optimal = aStar.start()
-                    end1 = time.time()
-                    dtime = end1 - start1
-                    # print("程序运行时间：%.8s s" % dtime)
-                    if trajectory_optimal == None:
-                        # print('\033[94mNo solution for local planning... \033[0m')
-                        # print()
-                        for kk in range(idx + 1, next_idx + 1):
-                            trajectory_plan[kk].ca = 1
+                    # trajectory_optimal = aStar.start()
 
-                    else:
-                        # print("The length of local planning: ", len(trajectory_optimal))
-                        # print()
-                        previous_trajectory = copy.deepcopy(trajectory_plan[:idx])
-                        following_trajectory = copy.deepcopy(trajectory_plan[next_idx + 1:])
+                    previous_trajectory = copy.deepcopy(trajectory_plan[:idx])
+                    following_trajectory = copy.deepcopy(trajectory_plan[next_idx + 1:])
 
-                        now_trajectory = []
-                        first_part = trajectory_plan[0:idx + 1]
-                        following_part = trajectory_plan[next_idx + 1:]
-                        now_trajectory = first_part + trajectory_optimal + following_part
+                    now_trajectory = []
+                    first_part = trajectory_plan[0:idx + 1]
+                    following_part = trajectory_plan[next_idx + 1:]
+                    now_trajectory = first_part + trajectory_optimal + following_part
 
-                        replan_flag = 0
-                        for m in range(idx + 1, next_idx + 1):
-                            # print("original， The No.", m, " step: ", trajectory_plan[m])
-                            if (len(trajectory_optimal) != (next_idx - idx)):
-                                replan_flag = 1
-                                break
-                            if (trajectory_plan[m] != trajectory_optimal[m - idx - 1]):
-                                replan_flag = 1
+                    replan_flag = 0
+                    for m in range(idx + 1, next_idx + 1):
+                        # print("original， The No.", m, " step: ", trajectory_plan[m])
+                        if (len(trajectory_optimal) != (next_idx - idx)):
+                            replan_flag = 1
+                            break
+                        if (trajectory_plan[m] != trajectory_optimal[m - idx - 1]):
+                            replan_flag = 1
 
-                        if replan_flag:
-                            replantime += 1  ## 排除重复规划的相同路径 0620
+                    if replan_flag:
+                        replantime += 1  ## 排除重复规划的相同路径 0620
 
-                        # for m in range(idx + 1, next_idx + 1):
-                            # print("original， The No.", m, " step: ", trajectory_plan[m])
+                    trajectory_plan = copy.deepcopy(now_trajectory)
 
-                        # print("The length of now plan is: ", len(trajectory_optimal))
-                        # for m in range(len(trajectory_optimal)):
-                        #     print("trajectory_optimal， The No.", m, " step: ", trajectory_optimal[m])
-                        #
-                        # for m in range(len(now_trajectory)):
-                        #     print("The No.", m, " step: ", now_trajectory[m])
-                        # print()
+                    # if trajectory_optimal == None:
+                    #     # print('\033[94mNo solution for local planning... \033[0m')
+                    #     # print()
+                    #     for kk in range(idx + 1, next_idx + 1):
+                    #         trajectory_plan[kk].ca = 1
+                    #
+                    # else:
+                    #     # print("The length of local planning: ", len(trajectory_optimal))
+                    #     # print()
+                    #     previous_trajectory = copy.deepcopy(trajectory_plan[:idx])
+                    #     following_trajectory = copy.deepcopy(trajectory_plan[next_idx + 1:])
+                    #
+                    #     now_trajectory = []
+                    #     first_part = trajectory_plan[0:idx + 1]
+                    #     following_part = trajectory_plan[next_idx + 1:]
+                    #     now_trajectory = first_part + trajectory_optimal + following_part
+                    #
+                    #     replan_flag = 0
+                    #     for m in range(idx + 1, next_idx + 1):
+                    #         # print("original， The No.", m, " step: ", trajectory_plan[m])
+                    #         if (len(trajectory_optimal) != (next_idx - idx)):
+                    #             replan_flag = 1
+                    #             break
+                    #         if (trajectory_plan[m] != trajectory_optimal[m - idx - 1]):
+                    #             replan_flag = 1
+                    #
+                    #     if replan_flag:
+                    #         replantime += 1  ## 排除重复规划的相同路径 0620
 
-                        trajectory_plan = copy.deepcopy(now_trajectory)
-                        # print("The UAV would move a step: ")
-                        # print("The current point: ", current_p)
-                        # print("The next point: ", trajectory_plan[idx + 1])
-                        # print("The index of next point: ", idx + 1, "\n")
+
+                        # trajectory_plan = copy.deepcopy(now_trajectory)
+
                 # turn off camera never exist
                 else:
                     # print("sensor reconfigured for the next points in the path!!!")
@@ -685,14 +763,18 @@ def Astar_Hybrid_Planning_online(config, iteration, log, num):
     path_grid2 = copy.deepcopy(occ_grid)
 
     ## log info
+    # sum of privacy risk with pri_grid
     sum_unknown_plan = 0
+    # sum of privacy risk with pri_grid_knwon
     sum_known_plan = 0
+    # times of camera reconfigured
     num_ca_plan = 0
-
+    # times of with intrusion of restricted area with pri_grid
     num_intruder_notknown_plan = 0
+    # times of with intrusion of restricted area with pri_grid_knwon
     num_intruder_known_plan = 0
-    num_should_avoid_intruder_plan = 0
-    num_cannot_avoid_intruder_plan = 0
+    # num_should_avoid_intruder_plan = 0
+    # num_cannot_avoid_intruder_plan = 0
 
 
     for point in trajectory_plan:
@@ -709,15 +791,27 @@ def Astar_Hybrid_Planning_online(config, iteration, log, num):
         if pri_grid_known[point.x][point.y][point.z] > 0 and occ_grid_known[point.x][point.y][point.z] == 0:
             num_intruder_known_plan += 1
 
-        if occ_grid[point.x][point.y][point.z] > 1:
-            num_should_avoid_intruder_plan += 1
-
-        if occ_grid_known[point.x][point.y][point.z] > 1:
-            num_cannot_avoid_intruder_plan += 1
+        # if occ_grid[point.x][point.y][point.z] == 2 or occ_grid[point.x][point.y][point.z] == 3 or occ_grid[point.x][point.y][point.z] == 4 :
+        #     num_should_avoid_intruder_plan += 1
+        #
+        # if occ_grid_known[point.x][point.y][point.z] == 2 or occ_grid_known[point.x][point.y][point.z] == 3 or occ_grid_known[point.x][point.y][point.z] == 4:
+        #     num_cannot_avoid_intruder_plan += 1
         # print(point, pri_grid_known[point.x][point.y][point.z])
     print("\033[94mFitness for replanned path:\033[0m \n ", len(trajectory_plan) - 1, sum_unknown_plan, sum_known_plan, num_ca_plan,
-          num_intruder_notknown_plan, num_intruder_known_plan,
-          num_should_avoid_intruder_plan, num_cannot_avoid_intruder_plan)
+          num_intruder_notknown_plan, num_intruder_known_plan)
+
+    # num = 0
+    # for i in range(grid_x):
+    #     for j in range(grid_y):
+    #         for k in range(grid_z):
+    #             if pri_grid[i][j][k] != pri_grid_known[i][j][k]:
+    #                 num += 1
+    # print("$$$$$", num)
+
+
+    # print(occ_grid_known)
+    # print(pri_grid_known)
+    # print("pri_grid",pri_grid)
     log.info("Online_Hybrid_Planning: Length of replanned trajectory: %d" %(len(trajectory_plan) - 1))
     log.info("Online_Hybrid_Planning: Sum of privacy threat of replanned trajectory(unknown): %f" % sum_unknown_plan)
     log.info("Online_Hybrid_Planning: Sum of privacy threat of replanned trajectory(known): %f" % sum_known_plan)
@@ -725,8 +819,8 @@ def Astar_Hybrid_Planning_online(config, iteration, log, num):
     # log.info("Online_Hybrid_Planning: Times of intrusion of replanned trajectory: %d" % num_intruder_plan)
     log.info("Online_Hybrid_Planning: Times of intrusion of replanned trajectory(notknown): %d" % num_intruder_notknown_plan)
     log.info("Online_Hybrid_Planning: Times of intrusion of replanned trajectory(known): %d" % num_intruder_known_plan)
-    log.info("Online_Hybrid_Planning: Times of intrusion of replanned trajectory(should avoid): %d" % num_should_avoid_intruder_plan)
-    log.info("Online_Hybrid_Planning: Times of intrusion of replanned trajectory(cannot avoid): %d" % num_cannot_avoid_intruder_plan)
+    # log.info("Online_Hybrid_Planning: Times of intrusion of replanned trajectory(should avoid): %d" % num_should_avoid_intruder_plan)
+    # log.info("Online_Hybrid_Planning: Times of intrusion of replanned trajectory(cannot avoid): %d" % num_cannot_avoid_intruder_plan)
 
     # 再次显示地图
     sum_ref = 0
@@ -740,6 +834,8 @@ def Astar_Hybrid_Planning_online(config, iteration, log, num):
     for point in trajectory_ref:
         sum_unknown_ref += pri_grid[point.x][point.y][point.z] * math.exp(-(point.ca) )
         sum_known_ref += pri_grid_known[point.x][point.y][point.z] * math.exp(-(point.ca))
+        if pri_grid[point.x][point.y][point.z] != pri_grid_known[point.x][point.y][point.z]:
+            print("$$$$$$$$$")
         num_ca_ref += point.ca
         # print(point, pri_grid_known[point.x][point.y][point.z])
         if pri_grid[point.x][point.y][point.z] > 0 and occ_grid[point.x][point.y][point.z] == 0:
@@ -748,16 +844,15 @@ def Astar_Hybrid_Planning_online(config, iteration, log, num):
         if pri_grid_known[point.x][point.y][point.z] > 0 and occ_grid_known[point.x][point.y][point.z] == 0:
             num_intruder_known_ref += 1
 
-        if occ_grid[point.x][point.y][point.z] > 1:
-            num_should_avoid_intruder_ref += 1
-
-        if occ_grid_known[point.x][point.y][point.z] > 1:
-            num_cannot_avoid_intruder_ref += 1
+        # if  occ_grid[point.x][point.y][point.z] == 2 or occ_grid[point.x][point.y][point.z] == 3 or occ_grid[point.x][point.y][point.z] == 4 :
+        #     num_should_avoid_intruder_ref += 1
+        #
+        # if occ_grid_known[point.x][point.y][point.z] == 2 or occ_grid_known[point.x][point.y][point.z] == 3 or occ_grid_known[point.x][point.y][point.z] == 4:
+        #     num_cannot_avoid_intruder_ref += 1
     # print("\033[94m Fitness for reference path:\033[0m \n", len(trajectory_ref) - 1, sum_ref, num_ca_ref,
     #       num_intruder_ref)
     print("\033[94mFitness for replanned path:\033[0m \n ", len(trajectory_plan) - 1, sum_unknown_ref, sum_known_ref, num_ca_ref,
-          num_intruder_notknown_ref, num_intruder_known_ref,
-          num_should_avoid_intruder_ref, num_cannot_avoid_intruder_ref)
+          num_intruder_notknown_ref, num_intruder_known_ref)
     log.info("Online_Hybrid_Planning: Length of preplanned trajectory: %d" % (len(trajectory_ref) - 1))
     log.info("Online_Hybrid_Planning: Sum of privacy threat of replanned trajectory(unknown): %f" % sum_unknown_ref)
     log.info("Online_Hybrid_Planning: Sum of privacy threat of replanned trajectory(known): %f" % sum_known_ref)
@@ -765,8 +860,8 @@ def Astar_Hybrid_Planning_online(config, iteration, log, num):
     # log.info("Online_Hybrid_Planning: Times of intrusion of preplanned trajectory: %d" % num_intruder_ref)
     log.info("Online_Hybrid_Planning: Times of intrusion of preplanned trajectory(notknown): %d" % num_intruder_notknown_ref)
     log.info("Online_Hybrid_Planning: Times of intrusion of preplanned trajectory(known): %d" % num_intruder_known_ref)
-    log.info("Online_Hybrid_Planning: Times of intrusion of preplanned trajectory(should avoid): %d" % num_should_avoid_intruder_ref)
-    log.info("Online_Hybrid_Planning: Times of intrusion of preplanned trajectory(cannot avoid): %d" % num_cannot_avoid_intruder_ref)
+    # log.info("Online_Hybrid_Planning: Times of intrusion of preplanned trajectory(should avoid): %d" % num_should_avoid_intruder_ref)
+    # log.info("Online_Hybrid_Planning: Times of intrusion of preplanned trajectory(cannot avoid): %d" % num_cannot_avoid_intruder_ref)
 
     # 再次显示地图
 
@@ -783,6 +878,8 @@ def Astar_Hybrid_Planning_online(config, iteration, log, num):
     # print("num_ca:", num_ca)
     print("\033[94m Replan times: \033[0m", replantime)
     log.info("Online_Hybrid_Planning: Replanning times: %d" % replantime)
+    print("\033[94m No solution times: \033[0m", num_of_no_solution)
+    log.info("Online_Path_Planning: No solution times: %d" % num_of_no_solution)
     # grid_visualization(occ_grid, starting_point, end_point, trajectory_plan, trajectory_ref)
 
     occ_grid_known_name = os.getcwd() +"/data/"+"occ_grid_known" + str(iteration) + ".npy"
@@ -814,6 +911,6 @@ def Astar_Hybrid_Planning_online(config, iteration, log, num):
     print("\033[94m exploration rate: \033[0m", exploration_rate)
     log.info("Online_Hybrid_Planning: Exploration rate: %f" % exploration_rate)
 
-    return sum_plan, len(trajectory_plan)-1, num_intruder_plan, sum_ref, len(trajectory_ref) - 1, num_intruder_ref
+    return
 
 

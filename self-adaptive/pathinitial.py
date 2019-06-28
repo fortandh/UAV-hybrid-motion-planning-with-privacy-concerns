@@ -39,7 +39,7 @@ class AStar:
         def __lt__(self, other):
             return self.g + self.h < other.g + other.h
 
-    def __init__(self, occ_grid, pri_grid, grid, sum_privacy, startPoint, endPoint, passTag, Tbudget, threat_list, Toptimal, preference):
+    def __init__(self, occ_grid, pri_grid, grid, sum_privacy, startPoint, endPoint, passTag, Tbudget, threat_list, Toptimal, preference, privacy_radius):
         """
         构造AStar算法的启动条件
         :param map3d: Array2D类型的寻路数组
@@ -66,6 +66,7 @@ class AStar:
         self.Toptimal = Toptimal
         # self.startPoint = startPoint
         self.preference = preference
+        self.pri_radius = privacy_radius
 
         # 起点终点
         if isinstance(startPoint, Point) and isinstance(endPoint, Point):
@@ -236,22 +237,67 @@ class AStar:
         # 设置单位花费
 
         # step = 1/self.Toptimal
-        step = 1
+        # step = 1
+        #
+        # if self.sumpri == 0:
+        #     privacy_threat = 0
+        # else:
+        #     # privacy_threat = (self.prigrid[minF.point.x + offsetX][minF.point.y + offsetY][minF.point.z + offsetZ] * math.exp(-(cam)))/self.sumpri
+        #     privacy_threat = self.prigrid[minF.point.x + offsetX][minF.point.y + offsetY][
+        #                           minF.point.z + offsetZ] * math.exp(-(cam))
+        # cam_off = cam
 
-        if self.sumpri == 0:
-            privacy_threat = 0
-        else:
-            # privacy_threat = (self.prigrid[minF.point.x + offsetX][minF.point.y + offsetY][minF.point.z + offsetZ] * math.exp(-(cam)))/self.sumpri
-            privacy_threat = self.prigrid[minF.point.x + offsetX][minF.point.y + offsetY][
-                                  minF.point.z + offsetZ] * math.exp(-(cam))
-        cam_off = cam
+        ## 0628 h_i*exp((-1/2)*ws*dis^2)
+        privacy_threat = 0
+        grid_x = self.grid[0]
+        grid_y = self.grid[1]
+        grid_z = self.grid[2]
+        r = max(self.pri_radius)
 
+        current_x = minF.point.x + offsetX
+        current_y = minF.point.y + offsetY
+        current_z = minF.point.z + offsetZ
+
+        min_x = max(current_x - r, 0)
+        min_x = math.floor(min_x)
+        max_x = min(current_x + r, grid_x - 1)
+        max_x = math.ceil(max_x)
+        min_y = max(current_y - r, 0)
+        min_y = math.floor(min_y)
+        max_y = min(current_x + r, grid_y - 1)
+        max_y = math.ceil(max_y)
+        min_z = max(current_z - r, 0)
+        min_z = math.floor(min_z)
+        max_z = min(current_z + r, grid_z - 1)
+        max_z = math.ceil(max_z)
+        for m in range(min_x, max_x + 1):
+            for n in range(min_y, max_y + 1):
+                for l in range(min_z, max_z + 1):
+                    if self.map3d[m][n][l] == 2 or self.map3d[m][n][l] == 3 or self.map3d[m][n][l] == 4:
+                        dis = np.sqrt(
+                            np.power((current_x - m), 2) + np.power((current_y - n), 2) + np.power((current_z - l), 2))
+                        h = 0
+                        if dis <= self.pri_radius[int(self.map3d[m][n][l]) - 2]:
+                            print(self.pri_radius[int(self.map3d[m][n][l]) - 2])
+                            if self.map3d[m][n][l] == 2:
+                                h = 1
+                            elif self.map3d[m][n][l] == 3:
+                                h = 10
+                            elif self.map3d[m][n][l] == 4:
+                                h = 100
+                            privacy_threat += h * math.exp((-1 / 2) * np.power(dis, 2) * cam)
+
+        ## 加入时间的约束惩罚
         time_punishment = 1
         if minF.step + 1 > self.Toptimal:
             time_punishment = math.exp((minF.step + 1 -self.Toptimal)/(self.Tbudget-self.Toptimal))
         # delta_g = self.preference * time_punishment * step + privacy_threat
-        delta_g = privacy_threat * time_punishment
-        # delta_g = step + privacy_threat
+
+        # type1
+        # delta_g =  time_punishment * privacy_threat
+        # type2
+        delta_g = privacy_threat
+        #delta_g = step + cam_off + privacy_threat
 
         # 如果不在openList中，就把它加入openlist
         # currentNode = self.pointInOpenList(currentPoint)
@@ -427,7 +473,7 @@ def PathInitial(config, reinitial_flag, iteration, log, num):
         # aStar1 = AStar(occ_grid_known, pri_grid_known, grid, privacy_sum_known, starting_point, end_point, [1], T_budget,
         #                threat_list, T_optimal)
         aStar1 = AStar(occ_grid_known, pri_grid_known, grid, privacy_sum, starting_point, end_point, [1], T_budget,
-                        threat_list, T_optimal, preference)
+                        threat_list, T_optimal, preference, privacy_radius)
         #aStar1 = AStar(occ_grid_known, pri_grid_known, grid, privacy_sum, starting_point, end_point, [1], T_optimal,
         #           threat_list, T_optimal, preference)
         trajectory_ref = aStar1.start()
@@ -437,10 +483,10 @@ def PathInitial(config, reinitial_flag, iteration, log, num):
         # print("程序运行时间：%.8s s" % dtime)
 
         if trajectory_ref == None:
-            return 0, 0, 0, 0, 0, 0, no_solution_flag
+            return no_solution_flag
         else:
             trajectory_ref = [starting_point] + trajectory_ref
-            no_solution_flag = 1
+            # no_solution_flag = 1
 
 
         refpath = np.zeros((len(trajectory_ref), 4))
@@ -481,11 +527,11 @@ def PathInitial(config, reinitial_flag, iteration, log, num):
 
     if reinitial_flag == 1:
         aStar2 = AStar(occ_grid, pri_grid, grid, privacy_sum, starting_point, end_point, [1], T_budget, threat_list,
-                       T_optimal, preference)
+                       T_optimal, preference, privacy_radius)
         trajectory_plan = aStar2.start()
 
         if trajectory_plan == None: ## 0628
-            return 0, 0, 0, 0, 0, 0, no_solution_flag
+            return no_solution_flag
         else:
             trajectory_plan = [starting_point] + trajectory_plan
             no_solution_flag = 1
@@ -521,5 +567,5 @@ def PathInitial(config, reinitial_flag, iteration, log, num):
         #    print("The value of x: ", m)
         #    print(c[m])
 
-    return trajectory_ref, len(trajectory_ref)-1, sum_ref, planpath, len(planpath)-1, sum_plan, no_solution_flag
+    return  no_solution_flag
 

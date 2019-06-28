@@ -110,7 +110,9 @@ def initialmap (grid_x, grid_y, grid_z, starting_point, end_point, safety_thresh
         for j in range (grid_y):
             for k in range (grid_z):
                 if occ_grid[i][j][k] == 2 or occ_grid[i][j][k] == 3 or occ_grid[i][j][k] == 4:
-                    occ_grid_known[i][j][k] = 0
+                    ## 初始化不得经过 0628
+                    occ_grid_known[i][j][k] = 1
+                    # occ_grid_known[i][j][k] = 0
                     # print (occ_grid_known[i][j][k], i,j,k)
     pri_grid_known, privacy_sum_known = privacy_init(grid_x, grid_y, grid_z, occ_grid_known, privacy_radius)
     # print(occ_grid, obstacle_num, occ_grid_known, pri_grid_known, privacy_sum_known,pri_grid,privacy_sum)
@@ -126,7 +128,9 @@ def initialmapwithknowngrid (grid_x, grid_y, grid_z, privacy_threshold, privacy_
         for j in range (grid_y):
             for k in range (grid_z):
                 if occ_grid[i][j][k] == 2 or occ_grid[i][j][k] == 3 or occ_grid[i][j][k] == 4:
-                    occ_grid_known[i][j][k] = 0
+                    ## 初始化不得经过
+                    occ_grid_known[i][j][k] = 1
+                    # occ_grid_known[i][j][k] = 0
                     # print (occ_grid_known[i][j][k], i,j,k)
     pri_grid_known, privacy_sum_known = privacy_init(grid_x, grid_y, grid_z, occ_grid_known, privacy_radius)
     # print(occ_grid, obstacle_num, occ_grid_known, pri_grid_known, privacy_sum_known,pri_grid,privacy_sum)
@@ -150,7 +154,9 @@ def initialmapwithknowngrid_ratio (grid_x, grid_y, grid_z, privacy_threshold, pr
         for j in range(grid_y):
             for k in range(grid_z):
                 if occ_grid[i][j][k] == 2 or occ_grid[i][j][k] == 3 or occ_grid[i][j][k] == 4:
-                    occ_grid_known[i][j][k] = 0
+                    ## 初始化不得经过
+                    occ_grid_known[i][j][k] = 1
+                    # occ_grid_known[i][j][k] = 0
                     # print (occ_grid_known[i][j][k], i,j,k)
     i = 0
     # 更新已探索的
@@ -170,7 +176,7 @@ def initialmapwithknowngrid_ratio (grid_x, grid_y, grid_z, privacy_threshold, pr
         x = randint(0, grid_x - 1)
         y = randint(0, grid_y - 1)
         z = randint(0, grid_z - 1)
-        if (occ_grid[x][y][z] == 2 or occ_grid[x][y][z] == 3 or occ_grid[x][y][z] == 4) and occ_grid_known[x][y][z] == 0:
+        if (occ_grid[x][y][z] == 2 or occ_grid[x][y][z] == 3 or occ_grid[x][y][z] == 4) and occ_grid_known[x][y][z] == 1: ## 0628
             i = i + 1
             occ_grid_known[x][y][z] = occ_grid[x][y][z]
 
@@ -183,7 +189,7 @@ def initialmapwithknowngrid_ratio (grid_x, grid_y, grid_z, privacy_threshold, pr
     # print(restricted_area_num, a, (grid_x * grid_y * grid_z * privacy_threshold))
     exp_rate = 1 - a / (grid_x * grid_y * grid_z * privacy_threshold)
     # print(occ_grid, occ_grid_known)
-    # print("\033[94m exploration rate: \033[0m", exp_rate)
+    print("\033[94m exploration rate: \033[0m", exp_rate)
 
 
     pri_grid_known, privacy_sum_known = privacy_init(grid_x, grid_y, grid_z, occ_grid_known, privacy_radius)

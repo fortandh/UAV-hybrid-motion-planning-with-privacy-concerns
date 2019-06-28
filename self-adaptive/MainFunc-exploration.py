@@ -18,7 +18,7 @@ from SensorConfigOnline import Astar_Sensor_Config_online
 
 from log import Log
 
-num_of_occ_grid = 5
+num_of_occ_grid = 10
 for round in range(num_of_occ_grid):
     num = round
 
@@ -27,12 +27,13 @@ for round in range(num_of_occ_grid):
     #     preference_list = [0, 0.5, 1, 2, 4, 8, 16, 32, 64]
     #     preference = preference_list[pk]
     preference = 1
-    log_tmp = Log(__name__, log_cate="results_0628-exploration-viewradius2.5-type4-data" + str(num))
+    log_tmp = Log(__name__, log_cate="results_0628-exploration-viewradius2.5-type5-data" + str(num))
     log = log_tmp.getlog()
 
     for j in range(6):
-        exploration_rate_list = [0, 0.2, 0.4,  0.6,  0.8, 1]
+        exploration_rate_list = [0, 0.2, 0.4, 0.6, 0.8, 1]
         exploration_rate = exploration_rate_list[j]
+        # exploration_rate = 0
         viewradius = 2.5
         # for j in range(10):
         #     preference_list = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
@@ -87,8 +88,8 @@ for round in range(num_of_occ_grid):
             # alpha = alpha_list[i % 10]
             # beta_list = [3/2, 4/3, 5/4, 6/5, 7/6, 8/7, 9/8, 10/9, 11/10, 12/11]
             # beta = beta_list[i % 10]
-            alpha = 4/3
-            beta = 5/3
+            alpha = 5/3
+            beta = 4/3
 
             Kca = 10
 
@@ -110,23 +111,16 @@ for round in range(num_of_occ_grid):
             reinitial_flag = 1
             refpath = []
             planpath = []
-            refpath, len_refpath, sum_ref_initial, planpath, len_planpath, sum_plan_last, no_solution_flag = PathInitial(
-                config, reinitial_flag,
-                iteration, log, num)
+            no_solution_flag = PathInitial(config, reinitial_flag, iteration, log, num)
             if no_solution_flag != 1:
                 log.info("Error for no initial solution!")
                 i -= 1
                 continue
 
             # Hybrid
-            sum_online_plan, len_trajectory_plan, num_intruder_plan, sum_pre, len_trajectory_ref, num_intruder_ref = Astar_Hybrid_Planning_online(
-                config, iteration, log, num)
+            Astar_Hybrid_Planning_online(config, iteration, log, num)
             reinitial_flag = 2
-            refpath, len_refpath, sum_ref, planpath, len_planpath, sum_plan, no_solution_flag = PathInitial(config,
-                                                                                                            reinitial_flag,
-                                                                                                            iteration,
-                                                                                                            log,
-                                                                                                            num)
+            PathInitial(config, reinitial_flag, iteration, log, num)
 
             # SC
             #
@@ -140,13 +134,9 @@ for round in range(num_of_occ_grid):
             #                                                                                                 num)
 
             # PP
-            sum_online_plan, len_trajectory_plan,  sum_pre, len_trajectory_ref = Astar_Path_Planning_online(
-                config, iteration, log, num)
+            Astar_Path_Planning_online(config, iteration, log, num)
             reinitial_flag = 2
-            refpath, len_refpath, sum_ref, planpath, len_planpath, sum_plan, no_solution_flag = PathInitial(config,
-                                                                                                            reinitial_flag,
-                                                                                                            iteration,
-                                                                                                            log, num)
+            PathInitial(config, reinitial_flag, iteration, log, num)
 
 
 
