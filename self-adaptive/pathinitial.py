@@ -29,8 +29,8 @@ class AStar:
             self.g = g  # g值，g值在用到的时候会重新算
             self.step = 0
             self.cam = 0
-            self.h = (abs(endPoint.x - point.x) + abs(endPoint.y - point.y) + abs(endPoint.z - point.z))  # 计算h值 曼哈顿距离
-
+            # self.h = (abs(endPoint.x - point.x) + abs(endPoint.y - point.y) + abs(endPoint.z - point.z))  # 计算h值 曼哈顿距离
+            self.h = 0
         def __str__(self):
             return "point as the node: x:" + str(self.point.x) + ",y:" + str(self.point.y) + ",z:" + str(
                 self.point.z) + ",ca:" + str(self.point.ca)
@@ -477,7 +477,7 @@ def PathInitial(config, reinitial_flag, iteration, log, num):
         starttime = time.time()
         # aStar1 = AStar(occ_grid_known, pri_grid_known, grid, privacy_sum_known, starting_point, end_point, [1], T_budget,
         #                threat_list, T_optimal)
-        aStar1 = AStar(occ_grid_known, pri_grid_known, grid, privacy_sum, starting_point, end_point, [1], T_budget,
+        aStar1 = AStar(occ_grid_known, pri_grid_known, grid, privacy_sum, starting_point, end_point, [1,2,3,4], T_budget,
                         threat_list, T_optimal, preference, privacy_radius)
         #aStar1 = AStar(occ_grid_known, pri_grid_known, grid, privacy_sum, starting_point, end_point, [1], T_optimal,
         #           threat_list, T_optimal, preference)
@@ -520,10 +520,10 @@ def PathInitial(config, reinitial_flag, iteration, log, num):
     # sum of privacy risk with occ_grid_known for reference path
     PR_sum_known_ref = 0
 
-    print("The occ_grid is: ")
-    for m in range(grid_x):
-        print("The value of x: ", m)
-        print(occ_grid[m])
+    # print("The occ_grid is: ")
+    # for m in range(grid_x):
+    #     print("The value of x: ", m)
+    #     print(occ_grid[m])
     # print("The occ_grid_known is: ")
     # for m in range(grid_x):
     #     print("The value of x: ", m)
@@ -535,7 +535,7 @@ def PathInitial(config, reinitial_flag, iteration, log, num):
         # sum_ref += pri_grid[point.x][point.y][point.z] * math.exp(-(point.ca))
         # if pri_grid[point.x][point.y][point.z] > 0:
         # print(point, pri_grid_known[point.x][point.y][point.z])
-        print(point, caculate_privacy_surround(grid, point, occ_grid, privacy_radius), caculate_privacy_surround(grid, point, occ_grid_known, privacy_radius))
+        # print(point, caculate_privacy_surround(grid, point, occ_grid, privacy_radius), caculate_privacy_surround(grid, point, occ_grid_known, privacy_radius))
         # print(caculate_privacy_surround(grid, point, occ_grid, privacy_radius))
         # print(caculate_privacy_surround(grid, point, occ_grid_known, privacy_radius))
         PR_sum_unknown_ref += caculate_privacy_surround(grid, point, occ_grid, privacy_radius)
@@ -551,7 +551,7 @@ def PathInitial(config, reinitial_flag, iteration, log, num):
     no_solution_flag = 0 ## 0628
 
     if reinitial_flag == 1:
-        aStar2 = AStar(occ_grid, pri_grid, grid, privacy_sum, starting_point, end_point, [1], T_budget, threat_list,
+        aStar2 = AStar(occ_grid, pri_grid, grid, privacy_sum, starting_point, end_point, [1,2,3,4], T_budget, threat_list,
                        T_optimal, preference, privacy_radius)
         trajectory_plan = aStar2.start()
 
@@ -581,7 +581,7 @@ def PathInitial(config, reinitial_flag, iteration, log, num):
         for point in trajectory_plan:
             # sum_plan += pri_grid[point.x][point.y][point.z] * math.exp(-(point.ca))
             # if pri_grid[point.x][point.y][point.z] > 0:
-            print(point, caculate_privacy_surround(grid, point, occ_grid, privacy_radius), caculate_privacy_surround(grid, point, occ_grid_known, privacy_radius))
+            # print(point, caculate_privacy_surround(grid, point, occ_grid, privacy_radius), caculate_privacy_surround(grid, point, occ_grid_known, privacy_radius))
         # print(point, pri_grid_known[point.x][point.y][point.z])
             PR_sum_unknown_plan += caculate_privacy_surround(grid, point, occ_grid, privacy_radius)
             PR_sum_known_plan += caculate_privacy_surround(grid, point, occ_grid_known, privacy_radius)
