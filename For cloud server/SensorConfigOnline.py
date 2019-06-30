@@ -218,15 +218,13 @@ class AStar:
 
         time_punishment = 1
         if minF.step + 1 > self.Toptimal:
-            time_punishment = math.exp((minF.step + 1 - self.Toptimal) / (self.Tbudget - self.Toptimal))
+            time_punishment = math.exp((minF.step + 1 -self.Toptimal)/(self.Tbudget-self.Toptimal))
         # delta_g = self.preference * time_punishment * step + privacy_threat
 
         # type1
-        delta_g = time_punishment * privacy_threat
+        delta_g =  time_punishment * privacy_threat
         # type2
-        # delta_g = privacy_threat
-
-        #delta_g = step + privacy_threat
+        #delta_g = privacy_threat
 
         # 如果不在openList中，就把它加入openlist
         # currentNode = self.pointInOpenList(currentPoint)

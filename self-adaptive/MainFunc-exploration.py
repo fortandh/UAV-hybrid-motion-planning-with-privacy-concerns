@@ -18,21 +18,23 @@ from SensorConfigOnline import Astar_Sensor_Config_online
 
 from log import Log
 
-num_of_occ_grid = 7
+num_of_occ_grid = 5
 for round in range(num_of_occ_grid):
-    num = round + 1
+    num = round
+    num = 4
 
     #
     # for pk in range (9):
     #     preference_list = [0, 0.5, 1, 2, 4, 8, 16, 32, 64]
     #     preference = preference_list[pk]
     preference = 1
-    log_tmp = Log(__name__, log_cate="results_0628-exploration-viewradius2.5-type5-data" + str(num))
+    log_tmp = Log(__name__, log_cate="results-exploration-viewradius2.5-type5-data" + str(num))
     log = log_tmp.getlog()
 
-    for j in range(6):
-        exploration_rate_list = [0, 0.2, 0.4, 0.6, 0.8, 1]
+    for j in range(4):
+        exploration_rate_list = [0.2, 0.4, 0.6, 0.8]
         exploration_rate = exploration_rate_list[j]
+        # exploration_rate = 0
         # exploration_rate = 0
         viewradius = 2.5
         # for j in range(10):
@@ -45,7 +47,7 @@ for round in range(num_of_occ_grid):
         # else:
         #     rangek = 3
         rangek = 11
-        for i in range(0, 11):
+        for i in range(1, 11):
 
             iteration = i
             grid_x = 10 + int(i / 100)
@@ -124,14 +126,9 @@ for round in range(num_of_occ_grid):
 
             # SC
             #
-            # sum_online_plan, len_trajectory_plan, num_intruder_plan, sum_pre, len_trajectory_ref, num_intruder_ref = Astar_Sensor_Config_online(
-            #     config, iteration, log, num)
-            # reinitial_flag = 2
-            # refpath, len_refpath, sum_ref, planpath, len_planpath, sum_plan, no_solution_flag = PathInitial(config,
-            #                                                                                                 reinitial_flag,
-            #                                                                                                 iteration,
-            #                                                                                                 log,
-            #                                                                                                 num)
+            Astar_Sensor_Config_online(config, iteration, log, num)
+            reinitial_flag = 2
+            PathInitial(config, reinitial_flag, iteration, log, num)
 
             # PP
             Astar_Path_Planning_online(config, iteration, log, num)

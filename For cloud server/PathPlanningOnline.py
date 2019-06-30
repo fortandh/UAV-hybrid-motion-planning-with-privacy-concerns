@@ -297,9 +297,9 @@ class AStar:
         # delta_g = self.preference * time_punishment * step + privacy_threat
 
         # type1
-        # delta_g =  time_punishment * privacy_threat
+        delta_g =  time_punishment * privacy_threat
         # type2
-        delta_g = privacy_threat
+        # delta_g = privacy_threat
         #delta_g = step + cam_off + privacy_threat
 
             # 如果不在openList中，就把它加入openlist
