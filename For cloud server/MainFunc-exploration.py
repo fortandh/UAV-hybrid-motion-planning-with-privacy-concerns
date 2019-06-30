@@ -30,8 +30,10 @@ for round in range(num_of_occ_grid):
     log_tmp = Log(__name__, log_cate="results-exploration-viewradius2.5-type6-data" + str(num))
     log = log_tmp.getlog()
 
-    for j in range(4):
-        exploration_rate_list = [0.2, 0.4, 0.6, 0.8]
+    exploration_rate_list = [0, 0.2, 0.4, 0.6, 0.8, 1]
+
+    for j in range(len(exploration_rate_list)):
+        # exploration_rate_list = [0, 0.2, 0.4, 0.6, 0.8]
         exploration_rate = exploration_rate_list[j]
         # exploration_rate = 0
         # exploration_rate = 0

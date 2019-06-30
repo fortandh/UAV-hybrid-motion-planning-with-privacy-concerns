@@ -147,7 +147,6 @@ def initialmapwithknowngrid_ratio (grid_x, grid_y, grid_z, privacy_threshold, pr
     restricted_area_num = map_volume * privacy_threshold
 
     occ_grid_know_ratio = restricted_area_num * exploraton_rate
-    print(occ_grid_know_ratio, restricted_area_num)
 
     i = 0
 
@@ -181,7 +180,7 @@ def initialmapwithknowngrid_ratio (grid_x, grid_y, grid_z, privacy_threshold, pr
             i = i + 1
             occ_grid_known[x][y][z] = occ_grid[x][y][z]
 
-    a = 0
+    a= 0
     for i in range(grid_x):
         for j in range(grid_y):
             for k in range(grid_z):

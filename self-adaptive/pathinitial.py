@@ -300,9 +300,9 @@ class AStar:
         # delta_g = self.preference * time_punishment * step + privacy_threat
 
         # type1
-        # delta_g =  time_punishment * privacy_threat
+        delta_g =  time_punishment * privacy_threat
         # type2
-        delta_g = privacy_threat
+        # delta_g = privacy_threat
         #delta_g = step + cam_off + privacy_threat
 
         # 如果不在openList中，就把它加入openlist
@@ -388,13 +388,13 @@ class AStar:
             self.openList.remove(minF)
 
             # 判断这个节点的上下左右节点
-            # # turn on camera
-            # actions = [[0, -1, 0, 0],[0, 1, 0, 0],[-1, 0, 0, 0],[1, 0, 0, 0],[0, 0, 1, 0],[0, 0, -1, 0]]
-            # actionlist = [0,1,2,3,4,5]
-            # np.random.shuffle(actionlist)
-            # #
-            # for i in range (len(actionlist)):
-            #     self.searchNear(minF, actions[actionlist[i]][0], actions[actionlist[i]][1], actions[actionlist[i]][2], actions[actionlist[i]][3])
+            # turn on camera
+            actions = [[0, -1, 0, 1], [0, 1, 0, 1], [-1, 0, 0, 1], [1, 0, 0, 1], [0, 0, 1, 1], [0, 0, -1, 1]]
+            actionlist = [0,1,2,3,4,5]
+            np.random.shuffle(actionlist)
+            #
+            for i in range (len(actionlist)):
+                self.searchNear(minF, actions[actionlist[i]][0], actions[actionlist[i]][1], actions[actionlist[i]][2], actions[actionlist[i]][3])
             # """
             # turn on camera
             self.searchNear(minF, 0, -1, 0, 1)
@@ -503,8 +503,8 @@ def PathInitial(config, reinitial_flag, iteration, log, num):
 
         reference_path_name = os.getcwd() +"/data/"+"reference_path" + str(iteration) + ".npy"
         np.save(file=reference_path_name, arr=refpath)
-    # b = np.load(file="reference_path.npy")
-    # print(b, len(b))
+        b = np.load(file=reference_path_name)
+        print(b, len(b))
     elif reinitial_flag == 2:
         reference_path_name = os.getcwd() + "/data/" + "reference_path" + str(iteration) + ".npy"
         trajectory_ref_temp = np.load(file=reference_path_name)
@@ -570,8 +570,8 @@ def PathInitial(config, reinitial_flag, iteration, log, num):
 
         plan_path_name = os.getcwd() +"/data/"+"plan_path" + str(iteration) + ".npy"
         np.save(file=plan_path_name, arr=planpath)
-        # c = np.load(file="plan_path.npy")
-        # print(c, len(c))
+        c = np.load(file=plan_path_name)
+        print(c, len(c))
         occ_grid_known = copy.deepcopy(occ_grid)
 
         # sum of privacy risk with occ_grid for best path

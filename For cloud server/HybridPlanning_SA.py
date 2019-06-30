@@ -314,9 +314,9 @@ class AStar:
             time_punishment = math.exp((minF.step + 1 - self.Toptimal) / (self.Tbudget - self.Toptimal))
 
         # type1
-        # delta_g =  time_punishment * privacy_threat
+        delta_g =  math.exp(time_punishment * privacy_threat)
         # type2
-        delta_g = privacy_threat
+        # delta_g = privacy_threat
         #delta_g = step + cam_off + privacy_threat
 
         # 如果不在openList中，就把它加入openlist
