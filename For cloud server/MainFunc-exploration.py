@@ -21,6 +21,7 @@ from log import Log
 num_of_occ_grid = 5
 for round in range(num_of_occ_grid):
     num = round
+    num = 10
 
     #
     # for pk in range (9):
@@ -62,8 +63,8 @@ for round in range(num_of_occ_grid):
             # privacy_threshold = privacy_threshold_list[i % 3]
             # privacy_radius = [0.5, 1, 2]
 
-            safety_threshold = 0.15
-            privacy_threshold = 0.05
+            safety_threshold = 0.091
+            privacy_threshold = 0.096
             privacy_radius = [1, 1.5, 2]
 
             # drone parameter
@@ -80,7 +81,7 @@ for round in range(num_of_occ_grid):
             x1 = 0
             x2 = grid_x - 1
             y1 = 0
-            y2 = grid_y - 1
+            y2 = 0
             z1 = 0
             z2 = grid_z - 1
             starting_point = Point(x1, y1, z1, 1)
@@ -91,8 +92,8 @@ for round in range(num_of_occ_grid):
             # alpha = alpha_list[i % 10]
             # beta_list = [3/2, 4/3, 5/4, 6/5, 7/6, 8/7, 9/8, 10/9, 11/10, 12/11]
             # beta = beta_list[i % 10]
-            alpha = 8/6
-            beta = 7/6
+            alpha = 5
+            beta = 4
 
             Kca = 10
 
