@@ -314,6 +314,7 @@ class AStar:
             time_punishment = math.exp((minF.step + 1 - self.Toptimal) / (self.Tbudget - self.Toptimal))
 
         # type1
+        # print ("delta_g :", time_punishment * privacy_threat)
         delta_g =  math.exp(time_punishment * privacy_threat)
         # type2
         # delta_g = privacy_threat
@@ -875,11 +876,11 @@ def Astar_Hybrid_Planning_online(config, iteration, log, num):
         #     num_cannot_avoid_intruder_ref += 1
     # print("\033[94m Fitness for reference path:\033[0m \n", len(trajectory_ref) - 1, sum_ref, num_ca_ref,
     #       num_intruder_ref)
-    print("\033[94mFitness for replanned path:\033[0m \n ", len(trajectory_plan) - 1,  PR_sum_unknown_ref ,  PR_sum_known_ref, num_ca_ref,
+    print("\033[94mFitness for preplanned path:\033[0m \n ", len(trajectory_plan) - 1,  PR_sum_unknown_ref ,  PR_sum_known_ref, num_ca_ref,
           num_intruder_notknown_ref, num_intruder_known_ref)
     log.info("Online_Hybrid_Planning: Length of preplanned trajectory: %d" % (len(trajectory_ref) - 1))
-    log.info("Online_Hybrid_Planning: Sum of privacy threat of replanned trajectory(occ_grid): %f" %  PR_sum_unknown_ref )
-    log.info("Online_Hybrid_Planning: Sum of privacy threat of replanned trajectory(occ_grid_known): %f" %  PR_sum_known_ref)
+    log.info("Online_Hybrid_Planning: Sum of privacy threat of preplanned trajectory(occ_grid): %f" %  PR_sum_unknown_ref )
+    log.info("Online_Hybrid_Planning: Sum of privacy threat of preplanned trajectory(occ_grid_known): %f" %  PR_sum_known_ref)
     log.info("Online_Hybrid_Planning: Times of turning off camera of preplanned trajectory: %d" % num_ca_ref)
     # log.info("Online_Hybrid_Planning: Times of intrusion of preplanned trajectory: %d" % num_intruder_ref)
     log.info("Online_Hybrid_Planning: Times of intrusion of preplanned trajectory(occ_grid): %d" % num_intruder_notknown_ref)

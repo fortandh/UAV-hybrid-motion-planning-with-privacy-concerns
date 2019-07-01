@@ -18,10 +18,10 @@ from SensorConfigOnline import Astar_Sensor_Config_online
 
 from log import Log
 
-num_of_occ_grid = 4
+num_of_occ_grid = 5
 for round in range(num_of_occ_grid):
-    num = round + 5
-    # num = 5
+    num = round + 11
+    # num = 10
     #
     # for pk in range (9):
     #     preference_list = [0, 0.5, 1, 2, 4, 8, 16, 32, 64]
@@ -36,7 +36,7 @@ for round in range(num_of_occ_grid):
         # exploration_rate_list = [0, 0.2, 0.4, 0.6, 0.8]
         exploration_rate = exploration_rate_list[j]
         # exploration_rate = 0
-        # exploration_rate = 0
+        exploration_rate = 0
         viewradius = 2.5
         # for j in range(10):
         #     preference_list = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
@@ -64,6 +64,8 @@ for round in range(num_of_occ_grid):
 
             safety_threshold = 0.1
             privacy_threshold = 0.05
+            # safety_threshold = 0.091
+            # privacy_threshold = 0.096
             privacy_radius = [1, 1.5, 2]
 
             # drone parameter
@@ -81,6 +83,7 @@ for round in range(num_of_occ_grid):
             x2 = grid_x - 1
             y1 = 0
             y2 = grid_y - 1
+            # y2 = 0
             z1 = 0
             z2 = grid_z - 1
             starting_point = Point(x1, y1, z1, 1)
@@ -93,6 +96,8 @@ for round in range(num_of_occ_grid):
             # beta = beta_list[i % 10]
             alpha = 5/3
             beta = 4/3
+            # alpha = 10
+            # beta = 10
 
             Kca = 10
 
