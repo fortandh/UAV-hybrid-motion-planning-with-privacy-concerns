@@ -431,7 +431,7 @@ def caculate_privacy_surround(grid, point, occ_grid, privacy_radius ):
                             h = 10
                         elif occ_grid[m][n][l] == 4:
                             h = 100
-                        privacy_threat += h * math.exp((-1 / 2) * np.power(dis, 2) * cam)
+                        privacy_threat += h * math.exp((-1 / 2) *(1/2)* np.power(dis, 2) * cam)  ## 规约到0-1之间
     return privacy_threat
 
 if __name__ == '__main__':
