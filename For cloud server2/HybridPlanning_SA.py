@@ -661,6 +661,7 @@ def Astar_Hybrid_Planning_online(config, iteration, log, num):
 
                     ## 0628
                     print("producing local planning")
+                    replantime += 1 ## 0701
                     aStar_pp = AStar(occ_grid, pri_grid_known, grid, privacy_sum, current_p, next_p, [1, 2, 3, 4],
                                      T_plan, threat_list, 0, T_plan_optimal, preference, privacy_radius)
                     trajectory_optimal_pp = aStar_pp.start()
@@ -716,17 +717,18 @@ def Astar_Hybrid_Planning_online(config, iteration, log, num):
                     following_part = trajectory_plan[next_idx + 1:]
                     now_trajectory = first_part + trajectory_optimal + following_part
 
-                    replan_flag = 0
-                    for m in range(idx + 1, next_idx + 1):
-                        # print("original， The No.", m, " step: ", trajectory_plan[m])
-                        if (len(trajectory_optimal) != (next_idx - idx)):
-                            replan_flag = 1
-                            break
-                        if (trajectory_plan[m] != trajectory_optimal[m - idx - 1]):
-                            replan_flag = 1
-
-                    if replan_flag:
-                        replantime += 1  ## 排除重复规划的相同路径 0620
+                    # replan_flag = 0
+                    # for m in range(idx + 1, next_idx + 1):
+                    #     # print("original， The No.", m, " step: ", trajectory_plan[m])
+                    #     if (len(trajectory_optimal) != (next_idx - idx)):
+                    #         replan_flag = 1
+                    #         break
+                    #     if (trajectory_plan[m] != trajectory_optimal[m - idx - 1]):
+                    #         replan_flag = 1
+                    #         break
+                    #
+                    # if replan_flag:
+                    #     replantime += 1  ## 排除重复规划的相同路径 0620
 
                     trajectory_plan = copy.deepcopy(now_trajectory)
 

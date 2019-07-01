@@ -20,7 +20,7 @@ from log import Log
 
 num_of_occ_grid = 5
 for round in range(num_of_occ_grid):
-    num = round + 11
+    num = round
     # num = 10
     #
     # for pk in range (9):
@@ -30,13 +30,13 @@ for round in range(num_of_occ_grid):
     log_tmp = Log(__name__, log_cate="results-exploration-viewradius2.5-type8-data" + str(num))
     log = log_tmp.getlog()
 
-    exploration_rate_list = [0.2, 0.4, 0.6, 0.8]
+    exploration_rate_list = [0.1, 0.3, 0.5, 0.7, 0.9]
 
     for j in range(len(exploration_rate_list)):
         # exploration_rate_list = [0, 0.2, 0.4, 0.6, 0.8]
         exploration_rate = exploration_rate_list[j]
         # exploration_rate = 0
-        exploration_rate = 0
+        # exploration_rate = 0
         viewradius = 2.5
         # for j in range(10):
         #     preference_list = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
@@ -62,7 +62,7 @@ for round in range(num_of_occ_grid):
             # privacy_threshold = privacy_threshold_list[i % 3]
             # privacy_radius = [0.5, 1, 2]
 
-            safety_threshold = 0.1
+            safety_threshold = 0.2
             privacy_threshold = 0.05
             # safety_threshold = 0.091
             # privacy_threshold = 0.096
