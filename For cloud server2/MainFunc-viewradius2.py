@@ -24,8 +24,9 @@ for round in range(num_of_occ_grid):
     # num = 10
     #
     for vr in range (5):
-        viewradius_list = [1, 1.5, 2, 2.5, 3]
+        viewradius_list = [2, 2.5, 3]
         viewradius = viewradius_list[vr]
+        # viewradius = 2
         preference = 1
         log_tmp = Log(__name__, log_cate="results-exploration-viewradius"+ str(viewradius) + "-data" + str(num))
         log = log_tmp.getlog()
@@ -34,7 +35,7 @@ for round in range(num_of_occ_grid):
         for j in range(len(exploration_rate_list)):
             # exploration_rate_list = [0, 0.2, 0.4, 0.6, 0.8]
             exploration_rate = exploration_rate_list[j]
-            # exploration_rate = 0
+            # exploration_rate = 0.9
             # exploration_rate = 0
             # viewradius = 2.5
             # for j in range(10):

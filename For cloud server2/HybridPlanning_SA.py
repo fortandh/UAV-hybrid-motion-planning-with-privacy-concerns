@@ -33,8 +33,8 @@ class AStar:
             self.g = g  # g值，g值在用到的时候会重新算
             self.step = 0
             self.cam = 0
-            self.h = abs(endPoint.x - point.x) + abs(endPoint.y - point.y) + abs(endPoint.z - point.z) # 计算h值 曼哈顿距离
-            # self.h = 0
+            # self.h = abs(endPoint.x - point.x) + abs(endPoint.y - point.y) + abs(endPoint.z - point.z) # 计算h值 曼哈顿距离
+            self.h = 0
 
         def __str__(self):
             return "point as the node: x:" + str(self.point.x) + ",y:" + str(self.point.y) + ",z:" + str(self.point.z) + ",ca:" + str(self.point.ca)
@@ -310,6 +310,8 @@ class AStar:
 
         ## 加入时间的约束惩罚
         time_punishment = 1
+        if self.Toptimal < 0:
+            self.Toptimal = 0
         if minF.step + 1 > self.Toptimal:
             time_punishment = math.exp((minF.step + 1 - self.Toptimal) / (self.Tbudget - self.Toptimal))
 
@@ -390,16 +392,17 @@ class AStar:
         while True:
             # 找到F值最小的点
             # minF = self.getMinNode()
+            minF = self.openList[0]
             # # print("minF: ", minF.point, minF.step)
             # if minF == None :
             #     print("no solution for minF!")
             #     return None
-            minF = None
-            if len(self.openList) == 0:
-                print("No solution for minF!")
-                return None
-            else:
-                minF = self.openList[0]
+            # minF = None
+            # if len(self.openList) == 0:
+            #     print("No solution for minF!")
+            #     return None
+            # else:
+            #     minF = self.openList[0]
             # 把这个点加入closeList中，并且在openList中删除它
             self.closeList.append(minF)
             self.openList.remove(minF)
@@ -690,10 +693,10 @@ def Astar_Hybrid_Planning_online(config, iteration, log, num):
                     ## 如果找不到没有侵犯隐私的可行解，或者规划出的可行解超出了时间的约束，说明只进行路径规划不可行
                     if no_solution_flag > 0:
                         num_of_no_solution += 1
-                        print("Online_Hybrid_Planning: No solution for local planning: from [%d, %d, %d] to [%d, %d, %d]. No solution flag is %d, PR for PP is %f. length of PP is %d, T plan optimal is %d"
-                            % (current_p.x, current_p.y, current_p.z, next_p.x, next_p.y, next_p.z, no_solution_flag, PR_temp_sum_known, length_PP, T_plan_optimal))
-                        log.info("Online_Hybrid_Planning: No solution for local planning: from [%d, %d, %d] to [%d, %d, %d]. No solution flag is %d, PR for PP is %f. length of PP is %d, T plan optimal is %d"
-                            % (current_p.x, current_p.y, current_p.z, next_p.x, next_p.y, next_p.z, no_solution_flag, PR_temp_sum_known, length_PP, T_plan_optimal))
+                        print("Online_Hybrid_Planning: No solution for local planning: from [%d, %d, %d] to [%d, %d, %d]. No solution flag is %d, PR for PP is %f. length of PP is %d, T plan optimal is %d, T_plan is %d"
+                            % (current_p.x, current_p.y, current_p.z, next_p.x, next_p.y, next_p.z, no_solution_flag, PR_temp_sum_known, length_PP, T_plan_optimal, T_plan))
+                        log.info("Online_Hybrid_Planning: No solution for local planning: from [%d, %d, %d] to [%d, %d, %d]. No solution flag is %d, PR for PP is %f. length of PP is %d, T plan optimal is %d, T_plan is %d"
+                            % (current_p.x, current_p.y, current_p.z, next_p.x, next_p.y, next_p.z, no_solution_flag, PR_temp_sum_known, length_PP, T_plan_optimal, T_plan))
                         aStar = AStar(occ_grid, pri_grid_known, grid, privacy_sum, current_p, next_p, [1, 2, 3, 4],
                                       T_plan, threat_list, 1, T_plan_optimal, preference, privacy_radius)
                         trajectory_optimal = aStar.start()
@@ -713,8 +716,9 @@ def Astar_Hybrid_Planning_online(config, iteration, log, num):
                     following_trajectory = copy.deepcopy(trajectory_plan[next_idx + 1:])
 
                     now_trajectory = []
-                    first_part = trajectory_plan[0:idx + 1]
-                    following_part = trajectory_plan[next_idx + 1:]
+                    print(trajectory_plan)
+                    first_part = copy.deepcopy(trajectory_plan[:idx + 1])
+                    following_part = copy.deepcopy(trajectory_plan[next_idx + 1:])
                     now_trajectory = first_part + trajectory_optimal + following_part
 
                     # replan_flag = 0
@@ -731,6 +735,10 @@ def Astar_Hybrid_Planning_online(config, iteration, log, num):
                     #     replantime += 1  ## 排除重复规划的相同路径 0620
 
                     trajectory_plan = copy.deepcopy(now_trajectory)
+
+                    if trajectory_optimal == None:
+                        print('\033[94mNo solution for local planning... \033[0m')
+
 
                     # if trajectory_optimal == None:
                     #     # print('\033[94mNo solution for local planning... \033[0m')

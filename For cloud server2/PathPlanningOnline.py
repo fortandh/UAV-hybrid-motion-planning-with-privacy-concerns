@@ -32,8 +32,8 @@ class AStar:
             self.g = g  # g值，g值在用到的时候会重新算
             self.step = 0
             self.cam = 0
-            self.h = (abs(endPoint.x - point.x) + abs(endPoint.y - point.y) + abs(endPoint.z - point.z)) # 计算h值 曼哈顿距离
-            # self.h = 0
+            # self.h = (abs(endPoint.x - point.x) + abs(endPoint.y - point.y) + abs(endPoint.z - point.z)) # 计算h值 曼哈顿距离
+            self.h = 0
 
         def __str__(self):
             return "point as the node: x:" + str(self.point.x) + ",y:" + str(self.point.y) + ",z:" + str(self.point.z) + ",ca:" + str(self.point.ca)
@@ -292,6 +292,8 @@ class AStar:
 
         #delta_g = step + privacy_threat
         time_punishment = 1
+        if self.Toptimal < 0:
+            self.Toptimal = 0
         if minF.step + 1 > self.Toptimal:
             time_punishment = math.exp((minF.step + 1 -self.Toptimal)/(self.Tbudget-self.Toptimal))
         # delta_g = self.preference * time_punishment * step + privacy_threat
@@ -368,11 +370,12 @@ class AStar:
         # 2.主循环逻辑
         while True:
             # 找到F值最小的点
-            minF = self.getMinNode()
+            # minF = self.getMinNode()
+            minF = self.openList[0]
             #print("minF: ", minF.point, minF.step)
-            if minF == None :
-                print("no solution for minF!")
-                return None
+            # if minF == None :
+            #     print("no solution for minF!")
+            #     return None
             #minF = None
             #if len(self.openList) == 0:
             #    print("No solution for minF!")
@@ -658,8 +661,8 @@ def Astar_Path_Planning_online (config, iteration, log, num):
                         following_trajectory = copy.deepcopy(trajectory_plan[next_idx+1: ])
 
                         now_trajectory = []
-                        first_part = trajectory_plan[0:idx+1]
-                        following_part = trajectory_plan[next_idx+1:]
+                        first_part = copy.deepcopy(trajectory_plan[:idx + 1])
+                        following_part = copy.deepcopy(trajectory_plan[next_idx + 1:])
                         now_trajectory = first_part + trajectory_optimal + following_part
 
                         # replan_flag = 0
