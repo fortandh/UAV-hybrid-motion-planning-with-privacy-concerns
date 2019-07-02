@@ -21,7 +21,7 @@ from log import Log
 num_of_occ_grid = 5
 for round in range(num_of_occ_grid):
     # num = round
-    num = 0
+    num = 9
     #
     # for pk in range (9):
     #     preference_list = [0, 0.5, 1, 2, 4, 8, 16, 32, 64]
@@ -35,7 +35,7 @@ for round in range(num_of_occ_grid):
     for j in range(len(exploration_rate_list)):
         # exploration_rate_list = [0, 0.2, 0.4, 0.6, 0.8]
         exploration_rate = exploration_rate_list[j]
-        # exploration_rate = 0
+        exploration_rate = 0
         # exploration_rate = 0
         viewradius = 2.5
         # for j in range(10):
@@ -63,7 +63,7 @@ for round in range(num_of_occ_grid):
             # privacy_radius = [0.5, 1, 2]
 
             safety_threshold = 0.2
-            privacy_threshold = 0.05
+            privacy_threshold = 0.1
             # safety_threshold = 0.091
             # privacy_threshold = 0.096
             privacy_radius = [1, 1.5, 2]
