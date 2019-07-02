@@ -21,7 +21,7 @@ from log import Log
 num_of_occ_grid = 5
 for round in range(num_of_occ_grid):
     num = round
-    num = 10
+    # num = 10
 
     #
     # for pk in range (9):
@@ -63,8 +63,8 @@ for round in range(num_of_occ_grid):
             # privacy_threshold = privacy_threshold_list[i % 3]
             # privacy_radius = [0.5, 1, 2]
 
-            safety_threshold = 0.091
-            privacy_threshold = 0.096
+            safety_threshold = 0.2
+            privacy_threshold = 0.05
             privacy_radius = [1, 1.5, 2]
 
             # drone parameter

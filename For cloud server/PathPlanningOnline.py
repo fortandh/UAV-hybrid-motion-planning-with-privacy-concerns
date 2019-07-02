@@ -542,50 +542,30 @@ def Astar_Path_Planning_online (config, iteration, log, num):
         # for m in range(len(threat_list)):
         #     print(threat_list[m])
 
+
+
+
+
         if flag:
-            # localization
-            # p_threat, h_impact = privacy_modeling()
-            # update occ_grid, pri_grid
-
-            # for j in range (idx+1, len(trajectory_plan)):
-            #     sigma_privacy = 0
-            #     for k in range (j,len(trajectory_plan)):
-            #         sigma_privacy += pri_grid_known[trajectory_plan[k].x][trajectory_plan[k].y][trajectory_plan[k].z]* math.exp(-(trajectory_plan[k].ca) + 1/2)
-            #     if sigma_privacy == 0:
-            #         next_p = trajectory_plan[j]
-            #         next_idx = j
-            #         break
-            #     elif k == len(trajectory_plan)-1 :
-            #         next_p = trajectory_plan[-1]
-            #         next_idx = len(trajectory_plan)-1
-
-            ## 0622
-            for j in range (idx+1, len(trajectory_plan)):
-                point = trajectory_plan[j]
-                if  (caculate_privacy_surround(grid, point, occ_grid_known, privacy_radius)) > 0:
-                    # print("have privacy risk!!")
-                    next_p = trajectory_plan[j]
-                    next_idx = j
-                # if (pri_grid_known[trajectory_plan[j].x][trajectory_plan[j].y][trajectory_plan[j].z] * math.exp(
-                #         -(trajectory_plan[j].ca) )) > 0:
-                #     next_p = trajectory_plan[j]
-                #     next_idx = j
-                else:
-                    break
-
-            # print(next_idx,next_p)
-            # print("---------------------------------")
-            # print("The UAV produce a temporory plan!")
-            # print("The index of current point: ", idx)
-            # print("The current point: ", current_p)
-            # print("The index of next point: ", next_idx)
-            # print("The next point: ", next_p, "\n")
-
-            # if  (next_idx == idx + 1)  and (pri_grid_known[trajectory_plan[next_idx].x][trajectory_plan[next_idx].y][trajectory_plan[next_idx].z] > 0) :
-            #    trajectory_plan[next_idx].ca = 1
-            #    print ("change sensor configuration for next point")
-
-            if next_idx != idx + 1:  # no need for motion planning
+            ## 0702
+            point = trajectory_plan[next_idx]
+            if (caculate_privacy_surround(grid, point, occ_grid_known, privacy_radius)) == 0:
+                pass
+            else:
+                for j in range(idx + 1, len(trajectory_plan)):
+                    point = trajectory_plan[j]
+                    if (caculate_privacy_surround(grid, point, occ_grid_known, privacy_radius)) > 0:
+                        # print("have privacy risk!!")
+                        next_p = trajectory_plan[j]
+                        next_idx = j
+                    # if (pri_grid_known[trajectory_plan[j].x][trajectory_plan[j].y][trajectory_plan[j].z] * math.exp(
+                    #         -(trajectory_plan[j].ca) )) > 0:
+                    #     next_p = trajectory_plan[j]
+                    #     next_idx = j
+                    else:
+                        break
+                next_idx += 1
+                next_p = trajectory_plan[next_idx]
 
                 """删除冗余路径"""
                 if current_p == next_p:
@@ -635,7 +615,7 @@ def Astar_Path_Planning_online (config, iteration, log, num):
                     # print("\033[94mThe sum of privacy of pre_trajectory_plan: \033[0m", sum)
 
                     # print('\033[94m finding solution for local planning... \033[0m')
-
+                    replantime += 1
                     aStar = AStar(occ_grid, pri_grid_known, grid, privacy_sum, current_p, next_p, [1,2,3,4], T_plan,
                                   threat_list, T_optimal, preference, privacy_radius)
                     trajectory_optimal = aStar.start()
@@ -658,71 +638,34 @@ def Astar_Path_Planning_online (config, iteration, log, num):
                         following_trajectory = copy.deepcopy(trajectory_plan[next_idx+1: ])
 
                         now_trajectory = []
-                        first_part = trajectory_plan[0:idx+1]
-                        following_part = trajectory_plan[next_idx+1:]
+                        for m in range(idx + 1, next_idx + 1):
+                            print("original， The No.", m, " step: ", trajectory_plan[m])
+                        first_part = trajectory_plan[0:idx + 1]
+                        following_part = trajectory_plan[next_idx + 1:]
                         now_trajectory = first_part + trajectory_optimal + following_part
 
-                        replan_flag = 0
-                        for m in range(idx + 1, next_idx + 1):
-                            # print("original， The No.", m, " step: ", trajectory_plan[m])
-                            if (len(trajectory_optimal) != (next_idx - idx)):
-                                replan_flag = 1
-                                break
-                            if (trajectory_plan[m] != trajectory_optimal[m - idx - 1]):
-                                replan_flag = 1
+                        # replan_flag = 0
+                        for m in range(len(trajectory_optimal)):
+                            print("plan， The No.", m, " step: ", trajectory_optimal[m])
+                        #     if (len(trajectory_optimal) != (next_idx - idx)):
+                        #         replan_flag = 1
+                        #         break
+                        #     if (trajectory_plan[m] != trajectory_optimal[m - idx - 1]):
+                        #         replan_flag = 1
+                        #
+                        # if replan_flag:
+                        #     replantime += 1  ## 排除重复规划的相同路径 0620
 
-                        if replan_flag:
-                            replantime += 1  ## 排除重复规划的相同路径 0620
-
-
-                        # print("The length of now plan is: ", len(trajectory_optimal))
-                        # for m in range(len(trajectory_optimal)):
-                        #     print("trajectory_optimal， The No.", m, " step: ", trajectory_optimal[m])
-
-
-                        # for m in range(len(now_trajectory)):
-                        #     print("The No.", m, " step: ", now_trajectory[m])
-                        # print()
 
 
                         trajectory_plan = copy.deepcopy(now_trajectory)
-                        # print("The UAV would move a step: ")
-                        # print("The current point: ", current_p)
-                        # print("The next point: ", trajectory_plan[idx+1])
-                        # print("The index of next point: ", idx+1, "\n")
-                # turn off camera never exist
-                #else:
-                #    print("sensor reconfigured for the next points in the path!!!")
-                #    for kk in range(idx+1, next_idx+1):
-                #        trajectory_plan[kk].ca = 1
-                # sum = 0
-                # cam_off = 0
-                # print("The length of trajectory_plan: ", len(trajectory_plan))
-                # for saber in range(len(trajectory_plan)):
-                #     print("The No.{} step: {}".format(saber, trajectory_plan[saber]))
-                # for ll in range(len(trajectory_plan)):
-                #     sum += pri_grid_known[trajectory_plan[ll].x][trajectory_plan[ll].y][trajectory_plan[ll].z]
-                #     cam_off += trajectory_plan[ll].ca
-                    # print("now", trajectory_plan[ll])
-                # print("\033[94mThe length of now_trajectory_plan: \033[0m", len(trajectory_plan))
-                # print("\033[94mThe sum of privacy of now_trajectory_plan: \033[0m", sum)
 
-                # current_f = sum + len(trajectory_plan) + cam_off
 
-                # print("fitness", current_f)
-
-            #elif pri_grid_known[trajectory_plan[next_idx].x][trajectory_plan[next_idx].y][trajectory_plan[next_idx].z] > 0:
-            #    trajectory_plan[next_idx].ca = 1
-            #    print("change sensor configuration for next point")
 
         time_step += 1
         idx = idx + 1
-        # print("The UAV has finished this step.\n")
 
-        #if idx == 4:
-        #    print("the debug begin!")
-        # print("next point", idx,time_step, len(trajectory_plan))
-    # print(occ_grid)
+
     path_grid2 = copy.deepcopy(occ_grid)
 
     ## log info

@@ -605,40 +605,226 @@ def Astar_Hybrid_Planning_online(config, iteration, log, num):
         # for m in range(len(threat_list)):
         #     print(threat_list[m])
 
+        # if flag:
+        #     ## 0622
+        #     for j in range(idx + 1, len(trajectory_plan)):
+        #         point = trajectory_plan[j]
+        #         if  (caculate_privacy_surround(grid, point, occ_grid_known, privacy_radius)) > 0:
+        #             # print("have privacy risk!!")
+        #             next_p = trajectory_plan[j]
+        #             next_idx = j
+        #         # if (pri_grid_known[trajectory_plan[j].x][trajectory_plan[j].y][trajectory_plan[j].z] * math.exp(
+        #         #         -(trajectory_plan[j].ca) )) > 0:
+        #         #     next_p = trajectory_plan[j]
+        #         #     next_idx = j
+        #         else:
+        #             break
+        #
+        #     # print("---------------------------------")
+        #     # print("The UAV produce a temporory plan!")
+        #     # print("The index of current point: ", idx)
+        #     # print("The current point: ", current_p)
+        #     # print("The index of next point: ", next_idx)
+        #     # print("The next point: ", next_p, "\n")
+        #
+        #     # if  (next_idx == idx + 1)  and (pri_grid_known[trajectory_plan[next_idx].x][trajectory_plan[next_idx].y][trajectory_plan[next_idx].z] > 0) :
+        #     #    trajectory_plan[next_idx].ca = 1
+        #     #    print ("change sensor configuration for next point")
+        #
+        #     if next_idx != idx + 1:  # no need for motion planning
+        #
+        #         """删除冗余路径"""
+        #         if current_p.x == next_p.x and current_p.y == next_p.y and current_p.z == next_p.z: # 0623
+        #         # if current_p == next_p:
+        #             # print("delete redundant route", current_p, next_p)
+        #             first_part = trajectory_plan[:idx]
+        #             next_part = trajectory_plan[next_idx + 1:]
+        #             trajectory_plan = first_part + next_part
+        #             break
+        #
+        #         # print("The length of trajectory_plan: ", len(trajectory_plan))
+        #         T_plan = T_budget - (len(trajectory_plan) - 1) + (next_idx - idx)
+        #         T_plan_optimal = T_optimal - (len(trajectory_plan) - 1) + (next_idx - idx)
+        #         # print("The time limit: ", T_plan, "\n")
+        #         # if T_plan < (abs(trajectory_plan.points[next_idx].x - trajectory_plan.points[idx].x) + abs(trajectory_plan.points[next_idx].y - trajectory_plan.points[idx].y) + \
+        #         #        abs(trajectory_plan.points[next_idx].z - trajectory_plan.points[idx].z)):
+        #         #    print("no solution!")
+        #         # print(T_plan, current_p,  next_p)
+        #
+        #         distance = abs(trajectory_plan[next_idx].x - trajectory_plan[idx].x) + abs(
+        #             trajectory_plan[next_idx].y - trajectory_plan[idx].y) + abs(
+        #             trajectory_plan[next_idx].z - trajectory_plan[idx].z)
+        #
+        #         ## have enough time for planning
+        #         if T_plan >= distance:
+        #             # 开始寻路
+        #             start1 = time.time()
+        #             # aStar = AStar(occ_grid, pri_grid_known, grid, privacy_sum_known, current_p, next_p, [1], T_plan,
+        #             #               threat_list, 1, T_plan_optimal)
+        #
+        #             ## 0628
+        #             print("producing local planning")
+        #             replantime += 1 ## 0701
+        #             aStar_pp = AStar(occ_grid, pri_grid_known, grid, privacy_sum, current_p, next_p, [1, 2, 3, 4],
+        #                              T_plan, threat_list, 0, T_plan_optimal, preference, privacy_radius)
+        #             trajectory_optimal_pp = aStar_pp.start()
+        #
+        #             temp_sum = 0
+        #             PR_temp_sum_unknown = 0
+        #             PR_temp_sum_known = 0
+        #             length_PP = 0
+        #             no_solution_flag = 0
+        #             if trajectory_optimal_pp != None:
+        #                 length_PP = len(trajectory_optimal_pp)
+        #                 for jj in range(len(trajectory_optimal_pp)):
+        #                     point = trajectory_optimal_pp[jj]
+        #                     # print(point)
+        #                     # temp_sum += pri_grid_known[point.x][point.y][point.z]
+        #                     PR_temp_sum_unknown += caculate_privacy_surround(grid, point, occ_grid, privacy_radius)
+        #                     PR_temp_sum_known += caculate_privacy_surround(grid, point, occ_grid_known, privacy_radius)
+        #                 if PR_temp_sum_known > 0:
+        #                     no_solution_flag = 1
+        #                 elif len(trajectory_optimal_pp) > T_plan_optimal:
+        #                     no_solution_flag = 2
+        #             else:
+        #                 length_PP = 0
+        #                 no_solution_flag = 3
+        #
+        #             ## 如果找不到没有侵犯隐私的可行解，或者规划出的可行解超出了时间的约束，说明只进行路径规划不可行
+        #             if no_solution_flag > 0:
+        #                 num_of_no_solution += 1
+        #                 print("Online_Hybrid_Planning: No solution for local planning: from [%d, %d, %d] to [%d, %d, %d]. No solution flag is %d, PR for PP is %f. length of PP is %d, T plan optimal is %d, T_plan is %d"
+        #                     % (current_p.x, current_p.y, current_p.z, next_p.x, next_p.y, next_p.z, no_solution_flag, PR_temp_sum_known, length_PP, T_plan_optimal, T_plan))
+        #                 log.info("Online_Hybrid_Planning: No solution for local planning: from [%d, %d, %d] to [%d, %d, %d]. No solution flag is %d, PR for PP is %f. length of PP is %d, T plan optimal is %d, T_plan is %d"
+        #                     % (current_p.x, current_p.y, current_p.z, next_p.x, next_p.y, next_p.z, no_solution_flag, PR_temp_sum_known, length_PP, T_plan_optimal, T_plan))
+        #                 aStar = AStar(occ_grid, pri_grid_known, grid, privacy_sum, current_p, next_p, [1, 2, 3, 4],
+        #                               T_plan, threat_list, 1, T_plan_optimal, preference, privacy_radius)
+        #                 trajectory_optimal = aStar.start()
+        #             else:
+        #                 trajectory_optimal = copy.deepcopy(trajectory_optimal_pp)
+        #
+        #             # trajectory_optimal = copy.deepcopy(trajectory_optimal_pp)
+        #             #
+        #             #
+        #             # aStar = AStar(occ_grid, pri_grid_known, grid, privacy_sum, current_p, next_p, [1,2,3,4], T_plan,
+        #             #               threat_list, 1, T_plan_optimal, preference)
+        #
+        #             # print('\033[94m finding solution for local planning... \033[0m')
+        #             # trajectory_optimal = aStar.start()
+        #
+        #             previous_trajectory = copy.deepcopy(trajectory_plan[:idx])
+        #             following_trajectory = copy.deepcopy(trajectory_plan[next_idx + 1:])
+        #
+        #             now_trajectory = []
+        #             print(trajectory_plan)
+        #             first_part = copy.deepcopy(trajectory_plan[:idx + 1])
+        #             following_part = copy.deepcopy(trajectory_plan[next_idx + 1:])
+        #             now_trajectory = first_part + trajectory_optimal + following_part
+        #
+        #             # replan_flag = 0
+        #             # for m in range(idx + 1, next_idx + 1):
+        #             #     # print("original， The No.", m, " step: ", trajectory_plan[m])
+        #             #     if (len(trajectory_optimal) != (next_idx - idx)):
+        #             #         replan_flag = 1
+        #             #         break
+        #             #     if (trajectory_plan[m] != trajectory_optimal[m - idx - 1]):
+        #             #         replan_flag = 1
+        #             #         break
+        #             #
+        #             # if replan_flag:
+        #             #     replantime += 1  ## 排除重复规划的相同路径 0620
+        #
+        #             trajectory_plan = copy.deepcopy(now_trajectory)
+        #
+        #             if trajectory_optimal == None:
+        #                 print('\033[94mNo solution for local planning... \033[0m')
+        #
+        #
+        #             # if trajectory_optimal == None:
+        #             #     # print('\033[94mNo solution for local planning... \033[0m')
+        #             #     # print()
+        #             #     for kk in range(idx + 1, next_idx + 1):
+        #             #         trajectory_plan[kk].ca = 1
+        #             #
+        #             # else:
+        #             #     # print("The length of local planning: ", len(trajectory_optimal))
+        #             #     # print()
+        #             #     previous_trajectory = copy.deepcopy(trajectory_plan[:idx])
+        #             #     following_trajectory = copy.deepcopy(trajectory_plan[next_idx + 1:])
+        #             #
+        #             #     now_trajectory = []
+        #             #     first_part = trajectory_plan[0:idx + 1]
+        #             #     following_part = trajectory_plan[next_idx + 1:]
+        #             #     now_trajectory = first_part + trajectory_optimal + following_part
+        #             #
+        #             #     replan_flag = 0
+        #             #     for m in range(idx + 1, next_idx + 1):
+        #             #         # print("original， The No.", m, " step: ", trajectory_plan[m])
+        #             #         if (len(trajectory_optimal) != (next_idx - idx)):
+        #             #             replan_flag = 1
+        #             #             break
+        #             #         if (trajectory_plan[m] != trajectory_optimal[m - idx - 1]):
+        #             #             replan_flag = 1
+        #             #
+        #             #     if replan_flag:
+        #             #         replantime += 1  ## 排除重复规划的相同路径 0620
+        #
+        #
+        #                 # trajectory_plan = copy.deepcopy(now_trajectory)
+        #
+        #         # turn off camera never exist
+        #         else:
+        #             # print("sensor reconfigured for the next points in the path!!!")
+        #             for kk in range(idx + 1, next_idx + 1):
+        #                 trajectory_plan[kk].ca = 2
+        #         sum = 0
+        #         cam_off = 0
+        #         for ll in range(len(trajectory_plan)):
+        #             sum += pri_grid_known[trajectory_plan[ll].x][trajectory_plan[ll].y][trajectory_plan[ll].z]
+        #             cam_off += trajectory_plan[ll].ca
+        #             # print("now", trajectory_plan[ll])
+        #         # print("The length of now_trajectory_plan: ", len(trajectory_plan), sum, cam_off)
+        #
+        #
+        #     # elif pri_grid_known[trajectory_plan[next_idx].x][trajectory_plan[next_idx].y][trajectory_plan[next_idx].z] > 0:
+        #     elif (caculate_privacy_surround(grid, point, occ_grid_known, privacy_radius)) > 0:
+        #         trajectory_plan[next_idx].ca = 2  ## camera reconfiguration
+        #         # print("change sensor configuration for next point")
+
+
         if flag:
-            ## 0622
-            for j in range(idx + 1, len(trajectory_plan)):
-                point = trajectory_plan[j]
-                if  (caculate_privacy_surround(grid, point, occ_grid_known, privacy_radius)) > 0:
-                    # print("have privacy risk!!")
-                    next_p = trajectory_plan[j]
-                    next_idx = j
-                # if (pri_grid_known[trajectory_plan[j].x][trajectory_plan[j].y][trajectory_plan[j].z] * math.exp(
-                #         -(trajectory_plan[j].ca) )) > 0:
-                #     next_p = trajectory_plan[j]
-                #     next_idx = j
+            ## 0702
+            point = trajectory_plan[next_idx]
+            if (caculate_privacy_surround(grid, point, occ_grid_known, privacy_radius)) == 0:
+                pass
+            else:
+                for j in range(idx + 1, len(trajectory_plan)):
+                    point = trajectory_plan[j]
+                    if  (caculate_privacy_surround(grid, point, occ_grid_known, privacy_radius)) > 0:
+                        # print("have privacy risk!!")
+                        next_p = trajectory_plan[j]
+                        next_idx = j
+                        # print(next_p)
+                    # if (pri_grid_known[trajectory_plan[j].x][trajectory_plan[j].y][trajectory_plan[j].z] * math.exp(
+                    #         -(trajectory_plan[j].ca) )) > 0:
+                    #     next_p = trajectory_plan[j]
+                    #     next_idx = j
+                    else:
+                        break
+                if next_idx == len(trajectory_plan)-1:
+                    next_p = trajectory_plan[next_idx]
                 else:
-                    break
-
-            # print("---------------------------------")
-            # print("The UAV produce a temporory plan!")
-            # print("The index of current point: ", idx)
-            # print("The current point: ", current_p)
-            # print("The index of next point: ", next_idx)
-            # print("The next point: ", next_p, "\n")
-
-            # if  (next_idx == idx + 1)  and (pri_grid_known[trajectory_plan[next_idx].x][trajectory_plan[next_idx].y][trajectory_plan[next_idx].z] > 0) :
-            #    trajectory_plan[next_idx].ca = 1
-            #    print ("change sensor configuration for next point")
-
-            if next_idx != idx + 1:  # no need for motion planning
-
+                    next_idx += 1
+                    next_p = trajectory_plan[next_idx]
                 """删除冗余路径"""
-                if current_p.x == next_p.x and current_p.y == next_p.y and current_p.z == next_p.z: # 0623
-                # if current_p == next_p:
+                if current_p.x == next_p.x and current_p.y == next_p.y and current_p.z == next_p.z:  # 0623
+                    # if current_p == next_p:
                     # print("delete redundant route", current_p, next_p)
                     first_part = trajectory_plan[:idx]
-                    next_part = trajectory_plan[next_idx + 1:]
+                    if next_idx == len(trajectory_plan)-1:
+                        next_part = []
+                    else:
+                        next_part = trajectory_plan[next_idx + 1:]
                     trajectory_plan = first_part + next_part
                     break
 
@@ -659,12 +845,9 @@ def Astar_Hybrid_Planning_online(config, iteration, log, num):
                 if T_plan >= distance:
                     # 开始寻路
                     start1 = time.time()
-                    # aStar = AStar(occ_grid, pri_grid_known, grid, privacy_sum_known, current_p, next_p, [1], T_plan,
-                    #               threat_list, 1, T_plan_optimal)
-
                     ## 0628
                     print("producing local planning")
-                    replantime += 1 ## 0701
+                    replantime += 1
                     aStar_pp = AStar(occ_grid, pri_grid_known, grid, privacy_sum, current_p, next_p, [1, 2, 3, 4],
                                      T_plan, threat_list, 0, T_plan_optimal, preference, privacy_radius)
                     trajectory_optimal_pp = aStar_pp.start()
@@ -681,7 +864,8 @@ def Astar_Hybrid_Planning_online(config, iteration, log, num):
                             # print(point)
                             # temp_sum += pri_grid_known[point.x][point.y][point.z]
                             PR_temp_sum_unknown += caculate_privacy_surround(grid, point, occ_grid, privacy_radius)
-                            PR_temp_sum_known += caculate_privacy_surround(grid, point, occ_grid_known, privacy_radius)
+                            PR_temp_sum_known += caculate_privacy_surround(grid, point, occ_grid_known,
+                                                                           privacy_radius)
                         if PR_temp_sum_known > 0:
                             no_solution_flag = 1
                         elif len(trajectory_optimal_pp) > T_plan_optimal:
@@ -693,103 +877,53 @@ def Astar_Hybrid_Planning_online(config, iteration, log, num):
                     ## 如果找不到没有侵犯隐私的可行解，或者规划出的可行解超出了时间的约束，说明只进行路径规划不可行
                     if no_solution_flag > 0:
                         num_of_no_solution += 1
-                        print("Online_Hybrid_Planning: No solution for local planning: from [%d, %d, %d] to [%d, %d, %d]. No solution flag is %d, PR for PP is %f. length of PP is %d, T plan optimal is %d, T_plan is %d"
-                            % (current_p.x, current_p.y, current_p.z, next_p.x, next_p.y, next_p.z, no_solution_flag, PR_temp_sum_known, length_PP, T_plan_optimal, T_plan))
-                        log.info("Online_Hybrid_Planning: No solution for local planning: from [%d, %d, %d] to [%d, %d, %d]. No solution flag is %d, PR for PP is %f. length of PP is %d, T plan optimal is %d, T_plan is %d"
-                            % (current_p.x, current_p.y, current_p.z, next_p.x, next_p.y, next_p.z, no_solution_flag, PR_temp_sum_known, length_PP, T_plan_optimal, T_plan))
+                        # print(occ_grid_known)
+                        print(
+                            "Online_Hybrid_Planning: No solution for local planning: from [%d, %d, %d] to [%d, %d, %d]. No soultion flag is %d, PR for PP is %f. length of PP is %d, T plan optimal is %d"
+                            % (
+                                current_p.x, current_p.y, current_p.z, next_p.x, next_p.y, next_p.z, no_solution_flag,
+                                PR_temp_sum_known, length_PP, T_plan_optimal))
+                        log.info(
+                            "Online_Hybrid_Planning: No solution for local planning: from [%d, %d, %d] to [%d, %d, %d]. No soultion flag is %d, PR for PP is %f. length of PP is %d, T plan optimal is %d"
+                            % (
+                                current_p.x, current_p.y, current_p.z, next_p.x, next_p.y, next_p.z, no_solution_flag,
+                                PR_temp_sum_known, length_PP, T_plan_optimal))
                         aStar = AStar(occ_grid, pri_grid_known, grid, privacy_sum, current_p, next_p, [1, 2, 3, 4],
                                       T_plan, threat_list, 1, T_plan_optimal, preference, privacy_radius)
                         trajectory_optimal = aStar.start()
                     else:
                         trajectory_optimal = copy.deepcopy(trajectory_optimal_pp)
 
-                    # trajectory_optimal = copy.deepcopy(trajectory_optimal_pp)
-                    #
-                    #
-                    # aStar = AStar(occ_grid, pri_grid_known, grid, privacy_sum, current_p, next_p, [1,2,3,4], T_plan,
-                    #               threat_list, 1, T_plan_optimal, preference)
-
-                    # print('\033[94m finding solution for local planning... \033[0m')
-                    # trajectory_optimal = aStar.start()
-
-                    previous_trajectory = copy.deepcopy(trajectory_plan[:idx])
-                    following_trajectory = copy.deepcopy(trajectory_plan[next_idx + 1:])
-
                     now_trajectory = []
-                    print(trajectory_plan)
-                    first_part = copy.deepcopy(trajectory_plan[:idx + 1])
-                    following_part = copy.deepcopy(trajectory_plan[next_idx + 1:])
+                    # for m in range(idx + 1, next_idx + 1):
+                    #     print("original， The No.", m, " step: ", trajectory_plan[m])
+                    first_part = trajectory_plan[0:idx + 1]
+                    if next_idx == len(trajectory_plan)-1:
+                        following_part = []
+                    else:
+                        following_part = trajectory_plan[next_idx + 1:]
+                    # following_part = trajectory_plan[next_idx + 1:]
                     now_trajectory = first_part + trajectory_optimal + following_part
 
                     # replan_flag = 0
-                    # for m in range(idx + 1, next_idx + 1):
-                    #     # print("original， The No.", m, " step: ", trajectory_plan[m])
+                    # for m in range(len(trajectory_optimal)):
+                    #     print("plan， The No.", m, " step: ", trajectory_optimal[m])
                     #     if (len(trajectory_optimal) != (next_idx - idx)):
                     #         replan_flag = 1
                     #         break
                     #     if (trajectory_plan[m] != trajectory_optimal[m - idx - 1]):
                     #         replan_flag = 1
-                    #         break
                     #
                     # if replan_flag:
                     #     replantime += 1  ## 排除重复规划的相同路径 0620
 
                     trajectory_plan = copy.deepcopy(now_trajectory)
 
-                    if trajectory_optimal == None:
-                        print('\033[94mNo solution for local planning... \033[0m')
-
-
-                    # if trajectory_optimal == None:
-                    #     # print('\033[94mNo solution for local planning... \033[0m')
-                    #     # print()
-                    #     for kk in range(idx + 1, next_idx + 1):
-                    #         trajectory_plan[kk].ca = 1
-                    #
-                    # else:
-                    #     # print("The length of local planning: ", len(trajectory_optimal))
-                    #     # print()
-                    #     previous_trajectory = copy.deepcopy(trajectory_plan[:idx])
-                    #     following_trajectory = copy.deepcopy(trajectory_plan[next_idx + 1:])
-                    #
-                    #     now_trajectory = []
-                    #     first_part = trajectory_plan[0:idx + 1]
-                    #     following_part = trajectory_plan[next_idx + 1:]
-                    #     now_trajectory = first_part + trajectory_optimal + following_part
-                    #
-                    #     replan_flag = 0
-                    #     for m in range(idx + 1, next_idx + 1):
-                    #         # print("original， The No.", m, " step: ", trajectory_plan[m])
-                    #         if (len(trajectory_optimal) != (next_idx - idx)):
-                    #             replan_flag = 1
-                    #             break
-                    #         if (trajectory_plan[m] != trajectory_optimal[m - idx - 1]):
-                    #             replan_flag = 1
-                    #
-                    #     if replan_flag:
-                    #         replantime += 1  ## 排除重复规划的相同路径 0620
-
-
-                        # trajectory_plan = copy.deepcopy(now_trajectory)
-
-                # turn off camera never exist
-                else:
-                    # print("sensor reconfigured for the next points in the path!!!")
-                    for kk in range(idx + 1, next_idx + 1):
-                        trajectory_plan[kk].ca = 2
-                sum = 0
-                cam_off = 0
-                for ll in range(len(trajectory_plan)):
-                    sum += pri_grid_known[trajectory_plan[ll].x][trajectory_plan[ll].y][trajectory_plan[ll].z]
-                    cam_off += trajectory_plan[ll].ca
+                # for ll in range(len(trajectory_plan)):
+                    # sum += pri_grid_known[trajectory_plan[ll].x][trajectory_plan[ll].y][trajectory_plan[ll].z]
+                    # cam_off += trajectory_plan[ll].ca
                     # print("now", trajectory_plan[ll])
                 # print("The length of now_trajectory_plan: ", len(trajectory_plan), sum, cam_off)
-
-
-            # elif pri_grid_known[trajectory_plan[next_idx].x][trajectory_plan[next_idx].y][trajectory_plan[next_idx].z] > 0:
-            elif (caculate_privacy_surround(grid, point, occ_grid_known, privacy_radius)) > 0:
-                trajectory_plan[next_idx].ca = 2  ## camera reconfiguration
-                # print("change sensor configuration for next point")
 
         time_step += 1
         idx = idx + 1
