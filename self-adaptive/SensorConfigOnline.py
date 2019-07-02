@@ -218,15 +218,13 @@ class AStar:
 
         time_punishment = 1
         if minF.step + 1 > self.Toptimal:
-            time_punishment = math.exp((minF.step + 1 - self.Toptimal) / (self.Tbudget - self.Toptimal))
+            time_punishment = math.exp((minF.step + 1 -self.Toptimal)/(self.Tbudget-self.Toptimal))
         # delta_g = self.preference * time_punishment * step + privacy_threat
 
         # type1
-        delta_g = time_punishment * privacy_threat
+        delta_g =  math.exp(time_punishment * privacy_threat)
         # type2
-        # delta_g = privacy_threat
-
-        #delta_g = step + privacy_threat
+        #delta_g = privacy_threat
 
         # 如果不在openList中，就把它加入openlist
         # currentNode = self.pointInOpenList(currentPoint)
@@ -489,7 +487,8 @@ def Astar_Sensor_Config_online(config, iteration, log, num):
             # update occ_grid, pri_grid
             replan_flag = 0
             for j in range (idx+1, len(trajectory_plan)):
-                if pri_grid_known[trajectory_plan[j].x][trajectory_plan[j].y][trajectory_plan[j].z] > 0:
+                if caculate_privacy_surround(grid, trajectory_plan[j], occ_grid_known, privacy_radius) > 0:
+                # if pri_grid_known[trajectory_plan[j].x][trajectory_plan[j].y][trajectory_plan[j].z] > 0:
                     if trajectory_plan[j].ca != 2:
                         trajectory_plan[j].ca = 2
                         replan_flag = 1
@@ -592,7 +591,7 @@ def Astar_Sensor_Config_online(config, iteration, log, num):
         if pri_grid_known[point.x][point.y][point.z] > 0 and occ_grid_known[point.x][point.y][point.z] == 0:
             num_intruder_known_ref += 1
 
-        # if  occ_grid[point.x][point.y][point.z] == 2 or occ_grid[point.x][point.y][point.z] == 3 or occ_grid[point.x][point.y][point.z] == 4 :
+    # if  occ_grid[point.x][point.y][point.z] == 2 or occ_grid[point.x][point.y][point.z] == 3 or occ_grid[point.x][point.y][point.z] == 4 :
         #     num_should_avoid_intruder_ref += 1
         #
         # if occ_grid_known[point.x][point.y][point.z] == 2 or occ_grid_known[point.x][point.y][point.z] == 3 or occ_grid_known[point.x][point.y][point.z] == 4:
@@ -603,8 +602,8 @@ def Astar_Sensor_Config_online(config, iteration, log, num):
           num_ca_ref,
           num_intruder_notknown_ref, num_intruder_known_ref)
     log.info("Online_Sensor_Config: Length of preplanned trajectory: %d" % (len(trajectory_ref) - 1))
-    log.info("Online_Sensor_Config: Sum of privacy threat of replanned trajectory(occ_grid): %f" % PR_sum_unknown_ref)
-    log.info("Online_Sensor_Config: Sum of privacy threat of replanned trajectory(occ_grid_known): %f" % PR_sum_known_ref)
+    log.info("Online_Sensor_Config: Sum of privacy threat of preplanned trajectory(occ_grid): %f" % PR_sum_unknown_ref)
+    log.info("Online_Sensor_Config: Sum of privacy threat of preplanned trajectory(occ_grid_known): %f" % PR_sum_known_ref)
     log.info("Online_Sensor_Config: Times of turning off camera of preplanned trajectory: %d" % num_ca_ref)
     # log.info("Online_Sensor_Config: Times of intrusion of preplanned trajectory: %d" % num_intruder_ref)
     log.info(

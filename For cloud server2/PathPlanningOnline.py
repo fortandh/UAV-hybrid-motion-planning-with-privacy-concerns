@@ -623,7 +623,7 @@ def Astar_Path_Planning_online (config, iteration, log, num):
                 if T_plan >= distance:
                     # 开始寻路
                     start1 = time.time()
-                    # replantime += 1
+                    replantime += 1
                     # aStar = AStar(occ_grid, pri_grid_known, grid, privacy_sum_known, current_p, next_p, [1], T_plan, threat_list, T_optimal)
                     # aStar = AStar(occ_grid, pri_grid_known, grid, privacy_sum, current_p, next_p, [1,2,3,4], T_plan,
                     #               threat_list, T_optimal, preference)
@@ -662,17 +662,17 @@ def Astar_Path_Planning_online (config, iteration, log, num):
                         following_part = trajectory_plan[next_idx+1:]
                         now_trajectory = first_part + trajectory_optimal + following_part
 
-                        replan_flag = 0
-                        for m in range(idx + 1, next_idx + 1):
-                            # print("original， The No.", m, " step: ", trajectory_plan[m])
-                            if (len(trajectory_optimal) != (next_idx - idx)):
-                                replan_flag = 1
-                                break
-                            if (trajectory_plan[m] != trajectory_optimal[m - idx - 1]):
-                                replan_flag = 1
-
-                        if replan_flag:
-                            replantime += 1  ## 排除重复规划的相同路径 0620
+                        # replan_flag = 0
+                        # for m in range(idx + 1, next_idx + 1):
+                        #     # print("original， The No.", m, " step: ", trajectory_plan[m])
+                        #     if (len(trajectory_optimal) != (next_idx - idx)):
+                        #         replan_flag = 1
+                        #         break
+                        #     if (trajectory_plan[m] != trajectory_optimal[m - idx - 1]):
+                        #         replan_flag = 1
+                        #
+                        # if replan_flag:
+                        #     replantime += 1  ## 排除重复规划的相同路径 0620
 
 
                         # print("The length of now plan is: ", len(trajectory_optimal))
@@ -786,15 +786,16 @@ def Astar_Path_Planning_online (config, iteration, log, num):
     num_intruder_known_ref = 0
     # num_should_avoid_intruder_ref = 0
     # num_cannot_avoid_intruder_ref = 0
-
     for point in trajectory_ref:
-
-        # sum_unknown_ref += pri_grid[point.x][point.y][point.z] * math.exp(-(point.ca))
+        # sum_unknown_ref += pri_grid[point.x][point.y][point.z] * math.exp(-(point.ca) )
         # sum_known_ref += pri_grid_known[point.x][point.y][point.z] * math.exp(-(point.ca))
         PR_sum_unknown_ref += caculate_privacy_surround(grid, point, occ_grid, privacy_radius)
         PR_sum_known_ref += caculate_privacy_surround(grid, point, occ_grid_known, privacy_radius)
         if point.ca == 2:
             num_ca_ref += 1
+        # if pri_grid[point.x][point.y][point.z] != pri_grid_known[point.x][point.y][point.z]:
+        #     print("$$$$$$$$$")
+
         # print(point, pri_grid_known[point.x][point.y][point.z])
         if pri_grid[point.x][point.y][point.z] > 0 and occ_grid[point.x][point.y][point.z] == 0:
             num_intruder_notknown_ref += 1
@@ -812,9 +813,8 @@ def Astar_Path_Planning_online (config, iteration, log, num):
     print("\033[94mFitness for replanned path:\033[0m \n ", len(trajectory_plan) - 1, PR_sum_unknown_ref, PR_sum_known_ref,
           num_ca_ref,
           num_intruder_notknown_ref, num_intruder_known_ref)
-    log.info("Online_Path_Planning: Length of preplanned trajectory: %d" % (len(trajectory_ref) - 1))
-    log.info("Online_Path_Planning: Sum of privacy threat of replanned trajectory(occ_grid): %f" % PR_sum_unknown_ref)
-    log.info("Online_Path_Planning: Sum of privacy threat of replanned trajectory(occ_grid_known): %f" % PR_sum_known_ref)
+    log.info("Online_Path_Planning: Sum of privacy threat of preplanned trajectory(occ_grid): %f" % PR_sum_unknown_ref)
+    log.info("Online_Path_Planning: Sum of privacy threat of preplanned trajectory(occ_grid_known): %f" % PR_sum_known_ref)
     log.info("Online_Path_Planning: Times of turning off camera of preplanned trajectory: %d" % num_ca_ref)
     # log.info("Online_Path_Planning: Times of intrusion of preplanned trajectory: %d" % num_intruder_ref)
     log.info(

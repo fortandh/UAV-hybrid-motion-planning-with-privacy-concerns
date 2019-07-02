@@ -33,8 +33,8 @@ class AStar:
             self.g = g  # g值，g值在用到的时候会重新算
             self.step = 0
             self.cam = 0
-            # self.h = abs(endPoint.x - point.x) + abs(endPoint.y - point.y) + abs(endPoint.z - point.z) # 计算h值 曼哈顿距离
-            self.h = 0
+            self.h = abs(endPoint.x - point.x) + abs(endPoint.y - point.y) + abs(endPoint.z - point.z) # 计算h值 曼哈顿距离
+            # self.h = 0
 
         def __str__(self):
             return "point as the node: x:" + str(self.point.x) + ",y:" + str(self.point.y) + ",z:" + str(self.point.z) + ",ca:" + str(self.point.ca)
@@ -314,10 +314,11 @@ class AStar:
             time_punishment = math.exp((minF.step + 1 - self.Toptimal) / (self.Tbudget - self.Toptimal))
 
         # type1
-        # delta_g =  time_punishment * privacy_threat
+        # print ("delta_g :", time_punishment * privacy_threat)
+        delta_g =  math.exp(time_punishment * privacy_threat)
         # type2
-        delta_g = privacy_threat
-        #delta_g = step + cam_off + privacy_threat
+        # delta_g = privacy_threat
+        # delta_g = step + cam_off + privacy_threat
 
         # 如果不在openList中，就把它加入openlist
         # currentNode = self.pointInOpenList(currentPoint)
@@ -660,6 +661,7 @@ def Astar_Hybrid_Planning_online(config, iteration, log, num):
 
                     ## 0628
                     print("producing local planning")
+                    replantime += 1 ## 0701
                     aStar_pp = AStar(occ_grid, pri_grid_known, grid, privacy_sum, current_p, next_p, [1, 2, 3, 4],
                                      T_plan, threat_list, 0, T_plan_optimal, preference, privacy_radius)
                     trajectory_optimal_pp = aStar_pp.start()
@@ -687,9 +689,10 @@ def Astar_Hybrid_Planning_online(config, iteration, log, num):
 
                     ## 如果找不到没有侵犯隐私的可行解，或者规划出的可行解超出了时间的约束，说明只进行路径规划不可行
                     if no_solution_flag > 0:
-                        print("Online_Hybrid_Planning: No solution for local planning: from [%d, %d, %d] to [%d, %d, %d]. No soultion flag is %d, PR for PP is %f. length of PP is %d, T plan optimal is %d"
+                        num_of_no_solution += 1
+                        print("Online_Hybrid_Planning: No solution for local planning: from [%d, %d, %d] to [%d, %d, %d]. No solution flag is %d, PR for PP is %f. length of PP is %d, T plan optimal is %d"
                             % (current_p.x, current_p.y, current_p.z, next_p.x, next_p.y, next_p.z, no_solution_flag, PR_temp_sum_known, length_PP, T_plan_optimal))
-                        log.info("Online_Hybrid_Planning: No solution for local planning: from [%d, %d, %d] to [%d, %d, %d]. No soultion flag is %d, PR for PP is %f. length of PP is %d, T plan optimal is %d"
+                        log.info("Online_Hybrid_Planning: No solution for local planning: from [%d, %d, %d] to [%d, %d, %d]. No solution flag is %d, PR for PP is %f. length of PP is %d, T plan optimal is %d"
                             % (current_p.x, current_p.y, current_p.z, next_p.x, next_p.y, next_p.z, no_solution_flag, PR_temp_sum_known, length_PP, T_plan_optimal))
                         aStar = AStar(occ_grid, pri_grid_known, grid, privacy_sum, current_p, next_p, [1, 2, 3, 4],
                                       T_plan, threat_list, 1, T_plan_optimal, preference, privacy_radius)
@@ -714,17 +717,18 @@ def Astar_Hybrid_Planning_online(config, iteration, log, num):
                     following_part = trajectory_plan[next_idx + 1:]
                     now_trajectory = first_part + trajectory_optimal + following_part
 
-                    replan_flag = 0
-                    for m in range(idx + 1, next_idx + 1):
-                        # print("original， The No.", m, " step: ", trajectory_plan[m])
-                        if (len(trajectory_optimal) != (next_idx - idx)):
-                            replan_flag = 1
-                            break
-                        if (trajectory_plan[m] != trajectory_optimal[m - idx - 1]):
-                            replan_flag = 1
-
-                    if replan_flag:
-                        replantime += 1  ## 排除重复规划的相同路径 0620
+                    # replan_flag = 0
+                    # for m in range(idx + 1, next_idx + 1):
+                    #     # print("original， The No.", m, " step: ", trajectory_plan[m])
+                    #     if (len(trajectory_optimal) != (next_idx - idx)):
+                    #         replan_flag = 1
+                    #         break
+                    #     if (trajectory_plan[m] != trajectory_optimal[m - idx - 1]):
+                    #         replan_flag = 1
+                    #         break
+                    #
+                    # if replan_flag:
+                    #     replantime += 1  ## 排除重复规划的相同路径 0620
 
                     trajectory_plan = copy.deepcopy(now_trajectory)
 
@@ -874,11 +878,11 @@ def Astar_Hybrid_Planning_online(config, iteration, log, num):
         #     num_cannot_avoid_intruder_ref += 1
     # print("\033[94m Fitness for reference path:\033[0m \n", len(trajectory_ref) - 1, sum_ref, num_ca_ref,
     #       num_intruder_ref)
-    print("\033[94mFitness for replanned path:\033[0m \n ", len(trajectory_plan) - 1,  PR_sum_unknown_ref ,  PR_sum_known_ref, num_ca_ref,
+    print("\033[94mFitness for preplanned path:\033[0m \n ", len(trajectory_plan) - 1,  PR_sum_unknown_ref ,  PR_sum_known_ref, num_ca_ref,
           num_intruder_notknown_ref, num_intruder_known_ref)
     log.info("Online_Hybrid_Planning: Length of preplanned trajectory: %d" % (len(trajectory_ref) - 1))
-    log.info("Online_Hybrid_Planning: Sum of privacy threat of replanned trajectory(occ_grid): %f" %  PR_sum_unknown_ref )
-    log.info("Online_Hybrid_Planning: Sum of privacy threat of replanned trajectory(occ_grid_known): %f" %  PR_sum_known_ref)
+    log.info("Online_Hybrid_Planning: Sum of privacy threat of preplanned trajectory(occ_grid): %f" %  PR_sum_unknown_ref )
+    log.info("Online_Hybrid_Planning: Sum of privacy threat of preplanned trajectory(occ_grid_known): %f" %  PR_sum_known_ref)
     log.info("Online_Hybrid_Planning: Times of turning off camera of preplanned trajectory: %d" % num_ca_ref)
     # log.info("Online_Hybrid_Planning: Times of intrusion of preplanned trajectory: %d" % num_intruder_ref)
     log.info("Online_Hybrid_Planning: Times of intrusion of preplanned trajectory(occ_grid): %d" % num_intruder_notknown_ref)

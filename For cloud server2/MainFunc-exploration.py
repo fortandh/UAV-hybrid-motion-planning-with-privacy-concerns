@@ -20,8 +20,8 @@ from log import Log
 
 num_of_occ_grid = 5
 for round in range(num_of_occ_grid):
-    num = round
-    # num = 10
+    # num = round
+    num = 19
     #
     # for pk in range (9):
     #     preference_list = [0, 0.5, 1, 2, 4, 8, 16, 32, 64]
@@ -48,7 +48,7 @@ for round in range(num_of_occ_grid):
         # else:
         #     rangek = 3
         rangek = 11
-        for i in range(1, 11):
+        for i in range(0, 11):
 
             iteration = i
             grid_x = 10 + int(i / 100)
@@ -62,7 +62,7 @@ for round in range(num_of_occ_grid):
             # privacy_threshold = privacy_threshold_list[i % 3]
             # privacy_radius = [0.5, 1, 2]
 
-            safety_threshold = 0.2
+            safety_threshold = 0.3
             privacy_threshold = 0.05
             # safety_threshold = 0.091
             # privacy_threshold = 0.096
