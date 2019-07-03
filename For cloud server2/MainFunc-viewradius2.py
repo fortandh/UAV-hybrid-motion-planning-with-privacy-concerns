@@ -20,7 +20,7 @@ from log import Log
 
 num_of_occ_grid = 2
 for round in range(num_of_occ_grid):
-    num = round + 5
+    num = round
     # num = 10
     #
     for vr in range (3):
@@ -63,7 +63,7 @@ for round in range(num_of_occ_grid):
                 # privacy_radius = [0.5, 1, 2]
 
                 safety_threshold = 0.2
-                privacy_threshold = 0.1
+                privacy_threshold = 0.05
                 # safety_threshold = 0.091
                 # privacy_threshold = 0.096
                 privacy_radius = [1, 1.5, 2]

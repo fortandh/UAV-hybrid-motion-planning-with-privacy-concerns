@@ -21,7 +21,7 @@ from log import Log
 num_of_occ_grid = 5
 for round in range(num_of_occ_grid):
     # num = round
-    num = 16
+    num = 17
     #
     # for pk in range (9):
     #     preference_list = [0, 0.5, 1, 2, 4, 8, 16, 32, 64]
@@ -126,15 +126,15 @@ for round in range(num_of_occ_grid):
                 continue
 
             # Hybrid
-            # Astar_Hybrid_Planning_online(config, iteration, log, num)
-            # reinitial_flag = 2
-            # PathInitial(config, reinitial_flag, iteration, log, num)
+            Astar_Hybrid_Planning_online(config, iteration, log, num)
+            reinitial_flag = 2
+            PathInitial(config, reinitial_flag, iteration, log, num)
 
             # SC
             #
-            # Astar_Sensor_Config_online(config, iteration, log, num)
-            # reinitial_flag = 2
-            # PathInitial(config, reinitial_flag, iteration, log, num)
+            Astar_Sensor_Config_online(config, iteration, log, num)
+            reinitial_flag = 2
+            PathInitial(config, reinitial_flag, iteration, log, num)
 
             # PP
             Astar_Path_Planning_online(config, iteration, log, num)
