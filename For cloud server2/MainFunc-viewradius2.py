@@ -18,13 +18,13 @@ from SensorConfigOnline import Astar_Sensor_Config_online
 
 from log import Log
 
-num_of_occ_grid = 5
+num_of_occ_grid = 2
 for round in range(num_of_occ_grid):
     num = round + 5
     # num = 10
     #
-    for vr in range (5):
-        viewradius_list = [2, 2.5, 3]
+    for vr in range (3):
+        viewradius_list = [1, 2, 3]
         viewradius = viewradius_list[vr]
         # viewradius = 2
         preference = 1

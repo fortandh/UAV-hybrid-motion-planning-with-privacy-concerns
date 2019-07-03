@@ -21,7 +21,7 @@ from log import Log
 num_of_occ_grid = 5
 for round in range(num_of_occ_grid):
     # num = round
-    num = 9
+    num = 10
     #
     # for pk in range (9):
     #     preference_list = [0, 0.5, 1, 2, 4, 8, 16, 32, 64]
@@ -35,7 +35,7 @@ for round in range(num_of_occ_grid):
     for j in range(len(exploration_rate_list)):
         # exploration_rate_list = [0, 0.2, 0.4, 0.6, 0.8]
         exploration_rate = exploration_rate_list[j]
-        exploration_rate = 0
+        exploration_rate = 0.1
         # exploration_rate = 0
         viewradius = 2.5
         # for j in range(10):
@@ -47,8 +47,8 @@ for round in range(num_of_occ_grid):
         #     rangek = 2
         # else:
         #     rangek = 3
-        rangek = 11
-        for i in range(0, 11):
+        rangek = 1
+        for i in range(rangek, 11):
 
             iteration = i
             grid_x = 10 + int(i / 100)
@@ -62,10 +62,10 @@ for round in range(num_of_occ_grid):
             # privacy_threshold = privacy_threshold_list[i % 3]
             # privacy_radius = [0.5, 1, 2]
 
-            safety_threshold = 0.2
-            privacy_threshold = 0.1
-            # safety_threshold = 0.091
-            # privacy_threshold = 0.096
+            # safety_threshold = 0.2
+            # privacy_threshold = 0.05
+            safety_threshold = 0.091
+            privacy_threshold = 0.096
             privacy_radius = [1, 1.5, 2]
 
             # drone parameter
@@ -82,8 +82,8 @@ for round in range(num_of_occ_grid):
             x1 = 0
             x2 = grid_x - 1
             y1 = 0
-            y2 = grid_y - 1
-            # y2 = 0
+            # y2 = grid_y - 1
+            y2 = 0
             z1 = 0
             z2 = grid_z - 1
             starting_point = Point(x1, y1, z1, 1)
@@ -126,15 +126,15 @@ for round in range(num_of_occ_grid):
                 continue
 
             # Hybrid
-            Astar_Hybrid_Planning_online(config, iteration, log, num)
-            reinitial_flag = 2
-            PathInitial(config, reinitial_flag, iteration, log, num)
+            # Astar_Hybrid_Planning_online(config, iteration, log, num)
+            # reinitial_flag = 2
+            # PathInitial(config, reinitial_flag, iteration, log, num)
 
             # SC
             #
-            Astar_Sensor_Config_online(config, iteration, log, num)
-            reinitial_flag = 2
-            PathInitial(config, reinitial_flag, iteration, log, num)
+            # Astar_Sensor_Config_online(config, iteration, log, num)
+            # reinitial_flag = 2
+            # PathInitial(config, reinitial_flag, iteration, log, num)
 
             # PP
             Astar_Path_Planning_online(config, iteration, log, num)
