@@ -17,27 +17,28 @@ from SensorConfigOnline import Astar_Sensor_Config_online
 
 
 from log import Log
-
 # num_of_occ_grid = 2
-num_list = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19]
+num_list = [0,7,17,13]
 for round in range(len(num_list)):
     # num = round + 1
     num = num_list[round]
     # num = 10
-    #
-    for vr in range (3):
-        viewradius_list = [1, 2, 3]
-        viewradius = viewradius_list[vr]
-        # viewradius = 2
+
+    for ts in range (4):
+        alpha_list = [4/2, 5/3, 6/4, 7/5]
+        alpha = alpha_list[ts]
+        beta_list = [3/2, 4/3, 5/4, 6/5]
+        beta = beta_list[ts]
+        viewradius = 2.5
         preference = 1
-        log_tmp = Log(__name__, log_cate="results-exploration-viewradius"+ str(viewradius) + "-data" + str(num))
+        log_tmp = Log(__name__, log_cate="results-exploration-time" + str(beta) + "-" + str(alpha) + "-data" + str(num))
         log = log_tmp.getlog()
 
         exploration_rate_list = [0.1, 0.3, 0.5, 0.7, 0.9]
         for j in range(len(exploration_rate_list)):
             # exploration_rate_list = [0, 0.2, 0.4, 0.6, 0.8]
             exploration_rate = exploration_rate_list[j]
-            # exploration_rate = 0.9
+            # exploration_rate = 0
             # exploration_rate = 0
             # viewradius = 2.5
             # for j in range(10):
@@ -76,9 +77,6 @@ for round in range(len(num_list)):
                 elif num < 20:
                     safety_threshold = 0.3
                     privacy_threshold = 0.1
-
-                # safety_threshold = 0.2
-                # privacy_threshold = 0.05
                 # safety_threshold = 0.091
                 # privacy_threshold = 0.096
                 privacy_radius = [1, 1.5, 2]
@@ -98,7 +96,6 @@ for round in range(len(num_list)):
                 x2 = grid_x - 1
                 y1 = 0
                 y2 = grid_y - 1
-                # y2 = 0
                 z1 = 0
                 z2 = grid_z - 1
                 starting_point = Point(x1, y1, z1, 1)
@@ -109,8 +106,8 @@ for round in range(len(num_list)):
                 # alpha = alpha_list[i % 10]
                 # beta_list = [3/2, 4/3, 5/4, 6/5, 7/6, 8/7, 9/8, 10/9, 11/10, 12/11]
                 # beta = beta_list[i % 10]
-                alpha = 5 / 3
-                beta = 4 / 3
+                # alpha = 5 / 3
+                # beta = 4 / 3
                 # alpha = 10
                 # beta = 10
 

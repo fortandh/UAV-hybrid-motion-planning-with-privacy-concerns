@@ -262,6 +262,9 @@ def Astar_Path_Planning_online (config, iteration, log, num):
                     else:
                         following_part = trajectory_plan[next_idx + 1:]
                     # following_part = trajectory_plan[next_idx + 1:]
+                    if trajectory_optimal == None:
+                        trajectory_optimal = []
+
                     now_trajectory = first_part + trajectory_optimal + following_part
 
                     # replan_flag = 0

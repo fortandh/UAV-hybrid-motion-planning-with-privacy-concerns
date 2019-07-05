@@ -23,8 +23,21 @@ class configure:
         self.starting_point = starting_point
         self.end_point = end_point
 
-        self.T_budget = alpha * (abs(self.end_point.x-self.starting_point.x) + abs(self.end_point.y-self.starting_point.y) + abs(self.end_point.z-self.starting_point.z))
-        self.T_optimal = beta * (abs(self.end_point.x-self.starting_point.x) + abs(self.end_point.y-self.starting_point.y) + abs(self.end_point.z-self.starting_point.z))
+        if alpha == 8:
+            self.T_budget = 45
+            self.T_optimal = 40
+        elif alpha == 4:
+            self.T_budget = 45
+            self.T_optimal = 36
+        elif alpha == 2:
+            self.T_budget = 45
+            self.T_optimal = 30
+
+        else:
+            self.T_budget = alpha * (abs(self.end_point.x-self.starting_point.x) + abs(self.end_point.y-self.starting_point.y) + abs(self.end_point.z-self.starting_point.z))
+            self.T_optimal = beta * (abs(self.end_point.x-self.starting_point.x) + abs(self.end_point.y-self.starting_point.y) + abs(self.end_point.z-self.starting_point.z))
+
+
         self.viewradius = viewradius
         self.Kca = 10
 
