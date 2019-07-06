@@ -18,20 +18,23 @@ from SensorConfigOnline import Astar_Sensor_Config_online
 
 from log import Log
 # num_of_occ_grid = 2
-num_list = [0,7,17,13]
+num_list = [0,7,13,17]
 for round in range(len(num_list)):
     # num = round + 1
     num = num_list[round]
     # num = 10
 
     for ts in range (3):
-        alpha_list = [8,2,4]
-        alpha = alpha_list[ts]
-        beta_list = [8,2,4]
-        beta = beta_list[ts]
-        viewradius = 2.5
+        # alpha_list = [8,2,4]
+        # alpha = alpha_list[ts]
+        # beta_list = [8,2,4]
+        # beta = beta_list[ts]
+        alpha = 8
+        beta = 8
+        viewradius_list = [1,2,3]
+        viewradius = viewradius_list[ts]
         preference = 1
-        log_tmp = Log(__name__, log_cate="results-exploration-time" + str(beta) + "-" + str(alpha) + "-data" + str(num))
+        log_tmp = Log(__name__, log_cate="results-exploration-time" + str(beta) + "-" + str(alpha) + "-viewradius" + str(viewradius) + "-data" + str(num))
         log = log_tmp.getlog()
 
         exploration_rate_list = [0.1, 0.3, 0.5, 0.7, 0.9]
