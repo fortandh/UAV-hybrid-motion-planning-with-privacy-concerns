@@ -5,7 +5,7 @@ a=np.loadtxt('1.txt')
 b=np.reshape(a,(10,10,10))
 print(b)
 print(type(b))
-occ_grid_known_name = "../data/"+"occ_grid-10" + ".npy"
+occ_grid_known_name = "../data/"+"occ_grid-100" + ".npy"
 np.save(file=occ_grid_known_name, arr=b)
 
 obstacle = 0
