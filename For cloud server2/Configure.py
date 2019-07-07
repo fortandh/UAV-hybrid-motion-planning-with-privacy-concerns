@@ -31,7 +31,7 @@ class configure:
             self.T_optimal = 36
         elif alpha == 2:
             self.T_budget = 45
-            self.T_optimal = 32
+            self.T_optimal = 30
 
         else:
             self.T_budget = alpha * (abs(self.end_point.x-self.starting_point.x) + abs(self.end_point.y-self.starting_point.y) + abs(self.end_point.z-self.starting_point.z))

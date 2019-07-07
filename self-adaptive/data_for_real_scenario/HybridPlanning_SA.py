@@ -91,8 +91,7 @@ def Astar_Hybrid_Planning_online(config, iteration, log, num):
 
     path_grid = copy.deepcopy(occ_grid)
 
-    sum_unknown = 0
-    sum_known = 0
+    sum = 0
     if trajectory_ref == None:
         print("No solution!")
         exit(0)
@@ -101,8 +100,7 @@ def Astar_Hybrid_Planning_online(config, iteration, log, num):
             # for ii in range(len(trajectory_ref)):
             # print(point)
             path_grid[point.x][point.y][point.z] = 9
-            sum_unknown += caculate_privacy_surround(grid, point, occ_grid, privacy_radius)
-            sum_known += caculate_privacy_surround(grid, point, occ_grid_known, privacy_radius)
+            sum += pri_grid_known[point.x][point.y][point.z]
             # print(point, pri_grid_known[point.x][point.y][point.z])
         # print("----------------------\n", len(trajectory_ref))
 
@@ -122,10 +120,7 @@ def Astar_Hybrid_Planning_online(config, iteration, log, num):
 
     idx = 0
     num_of_no_solution = 0
-    pre_PR = sum_unknown
-    now_PR = sum_unknown
-    pre_L = len(trajectory_plan)
-    now_L = len(trajectory_plan)
+    current_f = sum + len(trajectory_plan)
 
     while not (idx >= len(trajectory_plan)):
         current_p = trajectory_plan[idx]
@@ -146,8 +141,6 @@ def Astar_Hybrid_Planning_online(config, iteration, log, num):
             current_p = next_p
             idx += 1
             # print("The UAV has finished this step.\n")
-            log.info("Online_Hybrid_Planning: The UAV has finished this step: privacy risk is %f, the length of trajectory_plan is %d"
-                % (now_PR, now_L))
             continue
 
         # take picture
@@ -381,6 +374,8 @@ def Astar_Hybrid_Planning_online(config, iteration, log, num):
                         break
                 if next_idx == len(trajectory_plan)-1:
                     next_p = trajectory_plan[next_idx]
+                    if (caculate_privacy_surround(grid, next_p , occ_grid_known, privacy_radius)) > 0:
+                        next_p.ca = 2
                 else:
                     next_idx += 1
                     next_p = trajectory_plan[next_idx]
@@ -465,16 +460,6 @@ def Astar_Hybrid_Planning_online(config, iteration, log, num):
                     now_trajectory = []
                     # for m in range(idx + 1, next_idx + 1):
                     #     print("original， The No.", m, " step: ", trajectory_plan[m])
-                    PR_temp_sum_unknown = 0
-                    PR_temp_sum_known = 0
-                    for kk in range(len(trajectory_plan)):
-                        point = trajectory_plan[kk]
-                        PR_temp_sum_unknown += caculate_privacy_surround(grid, point, occ_grid, privacy_radius)
-                        PR_temp_sum_known += caculate_privacy_surround(grid, point, occ_grid_known, privacy_radius)
-                    log.info(
-                        "Online_Hybrid_Planning: before self-adaptive planning: privacy risk is %f(%f), the length of trajectory_plan is %d"
-                        % (PR_temp_sum_unknown, PR_temp_sum_known, len(trajectory_plan)))
-
                     first_part = trajectory_plan[0:idx + 1]
                     if next_idx == len(trajectory_plan)-1:
                         following_part = []
@@ -482,8 +467,6 @@ def Astar_Hybrid_Planning_online(config, iteration, log, num):
                         following_part = trajectory_plan[next_idx + 1:]
                     # following_part = trajectory_plan[next_idx + 1:]
                     now_trajectory = first_part + trajectory_optimal + following_part
-
-
 
                     # replan_flag = 0
                     # for m in range(len(trajectory_optimal)):
@@ -498,15 +481,6 @@ def Astar_Hybrid_Planning_online(config, iteration, log, num):
                     #     replantime += 1  ## 排除重复规划的相同路径 0620
 
                     trajectory_plan = copy.deepcopy(now_trajectory)
-                    PR_temp_sum_unknown = 0
-                    PR_temp_sum_known = 0
-                    for kk in range(len(trajectory_plan)):
-                        point = trajectory_plan[kk]
-                        PR_temp_sum_unknown += caculate_privacy_surround(grid, point, occ_grid, privacy_radius)
-                        PR_temp_sum_known += caculate_privacy_surround(grid, point, occ_grid_known, privacy_radius)
-                    log.info(
-                        "Online_Hybrid_Planning: after self-adaptive planning: privacy risk is %f(%f, occ_grid_known), the length of trajectory_plan is %d"
-                        % (PR_temp_sum_unknown, PR_temp_sum_known, len(trajectory_plan)))
 
                 # for ll in range(len(trajectory_plan)):
                     # sum += pri_grid_known[trajectory_plan[ll].x][trajectory_plan[ll].y][trajectory_plan[ll].z]

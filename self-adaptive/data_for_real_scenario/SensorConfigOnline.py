@@ -149,16 +149,6 @@ def Astar_Sensor_Config_online(config, iteration, log, num):
             # localization
             # p_threat, h_impact = privacy_modeling()
             # update occ_grid, pri_grid
-            PR_temp_sum_unknown = 0
-            PR_temp_sum_known = 0
-            for kk in range(len(trajectory_plan)):
-                point = trajectory_plan[kk]
-                PR_temp_sum_unknown += caculate_privacy_surround(grid, point, occ_grid, privacy_radius)
-                PR_temp_sum_known += caculate_privacy_surround(grid, point, occ_grid_known, privacy_radius)
-            log.info(
-                "SC: before self-adaptive planning: privacy risk is %f(%f), the length of trajectory_plan is %d"
-                % (PR_temp_sum_unknown, PR_temp_sum_known, len(trajectory_plan)))
-
             replan_flag = 0
             for j in range (idx+1, len(trajectory_plan)):
                 if caculate_privacy_surround(grid, trajectory_plan[j], occ_grid_known, privacy_radius) > 0:
@@ -167,16 +157,6 @@ def Astar_Sensor_Config_online(config, iteration, log, num):
                         trajectory_plan[j].ca = 2
                         replan_flag = 1
                         # print("change sensor configuration for next point")
-            PR_temp_sum_unknown = 0
-            PR_temp_sum_known = 0
-            for kk in range(len(trajectory_plan)):
-                point = trajectory_plan[kk]
-                PR_temp_sum_unknown += caculate_privacy_surround(grid, point, occ_grid, privacy_radius)
-                PR_temp_sum_known += caculate_privacy_surround(grid, point, occ_grid_known, privacy_radius)
-            log.info(
-                "SC: after planning: privacy risk is %f(%f), the length of trajectory_plan is %d"
-                % (PR_temp_sum_unknown, PR_temp_sum_known, len(trajectory_plan)))
-
             if replan_flag :
                 replantime += 1
             # print("replan_time:", replantime)

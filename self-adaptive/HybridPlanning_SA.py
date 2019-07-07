@@ -374,6 +374,8 @@ def Astar_Hybrid_Planning_online(config, iteration, log, num):
                         break
                 if next_idx == len(trajectory_plan)-1:
                     next_p = trajectory_plan[next_idx]
+                    if (caculate_privacy_surround(grid, next_p , occ_grid_known, privacy_radius)) > 0:
+                        next_p.ca = 2
                 else:
                     next_idx += 1
                     next_p = trajectory_plan[next_idx]

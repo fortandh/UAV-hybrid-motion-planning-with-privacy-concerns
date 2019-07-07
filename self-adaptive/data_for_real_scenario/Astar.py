@@ -310,8 +310,8 @@ class AStar:
 
         ## 加入时间的约束惩罚
         time_punishment = 1
-        if self.Toptimal < 0:
-            self.Toptimal = 0
+        # if self.Toptimal < 0:
+        #     self.Toptimal = 0
         if minF.step + 1 > self.Toptimal:
             time_punishment = math.exp((minF.step + 1 - self.Toptimal) / (self.Tbudget - self.Toptimal))
 

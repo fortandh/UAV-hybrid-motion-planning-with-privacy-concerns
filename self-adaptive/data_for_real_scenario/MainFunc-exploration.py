@@ -15,14 +15,16 @@ from PathPlanningOnline import Astar_Path_Planning_online
 from HybridPlanning_SA import Astar_Hybrid_Planning_online
 from SensorConfigOnline import Astar_Sensor_Config_online
 
-
 from log import Log
 
-num_of_occ_grid = 1
-for round in range(num_of_occ_grid):
-    # num = round
-    num = 100
-    #
+# num_of_occ_grid = 2
+num_list = [17]
+for round in range(len(num_list)):
+    # num = round + 1
+    num = num_list[round]
+    # num = 10
+
+
     # for pk in range (9):
     #     preference_list = [0, 0.5, 1, 2, 4, 8, 16, 32, 64]
     #     preference = preference_list[pk]
@@ -47,8 +49,8 @@ for round in range(num_of_occ_grid):
         #     rangek = 2
         # else:
         #     rangek = 3
-        rangek = 2
-        for i in range(1, rangek):
+        rangek = 11
+        for i in range(1, 11):
 
             iteration = i
             grid_x = 10 + int(i / 100)
@@ -62,10 +64,20 @@ for round in range(num_of_occ_grid):
             # privacy_threshold = privacy_threshold_list[i % 3]
             # privacy_radius = [0.5, 1, 2]
 
-            # safety_threshold = 0.3
-            # privacy_threshold = 0.1
-            safety_threshold = 0.091
-            privacy_threshold = 0.096
+            if num < 5:
+                safety_threshold = 0.2
+                privacy_threshold = 0.05
+            elif num < 10:
+                safety_threshold = 0.2
+                privacy_threshold = 0.1
+            elif num < 15:
+                safety_threshold = 0.2
+                privacy_threshold = 0.15
+            elif num < 20:
+                safety_threshold = 0.3
+                privacy_threshold = 0.1
+            # safety_threshold = 0.091
+            # privacy_threshold = 0.096
             privacy_radius = [1, 1.5, 2]
 
             # drone parameter
@@ -82,8 +94,7 @@ for round in range(num_of_occ_grid):
             x1 = 0
             x2 = grid_x - 1
             y1 = 0
-            # y2 = grid_y - 1
-            y2 = 0
+            y2 = grid_y - 1
             z1 = 0
             z2 = grid_z - 1
             starting_point = Point(x1, y1, z1, 1)

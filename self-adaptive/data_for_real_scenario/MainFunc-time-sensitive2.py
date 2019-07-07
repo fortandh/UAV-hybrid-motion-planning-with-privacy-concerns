@@ -17,27 +17,31 @@ from SensorConfigOnline import Astar_Sensor_Config_online
 
 
 from log import Log
-
 # num_of_occ_grid = 2
-num_list = [100]
+num_list = [0,7,13,17]
 for round in range(len(num_list)):
     # num = round + 1
     num = num_list[round]
     # num = 10
-    #
-    for vr in range (1):
-        viewradius_list = [1, 2, 3]
-        viewradius = viewradius_list[vr]
-        viewradius = 2.5
+
+    for ts in range (3):
+        # alpha_list = [8,2,4]
+        # alpha = alpha_list[ts]
+        # beta_list = [8,2,4]
+        # beta = beta_list[ts]
+        alpha = 8
+        beta = 8
+        viewradius_list = [1,2,3]
+        viewradius = viewradius_list[ts]
         preference = 1
-        log_tmp = Log(__name__, log_cate="results-exploration-viewradius"+ str(viewradius) + "-data" + str(num))
+        log_tmp = Log(__name__, log_cate="results-exploration-time" + str(beta) + "-" + str(alpha) + "-viewradius" + str(viewradius) + "-data" + str(num))
         log = log_tmp.getlog()
 
-        exploration_rate_list = [1]
+        exploration_rate_list = [0.1, 0.3, 0.5, 0.7, 0.9]
         for j in range(len(exploration_rate_list)):
             # exploration_rate_list = [0, 0.2, 0.4, 0.6, 0.8]
             exploration_rate = exploration_rate_list[j]
-            # exploration_rate = 0.9
+            # exploration_rate = 0
             # exploration_rate = 0
             # viewradius = 2.5
             # for j in range(10):
@@ -49,8 +53,8 @@ for round in range(len(num_list)):
             #     rangek = 2
             # else:
             #     rangek = 3
-            rangek = 2
-            for i in range(1, rangek):
+            rangek = 11
+            for i in range(1, 11):
 
                 iteration = i
                 grid_x = 10 + int(i / 100)
@@ -64,23 +68,20 @@ for round in range(len(num_list)):
                 # privacy_threshold = privacy_threshold_list[i % 3]
                 # privacy_radius = [0.5, 1, 2]
 
-                # if num < 5:
-                #     safety_threshold = 0.2
-                #     privacy_threshold = 0.05
-                # elif num < 10:
-                #     safety_threshold = 0.2
-                #     privacy_threshold = 0.1
-                # elif num < 15:
-                #     safety_threshold = 0.2
-                #     privacy_threshold = 0.15
-                # elif num < 20:
-                #     safety_threshold = 0.3
-                #     privacy_threshold = 0.1
-
-                # safety_threshold = 0.2
-                # privacy_threshold = 0.05
-                safety_threshold = 0.091
-                privacy_threshold = 0.096
+                if num < 5:
+                    safety_threshold = 0.2
+                    privacy_threshold = 0.05
+                elif num < 10:
+                    safety_threshold = 0.2
+                    privacy_threshold = 0.1
+                elif num < 15:
+                    safety_threshold = 0.2
+                    privacy_threshold = 0.15
+                elif num < 20:
+                    safety_threshold = 0.3
+                    privacy_threshold = 0.1
+                # safety_threshold = 0.091
+                # privacy_threshold = 0.096
                 privacy_radius = [1, 1.5, 2]
 
                 # drone parameter
@@ -97,8 +98,7 @@ for round in range(len(num_list)):
                 x1 = 0
                 x2 = grid_x - 1
                 y1 = 0
-                # y2 = grid_y - 1
-                y2 = 0
+                y2 = grid_y - 1
                 z1 = 0
                 z2 = grid_z - 1
                 starting_point = Point(x1, y1, z1, 1)
@@ -109,8 +109,8 @@ for round in range(len(num_list)):
                 # alpha = alpha_list[i % 10]
                 # beta_list = [3/2, 4/3, 5/4, 6/5, 7/6, 8/7, 9/8, 10/9, 11/10, 12/11]
                 # beta = beta_list[i % 10]
-                alpha = 5 / 3
-                beta = 4 / 3
+                # alpha = 5 / 3
+                # beta = 4 / 3
                 # alpha = 10
                 # beta = 10
 
@@ -119,8 +119,8 @@ for round in range(len(num_list)):
                 config = configure(grid_x, grid_y, grid_z, safety_threshold, privacy_threshold, privacy_radius,
                                    starting_point,
                                    end_point, viewradius, alpha, beta, exploration_rate, preference)
-                T_budget = alpha * (abs(x1 - x2) + abs(y1 - y2) + abs(z1 - z2))
-                T_optimal = beta * (abs(x1 - x2) + abs(y1 - y2) + abs(z1 - z2))
+                T_budget = config.T_budget
+                T_optimal = config.T_optimal
                 log.info(
                     "Iteration: %d; Configuration: grid: %d, safety_threshold: %f, privacy_threshold: %f, the starting point: [%d, %d, %d]; the end point: [%d, %d, %d]; T_budget(alpha): "
                     "%f (%f); "

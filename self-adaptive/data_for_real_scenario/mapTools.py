@@ -48,8 +48,10 @@ def privacy_init(grid_x, grid_y, grid_z, occ_grid, radius):
                                         h = 1
                                     elif occ_grid[i][j][k] == 3:
                                         h = 2
+                                        # h = 4
                                     elif occ_grid[i][j][k] == 4:
                                         h = 3
+                                        # h = 8
                                     # print (dis, np.power(dis, 2),math.exp((-1/2)*np.power(dis, 2)),i,j,k,m,n,l)
                                     # print (pri_grid[m][n][l])
                                     pri_grid[m][n][l] += h * math.exp((-1 / 2) * np.power(dis, 2))
@@ -429,8 +431,10 @@ def caculate_privacy_surround(grid, point, occ_grid, privacy_radius ):
                             h = 1
                         elif occ_grid[m][n][l] == 3:
                             h = 2
+                            # h = 4
                         elif occ_grid[m][n][l] == 4:
                             h = 3
+                            # h = 8
                         privacy_threat += h * math.exp((-1 / 2) *(1/2)* np.power(dis, 2) * cam)  ## 规约到0-1之间
     return privacy_threat
 

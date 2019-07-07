@@ -18,7 +18,7 @@ from SensorConfigOnline import Astar_Sensor_Config_online
 from log import Log
 
 # num_of_occ_grid = 2
-num_list = [8]
+num_list = [17]
 for round in range(len(num_list)):
     # num = round + 1
     num = num_list[round]
@@ -50,7 +50,7 @@ for round in range(len(num_list)):
         # else:
         #     rangek = 3
         rangek = 11
-        for i in range(0, 11):
+        for i in range(1, 11):
 
             iteration = i
             grid_x = 10 + int(i / 100)

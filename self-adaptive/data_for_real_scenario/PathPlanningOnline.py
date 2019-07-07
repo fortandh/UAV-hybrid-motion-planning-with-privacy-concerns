@@ -237,12 +237,12 @@ def Astar_Path_Planning_online (config, iteration, log, num):
                         num_of_no_solution += 1
                         # print(occ_grid_known)
                         print(
-                            "Online_Path_Planning: No solution for local planning: from [%d, %d, %d] to [%d, %d, %d]. No soultion flag is %d, PR for PP is %f. length of PP is %d, T plan optimal is %d"
+                            "Online_Hybrid_Planning: No solution for local planning: from [%d, %d, %d] to [%d, %d, %d]. No soultion flag is %d, PR for PP is %f. length of PP is %d, T plan optimal is %d"
                             % (
                                 current_p.x, current_p.y, current_p.z, next_p.x, next_p.y, next_p.z, no_solution_flag,
                                 PR_temp_sum_known, length_PP, T_plan_optimal))
                         log.info(
-                            "Online_Path_Planning: No solution for local planning: from [%d, %d, %d] to [%d, %d, %d]. No soultion flag is %d, PR for PP is %f. length of PP is %d, T plan optimal is %d"
+                            "Online_Hybrid_Planning: No solution for local planning: from [%d, %d, %d] to [%d, %d, %d]. No soultion flag is %d, PR for PP is %f. length of PP is %d, T plan optimal is %d"
                             % (
                                 current_p.x, current_p.y, current_p.z, next_p.x, next_p.y, next_p.z, no_solution_flag,
                                 PR_temp_sum_known, length_PP, T_plan_optimal))
@@ -256,23 +256,15 @@ def Astar_Path_Planning_online (config, iteration, log, num):
                     now_trajectory = []
                     # for m in range(idx + 1, next_idx + 1):
                     #     print("original， The No.", m, " step: ", trajectory_plan[m])
-
-                    PR_temp_sum_unknown = 0
-                    PR_temp_sum_known = 0
-                    for kk in range(len(trajectory_plan)):
-                        point = trajectory_plan[kk]
-                        PR_temp_sum_unknown += caculate_privacy_surround(grid, point, occ_grid, privacy_radius)
-                        PR_temp_sum_known += caculate_privacy_surround(grid, point, occ_grid_known, privacy_radius)
-                    log.info(
-                        "Online_Path_Planning: before planning: privacy risk is %f(%f), the length of trajectory_plan is %d"
-                        % (PR_temp_sum_unknown, PR_temp_sum_known, len(trajectory_plan)))
-
                     first_part = trajectory_plan[0:idx + 1]
                     if next_idx == len(trajectory_plan) - 1:
                         following_part = []
                     else:
                         following_part = trajectory_plan[next_idx + 1:]
                     # following_part = trajectory_plan[next_idx + 1:]
+                    if trajectory_optimal == None:
+                        trajectory_optimal = []
+
                     now_trajectory = first_part + trajectory_optimal + following_part
 
                     # replan_flag = 0
@@ -288,14 +280,6 @@ def Astar_Path_Planning_online (config, iteration, log, num):
                     #     replantime += 1  ## 排除重复规划的相同路径 0620
 
                     trajectory_plan = copy.deepcopy(now_trajectory)
-                    for kk in range(len(trajectory_plan)):
-                        point = trajectory_plan[kk]
-                        PR_temp_sum_unknown += caculate_privacy_surround(grid, point, occ_grid, privacy_radius)
-                        PR_temp_sum_known += caculate_privacy_surround(grid, point, occ_grid_known, privacy_radius)
-                    log.info(
-                        "Online_Path_Planning: after planning: privacy risk is %f(%f, occ_grid_known), the length of trajectory_plan is %d"
-                        % (PR_temp_sum_unknown, PR_temp_sum_known, len(trajectory_plan)))
-
 
                 # for ll in range(len(trajectory_plan)):
                 # sum += pri_grid_known[trajectory_plan[ll].x][trajectory_plan[ll].y][trajectory_plan[ll].z]
