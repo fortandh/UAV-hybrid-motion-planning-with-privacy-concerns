@@ -94,10 +94,10 @@ for round in range(num_of_occ_grid):
             # alpha = alpha_list[i % 10]
             # beta_list = [3/2, 4/3, 5/4, 6/5, 7/6, 8/7, 9/8, 10/9, 11/10, 12/11]
             # beta = beta_list[i % 10]
-            # alpha = 5/3
-            # beta = 4/3
-            alpha = 10
-            beta = 10
+            alpha = 5/3
+            beta = 4/3
+            # alpha = 10
+            # beta = 10
 
             Kca = 10
 

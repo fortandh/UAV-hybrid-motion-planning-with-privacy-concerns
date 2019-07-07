@@ -101,7 +101,6 @@ def Astar_Hybrid_Planning_online(config, iteration, log, num):
             # for ii in range(len(trajectory_ref)):
             # print(point)
             path_grid[point.x][point.y][point.z] = 9
-            sum += pri_grid_known[point.x][point.y][point.z]
             sum_unknown += caculate_privacy_surround(grid, point, occ_grid, privacy_radius)
             sum_known += caculate_privacy_surround(grid, point, occ_grid_known, privacy_radius)
             # print(point, pri_grid_known[point.x][point.y][point.z])
