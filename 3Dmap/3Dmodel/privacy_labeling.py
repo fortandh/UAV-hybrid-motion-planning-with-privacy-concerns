@@ -14,13 +14,15 @@ maplabel_privacy = copy.deepcopy(maplabel)
 maplabel_index = np.zeros([50,50],dtype=int)
 
 ## 分组数
-group_num = 36
+group_num = 110
 for i in range(1,group_num+1):
     privacy_num = np.zeros([5,1], dtype=int)
     for j in range (len(point)):
         # print (point[j][3])
-        privacy_num[point[j][3]] += 1
-    # print(privacy_num)
+        if point[j][4] == i:
+            print("j",j,point[j][3])
+            privacy_num[point[j][3]] += 1
+    print(privacy_num)
     maxindex = np.argmax(privacy_num)
     for m in range(50):
         for n in range(50):
@@ -32,8 +34,8 @@ for j in range (len(point)):
     n = point[j][0]
     maplabel_privacy[m][n] = point[j][3]
     maplabel_index[m][n] = j + 1
-    if j == 0:
-        print(maplabel_privacy[m][n],maplabel_index[m][n], m , n)
+    # if j == 318:
+    #     print("testttt",m,n,maplabel_index[m][n])
 
 
 print(maplabel_privacy)

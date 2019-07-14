@@ -103,4 +103,18 @@ inpath = '2.xlsx'  # excel文件所在路径
 point=extract(inpath)
 print(point)
 # print(point[116])
-np.savetxt("exc.txt",point,fmt='%d',delimiter=',')
+
+buildings = np.zeros((331, 5),dtype=int)
+
+buildings[:, 0] = point[:, 0]
+buildings[:, 1] = point[:, 1]
+buildings[:, 2] = point[:, 2]
+buildings[:, 3] = point[:, 3] #privacy_level
+
+temp = []
+for i in range(331):
+    if maplabel[buildings[i][1]][buildings[i][0]] == 1:
+        print(buildings[i][1], buildings[i][0])
+    buildings[i][4] = maplabel[buildings[i][1]][buildings[i][0]]
+
+np.savetxt("exc.txt",buildings,fmt='%d',delimiter=',')
