@@ -32,7 +32,7 @@ def count(array_of_img):
             T = np.sum(array_of_img[n])
             F = array_of_img[n].shape[0]*array_of_img[n].shape[1] - T
             print(T,F)#白色和黑色的数量比较
-            alpha = 1/2
+            alpha = 1
             if F >= alpha * T:
             #if F>0:
                 map1[i, j] = 1
@@ -65,7 +65,7 @@ def Writedata(data):
 def Writedata(data):
     np.savetxt("map1.txt",data,fmt='%d',delimiter=' ')
 
-array_of_img=read_directory("result")
+array_of_img=read_directory("map")
 
 map1=count(array_of_img)
 #map2=count(array_of_img)
