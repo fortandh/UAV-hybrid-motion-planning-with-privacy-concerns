@@ -50,7 +50,7 @@ for round in range(len(num_list)):
         # else:
         #     rangek = 3
         rangek = 11
-        for i in range(1, 11):
+        for i in range(0, 11):
 
             iteration = i
             grid_x = 10 + int(i / 100)

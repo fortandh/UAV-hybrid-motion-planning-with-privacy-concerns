@@ -19,7 +19,7 @@ from SensorConfigOnline import Astar_Sensor_Config_online
 from log import Log
 
 # num_of_occ_grid = 2
-num_list = [8]
+num_list = [5]
 for round in range(len(num_list)):
     # num = round + 1
     num = num_list[round]
