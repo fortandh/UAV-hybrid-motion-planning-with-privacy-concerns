@@ -1,0 +1,104 @@
+[2019-07-03 21:12:36,724] MainFunc-exploration.py-><module> line:116 [INFO]Iteration: 0; Configuration: grid: 10, safety_threshold: 0.200000, privacy_threshold: 0.150000, the starting point: [0, 0, 0]; the end point: [9, 9, 9]; T_budget(alpha): 45.000000 (1.666667); T_optimal(beta): 36.000000 (1.333333); Exploration_rate: 0.000000; Preference: 1.000000; View_radius: 2.500000
+[2019-07-03 21:13:46,662] MainFunc-exploration.py-><module> line:124 [INFO]Error for no initial solution!
+[2019-07-03 21:13:46,663] MainFunc-exploration.py-><module> line:116 [INFO]Iteration: 1; Configuration: grid: 10, safety_threshold: 0.200000, privacy_threshold: 0.150000, the starting point: [0, 0, 0]; the end point: [9, 9, 9]; T_budget(alpha): 45.000000 (1.666667); T_optimal(beta): 36.000000 (1.333333); Exploration_rate: 0.000000; Preference: 1.000000; View_radius: 2.500000
+[2019-07-03 21:14:54,336] MainFunc-exploration.py-><module> line:116 [INFO]Iteration: 0; Configuration: grid: 10, safety_threshold: 0.200000, privacy_threshold: 0.150000, the starting point: [0, 0, 0]; the end point: [9, 9, 9]; T_budget(alpha): 45.000000 (1.666667); T_optimal(beta): 36.000000 (1.333333); Exploration_rate: 0.000000; Preference: 1.000000; View_radius: 2.500000
+[2019-07-03 21:15:09,352] pathinitial.py->PathInitial line:138 [INFO]Initial_planning: Length of reference trajectory: 27
+[2019-07-03 21:15:09,352] pathinitial.py->PathInitial line:139 [INFO]Initial_planning: Sum of privacy threat of reference trajectory(occ_grid): 76.407503
+[2019-07-03 21:15:09,353] pathinitial.py->PathInitial line:140 [INFO]Initial_planning: Sum of privacy threat of reference trajectory(occ_grid_known): 0.000000
+[2019-07-03 21:15:26,136] pathinitial.py->PathInitial line:183 [INFO]Initial_planning: Length of best trajectory: 29
+[2019-07-03 21:15:26,136] pathinitial.py->PathInitial line:184 [INFO]Initial_planning: Sum of privacy threat of best trajectory(occ_grid): 44.346411
+[2019-07-03 21:15:26,136] pathinitial.py->PathInitial line:185 [INFO]Initial_planning: Sum of privacy threat of best trajectory(occ_grid_known): 44.346411
+[2019-07-03 21:15:26,196] HybridPlanning_SA.py->Astar_Hybrid_Planning_online line:451 [INFO]Online_Hybrid_Planning: No solution for local planning: from [0, 0, 0] to [2, 0, 0]. No soultion flag is 1, PR for PP is 1.213061. length of PP is 2, T plan optimal is 11
+[2019-07-03 21:15:26,215] HybridPlanning_SA.py->Astar_Hybrid_Planning_online line:451 [INFO]Online_Hybrid_Planning: No solution for local planning: from [2, 2, 0] to [2, 4, 0]. No soultion flag is 1, PR for PP is 0.778801. length of PP is 2, T plan optimal is 11
+[2019-07-03 21:15:26,314] HybridPlanning_SA.py->Astar_Hybrid_Planning_online line:451 [INFO]Online_Hybrid_Planning: No solution for local planning: from [2, 4, 0] to [3, 5, 1]. No soultion flag is 1, PR for PP is 1.417100. length of PP is 3, T plan optimal is 12
+[2019-07-03 21:34:51,751] MainFunc-exploration.py-><module> line:116 [INFO]Iteration: 0; Configuration: grid: 10, safety_threshold: 0.200000, privacy_threshold: 0.150000, the starting point: [0, 0, 0]; the end point: [9, 9, 9]; T_budget(alpha): 45.000000 (1.666667); T_optimal(beta): 36.000000 (1.333333); Exploration_rate: 0.000000; Preference: 1.000000; View_radius: 2.500000
+[2019-07-03 21:35:07,371] pathinitial.py->PathInitial line:138 [INFO]Initial_planning: Length of reference trajectory: 27
+[2019-07-03 21:35:07,371] pathinitial.py->PathInitial line:139 [INFO]Initial_planning: Sum of privacy threat of reference trajectory(occ_grid): 62.607023
+[2019-07-03 21:35:07,371] pathinitial.py->PathInitial line:140 [INFO]Initial_planning: Sum of privacy threat of reference trajectory(occ_grid_known): 0.000000
+[2019-07-03 21:35:12,933] pathinitial.py->PathInitial line:183 [INFO]Initial_planning: Length of best trajectory: 29
+[2019-07-03 21:35:12,933] pathinitial.py->PathInitial line:184 [INFO]Initial_planning: Sum of privacy threat of best trajectory(occ_grid): 19.220317
+[2019-07-03 21:35:12,933] pathinitial.py->PathInitial line:185 [INFO]Initial_planning: Sum of privacy threat of best trajectory(occ_grid_known): 19.220317
+[2019-07-03 21:35:15,165] HybridPlanning_SA.py->Astar_Hybrid_Planning_online line:451 [INFO]Online_Hybrid_Planning: No solution for local planning: from [0, 5, 0] to [3, 8, 1]. No soultion flag is 1, PR for PP is 8.171487. length of PP is 7, T plan optimal is 16
+[2019-07-03 21:35:33,083] HybridPlanning_SA.py->Astar_Hybrid_Planning_online line:451 [INFO]Online_Hybrid_Planning: No solution for local planning: from [1, 8, 1] to [4, 8, 2]. No soultion flag is 1, PR for PP is 10.597609. length of PP is 4, T plan optimal is 13
+[2019-07-03 21:35:33,897] HybridPlanning_SA.py->Astar_Hybrid_Planning_online line:451 [INFO]Online_Hybrid_Planning: No solution for local planning: from [4, 8, 2] to [6, 8, 6]. No soultion flag is 1, PR for PP is 7.533188. length of PP is 6, T plan optimal is 15
+[2019-07-03 21:35:36,606] HybridPlanning_SA.py->Astar_Hybrid_Planning_online line:451 [INFO]Online_Hybrid_Planning: No solution for local planning: from [6, 8, 6] to [8, 9, 7]. No soultion flag is 1, PR for PP is 5.803316. length of PP is 4, T plan optimal is 13
+[2019-07-03 21:35:36,677] HybridPlanning_SA.py->Astar_Hybrid_Planning_online line:542 [INFO]Online_Hybrid_Planning: Length of replanned trajectory: 27
+[2019-07-03 21:35:36,677] HybridPlanning_SA.py->Astar_Hybrid_Planning_online line:543 [INFO]Online_Hybrid_Planning: Sum of privacy threat of replanned trajectory(occ_grid): 38.201711
+[2019-07-03 21:35:36,677] HybridPlanning_SA.py->Astar_Hybrid_Planning_online line:544 [INFO]Online_Hybrid_Planning: Sum of privacy threat of replanned trajectory(occ_grid_known): 38.201711
+[2019-07-03 21:35:36,677] HybridPlanning_SA.py->Astar_Hybrid_Planning_online line:545 [INFO]Online_Hybrid_Planning: Times of turning off camera of replanned trajectory: 15
+[2019-07-03 21:35:36,677] HybridPlanning_SA.py->Astar_Hybrid_Planning_online line:547 [INFO]Online_Hybrid_Planning: Times of intrusion of replanned trajectory(occ_grid): 18
+[2019-07-03 21:35:36,677] HybridPlanning_SA.py->Astar_Hybrid_Planning_online line:548 [INFO]Online_Hybrid_Planning: Times of intrusion of replanned trajectory(occ_grid_known): 18
+[2019-07-03 21:35:36,685] HybridPlanning_SA.py->Astar_Hybrid_Planning_online line:586 [INFO]Online_Hybrid_Planning: Length of preplanned trajectory: 27
+[2019-07-03 21:35:36,685] HybridPlanning_SA.py->Astar_Hybrid_Planning_online line:587 [INFO]Online_Hybrid_Planning: Sum of privacy threat of preplanned trajectory(occ_grid): 62.607023
+[2019-07-03 21:35:36,685] HybridPlanning_SA.py->Astar_Hybrid_Planning_online line:588 [INFO]Online_Hybrid_Planning: Sum of privacy threat of preplanned trajectory(occ_grid_known): 62.607023
+[2019-07-03 21:35:36,685] HybridPlanning_SA.py->Astar_Hybrid_Planning_online line:589 [INFO]Online_Hybrid_Planning: Times of turning off camera of preplanned trajectory: 0
+[2019-07-03 21:35:36,685] HybridPlanning_SA.py->Astar_Hybrid_Planning_online line:591 [INFO]Online_Hybrid_Planning: Times of intrusion of preplanned trajectory(occ_grid): 18
+[2019-07-03 21:35:36,686] HybridPlanning_SA.py->Astar_Hybrid_Planning_online line:592 [INFO]Online_Hybrid_Planning: Times of intrusion of preplanned trajectory(occ_grid_known): 18
+[2019-07-03 21:35:36,686] HybridPlanning_SA.py->Astar_Hybrid_Planning_online line:610 [INFO]Online_Hybrid_Planning: Replanning times: 4
+[2019-07-03 21:35:36,686] HybridPlanning_SA.py->Astar_Hybrid_Planning_online line:612 [INFO]Online_Path_Planning: No solution times: 4
+[2019-07-03 21:35:36,695] HybridPlanning_SA.py->Astar_Hybrid_Planning_online line:642 [INFO]Online_Hybrid_Planning: Exploration rate: 0.253333
+[2019-07-03 21:35:36,754] pathinitial.py->PathInitial line:138 [INFO]Initial_planning: Length of reference trajectory: 27
+[2019-07-03 21:35:36,754] pathinitial.py->PathInitial line:139 [INFO]Initial_planning: Sum of privacy threat of reference trajectory(occ_grid): 62.607023
+[2019-07-03 21:35:36,754] pathinitial.py->PathInitial line:140 [INFO]Initial_planning: Sum of privacy threat of reference trajectory(occ_grid_known): 0.000000
+[2019-07-03 21:35:36,922] SensorConfigOnline.py->Astar_Sensor_Config_online line:221 [INFO]Online_Sensor_Config: Length of replanned trajectory: 27
+[2019-07-03 21:35:36,922] SensorConfigOnline.py->Astar_Sensor_Config_online line:222 [INFO]Online_Sensor_Config: Sum of privacy threat of replanned trajectory(occ_grid): 43.829318
+[2019-07-03 21:35:36,922] SensorConfigOnline.py->Astar_Sensor_Config_online line:223 [INFO]Online_Sensor_Config: Sum of privacy threat of replanned trajectory(occ_grid_known): 39.802450
+[2019-07-03 21:35:36,922] SensorConfigOnline.py->Astar_Sensor_Config_online line:224 [INFO]Online_Sensor_Config: Times of turning off camera of replanned trajectory: 15
+[2019-07-03 21:35:36,922] SensorConfigOnline.py->Astar_Sensor_Config_online line:226 [INFO]Online_Sensor_Config: Times of intrusion of replanned trajectory(occ_grid): 18
+[2019-07-03 21:35:36,922] SensorConfigOnline.py->Astar_Sensor_Config_online line:227 [INFO]Online_Sensor_Config: Times of intrusion of replanned trajectory(occ_grid_known): 18
+[2019-07-03 21:35:36,930] SensorConfigOnline.py->Astar_Sensor_Config_online line:268 [INFO]Online_Sensor_Config: Length of preplanned trajectory: 27
+[2019-07-03 21:35:36,930] SensorConfigOnline.py->Astar_Sensor_Config_online line:269 [INFO]Online_Sensor_Config: Sum of privacy threat of preplanned trajectory(occ_grid): 62.607023
+[2019-07-03 21:35:36,930] SensorConfigOnline.py->Astar_Sensor_Config_online line:270 [INFO]Online_Sensor_Config: Sum of privacy threat of preplanned trajectory(occ_grid_known): 56.631437
+[2019-07-03 21:35:36,930] SensorConfigOnline.py->Astar_Sensor_Config_online line:271 [INFO]Online_Sensor_Config: Times of turning off camera of preplanned trajectory: 0
+[2019-07-03 21:35:36,930] SensorConfigOnline.py->Astar_Sensor_Config_online line:274 [INFO]Online_Sensor_Config: Times of intrusion of preplanned trajectory(occ_grid): 18
+[2019-07-03 21:35:36,930] SensorConfigOnline.py->Astar_Sensor_Config_online line:275 [INFO]Online_Sensor_Config: Times of intrusion of preplanned trajectory(occ_grid_known): 18
+[2019-07-03 21:35:36,930] SensorConfigOnline.py->Astar_Sensor_Config_online line:292 [INFO]Online_Sensor_Config: Replanning times: 5
+[2019-07-03 21:35:36,953] SensorConfigOnline.py->Astar_Sensor_Config_online line:322 [INFO]Online_Sensor_Config: Exploration rate: 0.240000
+[2019-07-03 21:35:37,009] pathinitial.py->PathInitial line:138 [INFO]Initial_planning: Length of reference trajectory: 27
+[2019-07-03 21:35:37,009] pathinitial.py->PathInitial line:139 [INFO]Initial_planning: Sum of privacy threat of reference trajectory(occ_grid): 62.607023
+[2019-07-03 21:35:37,009] pathinitial.py->PathInitial line:140 [INFO]Initial_planning: Sum of privacy threat of reference trajectory(occ_grid_known): 0.000000
+[2019-07-03 21:35:39,225] PathPlanningOnline.py->Astar_Path_Planning_online line:248 [INFO]Online_Hybrid_Planning: No solution for local planning: from [0, 5, 0] to [3, 8, 1]. No soultion flag is 1, PR for PP is 8.171487. length of PP is 7, T plan optimal is 16
+[2019-07-03 21:35:40,611] PathPlanningOnline.py->Astar_Path_Planning_online line:248 [INFO]Online_Hybrid_Planning: No solution for local planning: from [1, 5, 0] to [3, 8, 1]. No soultion flag is 1, PR for PP is 7.533188. length of PP is 6, T plan optimal is 15
+[2019-07-03 21:35:43,182] PathPlanningOnline.py->Astar_Path_Planning_online line:248 [INFO]Online_Hybrid_Planning: No solution for local planning: from [1, 6, 0] to [3, 8, 2]. No soultion flag is 1, PR for PP is 14.632115. length of PP is 6, T plan optimal is 15
+[2019-07-03 21:35:43,938] PathPlanningOnline.py->Astar_Path_Planning_online line:248 [INFO]Online_Hybrid_Planning: No solution for local planning: from [1, 7, 0] to [3, 8, 2]. No soultion flag is 1, PR for PP is 13.246784. length of PP is 5, T plan optimal is 14
+[2019-07-03 21:35:44,680] PathPlanningOnline.py->Astar_Path_Planning_online line:248 [INFO]Online_Hybrid_Planning: No solution for local planning: from [1, 8, 0] to [4, 8, 2]. No soultion flag is 1, PR for PP is 14.115305. length of PP is 5, T plan optimal is 14
+[2019-07-03 21:35:44,754] PathPlanningOnline.py->Astar_Path_Planning_online line:248 [INFO]Online_Hybrid_Planning: No solution for local planning: from [1, 8, 1] to [4, 8, 2]. No soultion flag is 1, PR for PP is 10.597609. length of PP is 4, T plan optimal is 13
+[2019-07-03 21:35:44,778] PathPlanningOnline.py->Astar_Path_Planning_online line:248 [INFO]Online_Hybrid_Planning: No solution for local planning: from [2, 8, 1] to [4, 8, 2]. No soultion flag is 1, PR for PP is 7.283263. length of PP is 3, T plan optimal is 12
+[2019-07-03 21:35:44,820] PathPlanningOnline.py->Astar_Path_Planning_online line:248 [INFO]Online_Hybrid_Planning: No solution for local planning: from [3, 8, 1] to [5, 8, 3]. No soultion flag is 1, PR for PP is 4.946861. length of PP is 4, T plan optimal is 13
+[2019-07-03 21:35:44,840] PathPlanningOnline.py->Astar_Path_Planning_online line:248 [INFO]Online_Hybrid_Planning: No solution for local planning: from [3, 8, 2] to [4, 8, 3]. No soultion flag is 1, PR for PP is 1.213061. length of PP is 2, T plan optimal is 11
+[2019-07-03 21:35:45,608] PathPlanningOnline.py->Astar_Path_Planning_online line:248 [INFO]Online_Hybrid_Planning: No solution for local planning: from [4, 8, 2] to [6, 8, 6]. No soultion flag is 1, PR for PP is 7.533188. length of PP is 6, T plan optimal is 15
+[2019-07-03 21:35:45,778] PathPlanningOnline.py->Astar_Path_Planning_online line:248 [INFO]Online_Hybrid_Planning: No solution for local planning: from [4, 8, 3] to [6, 8, 6]. No soultion flag is 1, PR for PP is 7.877728. length of PP is 5, T plan optimal is 14
+[2019-07-03 21:35:46,596] PathPlanningOnline.py->Astar_Path_Planning_online line:248 [INFO]Online_Hybrid_Planning: No solution for local planning: from [4, 8, 4] to [7, 9, 7]. No soultion flag is 1, PR for PP is 4.328264. length of PP is 25, T plan optimal is 16
+[2019-07-03 21:35:46,678] PathPlanningOnline.py->Astar_Path_Planning_online line:248 [INFO]Online_Hybrid_Planning: No solution for local planning: from [4, 7, 4] to [6, 4, 4]. No soultion flag is 1, PR for PP is 5.541326. length of PP is 5, T plan optimal is -4
+[2019-07-03 21:35:46,729] PathPlanningOnline.py->Astar_Path_Planning_online line:248 [INFO]Online_Hybrid_Planning: No solution for local planning: from [5, 7, 4] to [6, 4, 4]. No soultion flag is 1, PR for PP is 6.441615. length of PP is 4, T plan optimal is -5
+[2019-07-03 21:35:46,760] PathPlanningOnline.py->Astar_Path_Planning_online line:248 [INFO]Online_Hybrid_Planning: No solution for local planning: from [5, 6, 4] to [6, 4, 4]. No soultion flag is 1, PR for PP is 5.228554. length of PP is 3, T plan optimal is -6
+[2019-07-03 21:35:46,785] PathPlanningOnline.py->Astar_Path_Planning_online line:248 [INFO]Online_Hybrid_Planning: No solution for local planning: from [6, 6, 4] to [6, 4, 4]. No soultion flag is 1, PR for PP is 2.630161. length of PP is 2, T plan optimal is -7
+[2019-07-03 21:35:46,852] PathPlanningOnline.py->Astar_Path_Planning_online line:248 [INFO]Online_Hybrid_Planning: No solution for local planning: from [6, 4, 5] to [6, 3, 6]. No soultion flag is 1, PR for PP is 1.213061. length of PP is 2, T plan optimal is -7
+[2019-07-03 21:35:46,951] PathPlanningOnline.py->Astar_Path_Planning_online line:248 [INFO]Online_Hybrid_Planning: No solution for local planning: from [6, 3, 8] to [7, 4, 8]. No soultion flag is 1, PR for PP is 0.778801. length of PP is 2, T plan optimal is -7
+[2019-07-03 21:35:47,076] PathPlanningOnline.py->Astar_Path_Planning_online line:248 [INFO]Online_Hybrid_Planning: No solution for local planning: from [7, 6, 9] to [8, 7, 9]. No soultion flag is 1, PR for PP is 0.778801. length of PP is 2, T plan optimal is -7
+[2019-07-03 21:35:47,129] PathPlanningOnline.py->Astar_Path_Planning_online line:248 [INFO]Online_Hybrid_Planning: No solution for local planning: from [8, 7, 9] to [9, 8, 9]. No soultion flag is 1, PR for PP is 0.778801. length of PP is 2, T plan optimal is -7
+[2019-07-03 21:35:47,194] PathPlanningOnline.py->Astar_Path_Planning_online line:336 [INFO]Online_Path_Planning: Length of replanned trajectory: 45
+[2019-07-03 21:35:47,194] PathPlanningOnline.py->Astar_Path_Planning_online line:337 [INFO]Online_Path_Planning: Sum of privacy threat of replanned trajectory(occ_grid): 48.045392
+[2019-07-03 21:35:47,194] PathPlanningOnline.py->Astar_Path_Planning_online line:338 [INFO]Online_Path_Planning: Sum of privacy threat of replanned trajectory(occ_grid_known): 48.045392
+[2019-07-03 21:35:47,194] PathPlanningOnline.py->Astar_Path_Planning_online line:339 [INFO]Online_Path_Planning: Times of turning off camera of replanned trajectory: 0
+[2019-07-03 21:35:47,194] PathPlanningOnline.py->Astar_Path_Planning_online line:341 [INFO]Online_Path_Planning: Times of intrusion of replanned trajectory(occ_grid): 21
+[2019-07-03 21:35:47,194] PathPlanningOnline.py->Astar_Path_Planning_online line:342 [INFO]Online_Path_Planning: Times of intrusion of replanned trajectory(occ_grid_known): 21
+[2019-07-03 21:35:47,202] PathPlanningOnline.py->Astar_Path_Planning_online line:384 [INFO]Online_Path_Planning: Sum of privacy threat of preplanned trajectory(occ_grid): 62.607023
+[2019-07-03 21:35:47,202] PathPlanningOnline.py->Astar_Path_Planning_online line:385 [INFO]Online_Path_Planning: Sum of privacy threat of preplanned trajectory(occ_grid_known): 61.049421
+[2019-07-03 21:35:47,202] PathPlanningOnline.py->Astar_Path_Planning_online line:386 [INFO]Online_Path_Planning: Times of turning off camera of preplanned trajectory: 0
+[2019-07-03 21:35:47,202] PathPlanningOnline.py->Astar_Path_Planning_online line:389 [INFO]Online_Path_Planning: Times of intrusion of preplanned trajectory(occ_grid): 18
+[2019-07-03 21:35:47,202] PathPlanningOnline.py->Astar_Path_Planning_online line:390 [INFO]Online_Path_Planning: Times of intrusion of preplanned trajectory(occ_grid_known): 18
+[2019-07-03 21:35:47,203] PathPlanningOnline.py->Astar_Path_Planning_online line:406 [INFO]Online_Path_Planning: Replanning times: 20
+[2019-07-03 21:35:47,203] PathPlanningOnline.py->Astar_Path_Planning_online line:408 [INFO]Online_Path_Planning: No solution times: 20
+[2019-07-03 21:35:47,269] PathPlanningOnline.py->Astar_Path_Planning_online line:438 [INFO]Online_Path_Planning: Exploration rate: 0.480000
+[2019-07-03 21:35:47,326] pathinitial.py->PathInitial line:138 [INFO]Initial_planning: Length of reference trajectory: 27
+[2019-07-03 21:35:47,326] pathinitial.py->PathInitial line:139 [INFO]Initial_planning: Sum of privacy threat of reference trajectory(occ_grid): 62.607023
+[2019-07-03 21:35:47,326] pathinitial.py->PathInitial line:140 [INFO]Initial_planning: Sum of privacy threat of reference trajectory(occ_grid_known): 0.000000
+[2019-07-03 21:35:47,326] MainFunc-exploration.py-><module> line:116 [INFO]Iteration: 1; Configuration: grid: 10, safety_threshold: 0.200000, privacy_threshold: 0.150000, the starting point: [0, 0, 0]; the end point: [9, 9, 9]; T_budget(alpha): 45.000000 (1.666667); T_optimal(beta): 36.000000 (1.333333); Exploration_rate: 0.000000; Preference: 1.000000; View_radius: 2.500000
+[2019-07-03 21:36:02,872] pathinitial.py->PathInitial line:138 [INFO]Initial_planning: Length of reference trajectory: 27
+[2019-07-03 21:36:02,872] pathinitial.py->PathInitial line:139 [INFO]Initial_planning: Sum of privacy threat of reference trajectory(occ_grid): 62.607023
+[2019-07-03 21:36:02,872] pathinitial.py->PathInitial line:140 [INFO]Initial_planning: Sum of privacy threat of reference trajectory(occ_grid_known): 0.000000
+[2019-07-03 21:36:08,561] pathinitial.py->PathInitial line:183 [INFO]Initial_planning: Length of best trajectory: 29
+[2019-07-03 21:36:08,561] pathinitial.py->PathInitial line:184 [INFO]Initial_planning: Sum of privacy threat of best trajectory(occ_grid): 19.220317
+[2019-07-03 21:36:08,561] pathinitial.py->PathInitial line:185 [INFO]Initial_planning: Sum of privacy threat of best trajectory(occ_grid_known): 19.220317
+[2019-07-03 21:36:10,804] HybridPlanning_SA.py->Astar_Hybrid_Planning_online line:451 [INFO]Online_Hybrid_Planning: No solution for local planning: from [0, 5, 0] to [3, 8, 1]. No soultion flag is 1, PR for PP is 8.171487. length of PP is 7, T plan optimal is 16

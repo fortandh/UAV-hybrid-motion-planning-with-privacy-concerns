@@ -1,0 +1,10 @@
+[2019-07-07 13:17:25,875] MainFunc-exploration.py-><module> line:127 [INFO]Iteration: 1; Configuration: grid: 10, safety_threshold: 0.200000, privacy_threshold: 0.050000, the starting point: [0, 0, 0]; the end point: [9, 9, 9]; T_budget(alpha): 45.000000 (1.666667); T_optimal(beta): 36.000000 (1.333333); Exploration_rate: 0.000000; Preference: 1.000000; View_radius: 2.500000
+[2019-07-07 13:17:49,526] pathinitial.py->PathInitial line:138 [INFO]Initial_planning: Length of reference trajectory: 27
+[2019-07-07 13:17:49,526] pathinitial.py->PathInitial line:139 [INFO]Initial_planning: Sum of privacy threat of reference trajectory(occ_grid): 23.497111
+[2019-07-07 13:17:49,527] pathinitial.py->PathInitial line:140 [INFO]Initial_planning: Sum of privacy threat of reference trajectory(occ_grid_known): 0.000000
+[2019-07-07 13:18:09,846] pathinitial.py->PathInitial line:183 [INFO]Initial_planning: Length of best trajectory: 29
+[2019-07-07 13:18:09,846] pathinitial.py->PathInitial line:184 [INFO]Initial_planning: Sum of privacy threat of best trajectory(occ_grid): 7.079914
+[2019-07-07 13:18:09,846] pathinitial.py->PathInitial line:185 [INFO]Initial_planning: Sum of privacy threat of best trajectory(occ_grid_known): 7.079914
+[2019-07-07 13:18:09,889] HybridPlanning_SA.py->Astar_Hybrid_Planning_online line:451 [INFO]Online_Hybrid_Planning: No solution for local planning: from [0, 0, 0] to [0, 2, 0]. No soultion flag is 1, PR for PP is 1.103638. length of PP is 2, T plan optimal is 11
+[2019-07-07 13:18:10,102] HybridPlanning_SA.py->Astar_Hybrid_Planning_online line:451 [INFO]Online_Hybrid_Planning: No solution for local planning: from [0, 3, 0] to [2, 4, 0]. No soultion flag is 1, PR for PP is 1.882439. length of PP is 3, T plan optimal is 12
+[2019-07-07 13:18:10,861] HybridPlanning_SA.py->Astar_Hybrid_Planning_online line:451 [INFO]Online_Hybrid_Planning: No solution for local planning: from [2, 5, 0] to [3, 9, 0]. No soultion flag is 2, PR for PP is 0.000000. length of PP is 19, T plan optimal is 14

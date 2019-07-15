@@ -1,0 +1,7 @@
+[2019-07-07 13:19:56,838] MainFunc-exploration.py-><module> line:127 [INFO]Iteration: 1; Configuration: grid: 10, safety_threshold: 0.300000, privacy_threshold: 0.100000, the starting point: [0, 0, 0]; the end point: [9, 9, 9]; T_budget(alpha): 45.000000 (1.666667); T_optimal(beta): 36.000000 (1.333333); Exploration_rate: 0.000000; Preference: 1.000000; View_radius: 2.500000
+[2019-07-07 13:20:08,147] pathinitial.py->PathInitial line:138 [INFO]Initial_planning: Length of reference trajectory: 27
+[2019-07-07 13:20:08,148] pathinitial.py->PathInitial line:139 [INFO]Initial_planning: Sum of privacy threat of reference trajectory(occ_grid): 81.157962
+[2019-07-07 13:20:08,148] pathinitial.py->PathInitial line:140 [INFO]Initial_planning: Sum of privacy threat of reference trajectory(occ_grid_known): 0.000000
+[2019-07-07 13:20:17,179] pathinitial.py->PathInitial line:183 [INFO]Initial_planning: Length of best trajectory: 29
+[2019-07-07 13:20:17,179] pathinitial.py->PathInitial line:184 [INFO]Initial_planning: Sum of privacy threat of best trajectory(occ_grid): 23.172273
+[2019-07-07 13:20:17,179] pathinitial.py->PathInitial line:185 [INFO]Initial_planning: Sum of privacy threat of best trajectory(occ_grid_known): 23.172273

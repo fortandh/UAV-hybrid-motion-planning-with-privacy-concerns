@@ -597,7 +597,7 @@ def Astar_Sensor_Config_online(config, iteration, log, num):
         #     num_cannot_avoid_intruder_ref += 1
     # print("\033[94m Fitness for reference path:\033[0m \n", len(trajectory_ref) - 1, sum_ref, num_ca_ref,
     #       num_intruder_ref)
-    print("\033[94mFitness for replanned path:\033[0m \n ", len(trajectory_plan) - 1, PR_sum_unknown_ref, PR_sum_known_ref,
+    print("\033[94mFitness for preplanned path:\033[0m \n ", len(trajectory_plan) - 1, PR_sum_unknown_ref, PR_sum_known_ref,
           num_ca_ref,
           num_intruder_notknown_ref, num_intruder_known_ref)
     log.info("Online_Sensor_Config: Length of preplanned trajectory: %d" % (len(trajectory_ref) - 1))
